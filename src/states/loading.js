@@ -71,7 +71,7 @@ PlatformBlueprint.Loading.preload = function () {
     ////////////////////////////
     //MENU
     this.addSpriteSheet('menu', 'assets/img/menu/MenuAnimation.png', 960, 540);
-    this.addImage('startText', 'assets/img/menu/PressStart.png');
+    this.addImage('startText', 'assets/img/menu/PressStart1.png');
 
 
 
