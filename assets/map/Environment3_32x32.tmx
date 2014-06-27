@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="70" height="23" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="environment" tilewidth="32" tileheight="32">
+  <image source="../img/tiles3.png" width="320" height="256"/>
+ </tileset>
+ <layer name="Background" width="70" height="23">
+  <data encoding="base64" compression="zlib">
+   eJzt1KEOgDAMBNCqjSGm+f8vpSTMkE7i3kvO9KovAgCAv12ZnmmZMzOL/ijuq2tvxuYHgNra0Pm5PVvcw6YCABBxAx2WAQo=
+  </data>
+ </layer>
+ <layer name="Ground" width="70" height="23">
+  <data encoding="base64" compression="zlib">
+   eJztlsEKgCAQRDXtVB2r///TFBow2QghxMN7MJjrprKwg84BAAAA/MeeNCX5pJi0GOveiGst3P+95QAAgI38d6li2U9nh6cCwJjIo/KoN2QPv5I/6txYzEPxPZKHrh3OOBrze9zpC+pis7lnf5WKRky9oPyyD+o9ND8b7zRCXUaEutj0rssFHl0B1Q==
+  </data>
+ </layer>
+ <layer name="Objects" width="70" height="23">
+  <data encoding="base64" compression="zlib">
+   eJztwQEBAAAAgiD/r25IQAEAAAAAAHwaGSgAAQ==
+  </data>
+ </layer>
+ <layer name="RightSlope" width="70" height="23">
+  <data encoding="base64" compression="zlib">
+   eJzt0DERAAAIxDC84d8TClhY+CFR0GsVAAAAAOTo74Bg3uy8Aa4GTqAAyg==
+  </data>
+ </layer>
+ <layer name="LeftSlope" width="70" height="23">
+  <data encoding="base64" compression="zlib">
+   eJzt0DERADAMA7GwKofyB1QAHjomd5EQ2F8FANDvdA8YSJOkSdIkbWyy8fOPJkmTpEna0OR2DxhIk6QJ7PIAy8cDBQ==
+  </data>
+ </layer>
+ <layer name="Foreground" width="70" height="23">
+  <data encoding="base64" compression="zlib">
+   eJztlMkKwjAURd+f6FZd1nHhUJwH1P//Gm+hhbRJwSHmPfEeOARS0oRDWhFCCCGEEGKRCZxqH8IYVZOZ9kEMwSY+bNLOPzXhP9SH34aPZpM5XMAlXH3h/Wd4hTd4f2GdlXuyhrnEbVM0ucDTm+tTNunArjNm5fxG4rZxmxzLuV5j77Yxk/SMGw6dZ1WbLdx9sMceHqTepKAf2D+ke6ZUaJ7hl7qM5Lm7HWMcBPa32sWiGl0et1Alpg==
+  </data>
+ </layer>
+</map>

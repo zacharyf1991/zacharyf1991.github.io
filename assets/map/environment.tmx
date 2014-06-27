@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="65" height="25" tilewidth="48" tileheight="48">
+ <tileset firstgid="1" name="environment" tilewidth="48" tileheight="48">
+  <image source="../img/tiles.png" width="480" height="768"/>
+ </tileset>
+ <layer name="Ground" width="65" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztlrEOgCAMBTHqpCv+/6cKiRN5RSTUhbvkDYSSNjc0hAAAYBNTlidH5U7d99TUeqi3AADe9Oy60endr6O4ivPp2OsL5Vx/9sIBDjI40A7UTnz7R9bqtpQ1ZTdq1FyetDhQ85R11swtda09vcABDlQvHOAgg4M5HQDMzg1sTgcK
+  </data>
+ </layer>
+ <layer name="Objects" width="65" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20Gf6AAAAAAAAB4DRlkAAE=
+  </data>
+ </layer>
+ <layer name="SlopeRight" width="65" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt0EERACAMBLF6w78nHqcBaIdEwc5WAdy1Xgc04UP4ED7ElA9TOk/zIXwIH8IHAAD4ywY1+QKf
+  </data>
+ </layer>
+ <layer name="SlopeLeft" width="65" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt0AENAAAIwzD04V8QKggkbxV8rwLY0dcDjunPpp9N6f/qz6YfAAD4ZABO9QLl
+  </data>
+ </layer>
+ <layer name="Foreground" width="65" height="25">
+  <data encoding="base64" compression="zlib">
+   eJztlNsKwjAQRPMB/oN91VfFN2/gFUX9/69xArsQStJuxWZj3IGhFwa6e9qOcyaT6du6wQ/4Cb/o3hrewFt4pzNWNvn97z2ZvauXQ7j/NZE50LFGDpL9WTVyGLI/61c4SHrsDF/oXLo/izkc4VMiE+tXLWm8L0m/jqUZPIUXdK3x3cb+Lz9XQ3NNRn7+HF7By+BeTg6pfgnn0mDglYNDV7+WwMBL0mOfqq9fS2GgqdIYcG+G3RnLNANzqUx7rhIYcKYrF2akOckzjYExMAbGwBjkZWAy/bPepe8zZw==
+  </data>
+ </layer>
+</map>
