@@ -10,7 +10,7 @@
 //Initialise the Kiwi Game. 
 
 var gameOptions = {
-	renderer: Kiwi.RENDERER_CANVAS, 
+	renderer: Kiwi.RENDERER_WEBGL, 
 	width: 960,
 	height: 540,
 	plugins: ['ShareButton']
