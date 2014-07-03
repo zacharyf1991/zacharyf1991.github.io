@@ -14,7 +14,7 @@ PoriruaGame.Play.create = function () {
 	  this.addChild(this.name);
     //this.rect1.render();
     this.inputManager = new InputManager(this);
-    this.player = new PlayerManager(this, 780, 1750);
+    this.player = new PlayerManager(this, 600, 1350);
     this.addChild(this.player);
 
 
