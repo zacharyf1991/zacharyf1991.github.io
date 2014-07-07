@@ -142,6 +142,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._renderRect = function() {
 
     this.linePointsAmount = 100;
     this.lineDivideAmount = 0.01;
+    this.startLineOn = false;
     this.allRoadPoints = [];
 
 
@@ -160,6 +161,8 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._renderRect = function() {
     this.createRoad4Points();
 
     this.createRoad5Points();
+    this.createRoad5aPoints();
+    this.createRoad5dPoints();
 
     this.createRoad6Points();
 
@@ -174,6 +177,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._renderRect = function() {
     this.createRoad11Points();
 
     this.createRoad12Points();
+    this.createRoad12aPoints();
 
     this.createRoad13Points();
 
@@ -194,8 +198,36 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._renderRect = function() {
     this.createRoad19Points();
 
     this.createRoad20Points();
+
+    this.createRoad21Points();
+
+    this.createRoad22Points();
+
+    this.createRoad23Points();
+
+    this.createRoad24Points();
+
+    this.createRoad25Points();
+    this.createRoad25aPoints();
+    this.createRoad25bPoints();
+    this.createRoad25cPoints();
+    this.createRoad25dPoints();
+
+    this.createRoad26Points();
+    this.createRoad26aPoints();
+
+    this.createRoad27Points();
+
+    this.createRoad28Points();
+
+    this.createRoad29Points();
+    this.createRoad29aPoints();
+
+    this.createRoad30Points();
+    this.createRoad30aPoints();
+    this.createRoad30bPoints();
+    this.createRoad30cPoints();
     
-    this.drawRectOne();
 
     
 
@@ -214,10 +246,10 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawRectOne = function(){
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.lineStyle = function(){
     this.ctx.lineWidth = 10;
     this.ctx.strokeStyle = '#ffffff';
-    this.ctx.shadowColor = '#0066ff';
-    this.ctx.shadowBlur = 25;
-    this.ctx.shadowOffsetX = 0;
-    this.ctx.shadowOffsetY = 0;
+    // this.ctx.shadowColor = '#0066ff';
+    // this.ctx.shadowBlur = 1;
+    // this.ctx.shadowOffsetX = 0;
+    // this.ctx.shadowOffsetY = 0;
 }
 
 
@@ -293,7 +325,6 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.update = function() {
 
 
     this.ctx.clearRect(0, 0, 2098,2161);
-    this.drawRectOne();
 
     this.ctx.beginPath();
     for (var i = this.allRoadPoints.length - 1; i >= 0; i--) {
@@ -312,9 +343,13 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawRoad = function(points){
     this.ctx.lineCap="round";
     this.ctx.moveTo(points[0].x, points[0].y);
     for(var i = 0; i < points.length; i ++){
-        //console.log("Yes");
-        if(points[i].isOn){
-            this.ctx.lineTo(points[i].x, points[i].y);
+        //console.log(game.cameras.defaultCamera.transform.x);
+        if(points[i].isOn ){
+            if(points[i].x > (game.cameras.defaultCamera.transform.x * -1) / 0.75 - 150 && points[i].x < (game.cameras.defaultCamera.transform.x * -1)/ 0.75 + game.stage.width + 150){
+                if(points[i].y > (game.cameras.defaultCamera.transform.y * -1)/ 0.75 - 150 && points[i].y < (game.cameras.defaultCamera.transform.y * -1)/ 0.75 + game.stage.height + 150){
+                    this.ctx.lineTo(points[i].x, points[i].y);
+                }
+            }
         }
         else {
             this.ctx.moveTo(points[i].x, points[i].y);
@@ -332,7 +367,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad1Points = function()
 
     for(var i = 0; i <= 100; i += 1){
         this.r1Points[i] = this.splinePoint(this.getPointsRoad1(), i * 0.01)[0];
-        this.r1Points[i].isOn = false;
+        this.r1Points[i].isOn = this.startLineOn;
     }
     this.allRoadPoints[this.allRoadPoints.length] = this.r1Points;
 
@@ -359,7 +394,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad1aPoints = function(
 
     for(var i = 0; i <= this.linePointsAmount; i += 1){
         this.r1aPoints[i] = this.splinePoint(this.getPointsRoad1a(), i * this.lineDivideAmount)[0];
-        this.r1aPoints[i].isOn = false;
+        this.r1aPoints[i].isOn = this.startLineOn;
     }
     this.allRoadPoints[this.allRoadPoints.length] = this.r1aPoints;
 
@@ -386,7 +421,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad1bPoints = function(
 
     for(var i = 0; i <= 100; i += 1){
         this.r1bPoints[i] = this.splinePoint(this.getPointsRoad1b(), i * 0.01)[0];
-        this.r1bPoints[i].isOn = false;
+        this.r1bPoints[i].isOn = this.startLineOn;
     }
     this.allRoadPoints[this.allRoadPoints.length] = this.r1bPoints;
 
@@ -412,7 +447,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad1cPoints = function(
 
     for(var i = 0; i <= 100; i += 1){
         this.r1cPoints[i] = this.splinePoint(this.getPointsRoad1c(), i * 0.01)[0];
-        this.r1cPoints[i].isOn = false;
+        this.r1cPoints[i].isOn = this.startLineOn;
     }
     this.allRoadPoints[this.allRoadPoints.length] = this.r1cPoints;
 
@@ -442,7 +477,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad2Points = function()
         /////HERE///////////////////////////////////HERE/////////////////////
         this.r2Points[i] = this.splinePoint(this.getPointsRoad2(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r2Points[i].isOn = false;
+        this.r2Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r2Points;
@@ -470,7 +505,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad2aPoints = function(
         /////HERE///////////////////////////////////HERE/////////////////////
         this.r2aPoints[i] = this.splinePoint(this.getPointsRoad2a(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r2aPoints[i].isOn = false;
+        this.r2aPoints[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r2aPoints;
@@ -501,7 +536,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad3Points = function()
         /////HERE///////////////////////////////////HERE/////////////////////
         this.r3Points[i] = this.splinePoint(this.getPointsRoad3(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r3Points[i].isOn = false;
+        this.r3Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r3Points;
@@ -529,7 +564,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad4Points = function()
         /////HERE///////////////////////////////////HERE/////////////////////
         this.r4Points[i] = this.splinePoint(this.getPointsRoad4(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r4Points[i].isOn = false;
+        this.r4Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r4Points;
@@ -557,7 +592,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad5Points = function()
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r5Points[i] = this.splinePoint(this.getPointsRoad5(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r5Points[i].isOn = false;
+        this.r5Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r5Points;
@@ -565,17 +600,72 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad5Points = function()
 /////////////////////////////////////////////////////////////HERE/////////////
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad5 = function(){
     var tempPoint1 = new Kiwi.Geom.Point(425, 1005);
-    var tempPoint2 = new Kiwi.Geom.Point(340, 1240);
-    var tempPoint3 = new Kiwi.Geom.Point(470, 1400);
-    var tempPoint4 = new Kiwi.Geom.Point(390, 1550);
-    var tempPoint5 = new Kiwi.Geom.Point(510, 1730);
+    var tempPoint2 = new Kiwi.Geom.Point(390, 1200);
+    var tempPoint3 = new Kiwi.Geom.Point(420, 1370);
 
     var tempGroup = [];
     tempGroup[0] = tempPoint1;
     tempGroup[1] = tempPoint2;
     tempGroup[2] = tempPoint3;
-    tempGroup[3] = tempPoint4;
-    tempGroup[4] = tempPoint5;
+    return tempGroup;
+}
+
+
+//r5a//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad5aPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r5aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r5aPoints[i] = this.splinePoint(this.getPointsRoad5a(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r5aPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r5aPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad5a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(420, 1370);
+    var tempPoint2 = new Kiwi.Geom.Point(444, 1550);
+    var tempPoint3 = new Kiwi.Geom.Point(510, 1730);
+
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+
+
+//r5d//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad5dPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r5dPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r5dPoints[i] = this.splinePoint(this.getPointsRoad5d(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r5dPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r5dPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad5d = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(405, 1200);
+    var tempPoint2 = new Kiwi.Geom.Point(330, 1200);
+    var tempPoint3 = new Kiwi.Geom.Point(290, 1265);
+
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
     return tempGroup;
 }
 
@@ -585,7 +675,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad6Points = function()
 
     for(var i = 0; i <= 100; i += 1){
         this.r6Points[i] = this.splinePoint(this.getPointsRoad6(), i * 0.01)[0];
-        this.r6Points[i].isOn = false;
+        this.r6Points[i].isOn = this.startLineOn;
     }
     this.allRoadPoints[this.allRoadPoints.length] = this.r6Points;
 
@@ -615,7 +705,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad7Points = function()
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r7Points[i] = this.splinePoint(this.getPointsRoad7(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r7Points[i].isOn = false;
+        this.r7Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r7Points;
@@ -644,7 +734,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad8Points = function()
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r8Points[i] = this.splinePoint(this.getPointsRoad8(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r8Points[i].isOn = false;
+        this.r8Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r8Points;
@@ -674,7 +764,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad9Points = function()
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r9Points[i] = this.splinePoint(this.getPointsRoad9(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r9Points[i].isOn = false;
+        this.r9Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r9Points;
@@ -684,7 +774,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad9 = function(){
     var tempPoint1 = new Kiwi.Geom.Point(600, 1350);
     var tempPoint2 = new Kiwi.Geom.Point(630, 1530);
     var tempPoint3 = new Kiwi.Geom.Point(580, 1520);
-    var tempPoint4 = new Kiwi.Geom.Point(445, 1550);
+    var tempPoint4 = new Kiwi.Geom.Point(455, 1550);
 
     var tempGroup = [];
     tempGroup[0] = tempPoint1;
@@ -704,7 +794,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad10Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r10Points[i] = this.splinePoint(this.getPointsRoad10(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r10Points[i].isOn = false;
+        this.r10Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r10Points;
@@ -732,7 +822,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad11Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r11Points[i] = this.splinePoint(this.getPointsRoad11(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r11Points[i].isOn = false;
+        this.r11Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r11Points;
@@ -760,7 +850,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad12Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r12Points[i] = this.splinePoint(this.getPointsRoad12(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r12Points[i].isOn = false;
+        this.r12Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r12Points;
@@ -770,6 +860,34 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad12 = function(){
     var tempPoint1 = new Kiwi.Geom.Point(780, 1730);
     var tempPoint2 = new Kiwi.Geom.Point(920, 1750);
     var tempPoint3 = new Kiwi.Geom.Point(990, 1740);
+
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r12a//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad12aPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r12aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r12aPoints[i] = this.splinePoint(this.getPointsRoad12a(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r12aPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r12aPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad12a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(990, 1740);
+    var tempPoint2 = new Kiwi.Geom.Point(940, 1970);
+    var tempPoint3 = new Kiwi.Geom.Point(890, 2064);
 
     var tempGroup = [];
     tempGroup[0] = tempPoint1;
@@ -788,7 +906,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad13Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r13Points[i] = this.splinePoint(this.getPointsRoad13(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r13Points[i].isOn = false;
+        this.r13Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r13Points;
@@ -816,7 +934,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad14Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r14Points[i] = this.splinePoint(this.getPointsRoad14(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r14Points[i].isOn = false;
+        this.r14Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r14Points;
@@ -844,7 +962,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad15Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r15Points[i] = this.splinePoint(this.getPointsRoad15(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r15Points[i].isOn = false;
+        this.r15Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r15Points;
@@ -876,7 +994,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad16Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r16Points[i] = this.splinePoint(this.getPointsRoad16(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r16Points[i].isOn = false;
+        this.r16Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r16Points;
@@ -906,7 +1024,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad16aPoints = function
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r16aPoints[i] = this.splinePoint(this.getPointsRoad16a(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r16aPoints[i].isOn = false;
+        this.r16aPoints[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r16aPoints;
@@ -934,7 +1052,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad17Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r17Points[i] = this.splinePoint(this.getPointsRoad17(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r17Points[i].isOn = false;
+        this.r17Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r17Points;
@@ -961,7 +1079,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad17aPoints = function
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r17aPoints[i] = this.splinePoint(this.getPointsRoad17a(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r17aPoints[i].isOn = false;
+        this.r17aPoints[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r17aPoints;
@@ -988,7 +1106,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad17bPoints = function
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r17bPoints[i] = this.splinePoint(this.getPointsRoad17b(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r17bPoints[i].isOn = false;
+        this.r17bPoints[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r17bPoints;
@@ -1015,7 +1133,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad17cPoints = function
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r17cPoints[i] = this.splinePoint(this.getPointsRoad17c(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r17cPoints[i].isOn = false;
+        this.r17cPoints[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r17cPoints;
@@ -1042,7 +1160,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad18Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r18Points[i] = this.splinePoint(this.getPointsRoad18(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r18Points[i].isOn = false;
+        this.r18Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r18Points;
@@ -1069,7 +1187,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad19Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r19Points[i] = this.splinePoint(this.getPointsRoad19(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r19Points[i].isOn = false;
+        this.r19Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r19Points;
@@ -1096,7 +1214,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad20Points = function(
         /////HERE////////////////////////////////////////////HERE/////////////////////
         this.r20Points[i] = this.splinePoint(this.getPointsRoad20(), i * this.lineDivideAmount)[0];
         //////HERE////////////
-        this.r20Points[i].isOn = false;
+        this.r20Points[i].isOn = this.startLineOn;
     }
     ////////////////////////////////////////////////////HERE//////
     this.allRoadPoints[this.allRoadPoints.length] = this.r20Points;
@@ -1112,3 +1230,529 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad20 = function(){
     tempGroup[2] = tempPoint3;
     return tempGroup;
 }
+
+//r21//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad21Points = function(){
+
+    /////HERE/////////////////////////
+    this.r21Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r21Points[i] = this.splinePoint(this.getPointsRoad21(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r21Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r21Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad21 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1175, 1225);
+    var tempPoint2 = new Kiwi.Geom.Point(1295, 960);
+    var tempPoint3 = new Kiwi.Geom.Point(1170, 742);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r22//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad22Points = function(){
+
+    /////HERE/////////////////////////
+    this.r22Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r22Points[i] = this.splinePoint(this.getPointsRoad22(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r22Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r22Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad22 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1435, 1010);
+    var tempPoint2 = new Kiwi.Geom.Point(1360, 850);
+    var tempPoint3 = new Kiwi.Geom.Point(1396, 750);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r23//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad23Points = function(){
+
+    /////HERE/////////////////////////
+    this.r23Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r23Points[i] = this.splinePoint(this.getPointsRoad23(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r23Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r23Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad23 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1585, 975);
+    var tempPoint2 = new Kiwi.Geom.Point(1640, 930);
+    var tempPoint3 = new Kiwi.Geom.Point(1540, 860);
+    var tempPoint4 = new Kiwi.Geom.Point(1650, 770);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    tempGroup[3] = tempPoint4;
+    return tempGroup;
+}
+
+//r24//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad24Points = function(){
+
+    /////HERE/////////////////////////
+    this.r24Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r24Points[i] = this.splinePoint(this.getPointsRoad24(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r24Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r24Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad24 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1435, 1010);
+    var tempPoint2 = new Kiwi.Geom.Point(1520, 1050);
+    var tempPoint3 = new Kiwi.Geom.Point(1585, 975);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r25//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad25Points = function(){
+
+    /////HERE/////////////////////////
+    this.r25Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r25Points[i] = this.splinePoint(this.getPointsRoad25(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r25Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r25Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad25 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1585, 975);
+    var tempPoint2 = new Kiwi.Geom.Point(1645, 1060);
+    var tempPoint3 = new Kiwi.Geom.Point(1645, 1145);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r25a//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad25aPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r25aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r25aPoints[i] = this.splinePoint(this.getPointsRoad25a(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r25aPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r25aPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad25a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1645, 1145);
+    var tempPoint2 = new Kiwi.Geom.Point(1760, 1220);
+    var tempPoint3 = new Kiwi.Geom.Point(1850, 1140);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r25b//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad25bPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r25bPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r25bPoints[i] = this.splinePoint(this.getPointsRoad25b(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r25bPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r25bPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad25b = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1850, 1140);
+    var tempPoint2 = new Kiwi.Geom.Point(1875, 1120);
+    var tempPoint3 = new Kiwi.Geom.Point(1840, 1030);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r25c//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad25cPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r25cPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r25cPoints[i] = this.splinePoint(this.getPointsRoad25c(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r25cPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r25cPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad25c = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1840, 1030);
+    var tempPoint2 = new Kiwi.Geom.Point(1955, 950);
+    var tempPoint3 = new Kiwi.Geom.Point(1860, 890);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r25d//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad25dPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r25dPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r25dPoints[i] = this.splinePoint(this.getPointsRoad25d(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r25dPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r25dPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad25d = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1860, 890);
+    var tempPoint2 = new Kiwi.Geom.Point(1790, 880);
+    var tempPoint3 = new Kiwi.Geom.Point(1785, 785);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r26//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad26Points = function(){
+
+    /////HERE/////////////////////////
+    this.r26Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r26Points[i] = this.splinePoint(this.getPointsRoad26(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r26Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r26Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad26 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1650, 770);
+    var tempPoint2 = new Kiwi.Geom.Point(1730, 805);
+    var tempPoint3 = new Kiwi.Geom.Point(1785, 785);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r26a//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad26aPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r26aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r26aPoints[i] = this.splinePoint(this.getPointsRoad26a(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r26aPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r26aPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad26a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1785, 785);
+    var tempPoint2 = new Kiwi.Geom.Point(1900, 740);
+    var tempPoint3 = new Kiwi.Geom.Point(2015, 850);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r27//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad27Points = function(){
+
+    /////HERE/////////////////////////
+    this.r27Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r27Points[i] = this.splinePoint(this.getPointsRoad27(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r27Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r27Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad27 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1396, 750);
+    var tempPoint2 = new Kiwi.Geom.Point(1490, 825);
+    var tempPoint3 = new Kiwi.Geom.Point(1530, 740);
+    var tempPoint4 = new Kiwi.Geom.Point(1650, 770);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    tempGroup[3] = tempPoint4;
+    return tempGroup;
+}
+
+//r28//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad28Points = function(){
+
+    /////HERE/////////////////////////
+    this.r28Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r28Points[i] = this.splinePoint(this.getPointsRoad28(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r28Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r28Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad28 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1170, 742);
+    var tempPoint2 = new Kiwi.Geom.Point(1290, 655);
+    var tempPoint3 = new Kiwi.Geom.Point(1396, 750);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+
+//r29//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad29Points = function(){
+
+    /////HERE/////////////////////////
+    this.r29Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r29Points[i] = this.splinePoint(this.getPointsRoad29(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r29Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r29Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad29 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1170, 742);
+    var tempPoint2 = new Kiwi.Geom.Point(1080, 590);
+    var tempPoint3 = new Kiwi.Geom.Point(1010, 340);
+    var tempPoint4 = new Kiwi.Geom.Point(1200, 225);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    tempGroup[3] = tempPoint4;
+    return tempGroup;
+}
+//r29a//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad29aPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r29aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r29aPoints[i] = this.splinePoint(this.getPointsRoad29a(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r29aPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r29aPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad29a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1200, 225);
+    var tempPoint2 = new Kiwi.Geom.Point(1250, 150);
+    var tempPoint3 = new Kiwi.Geom.Point(1240, 90);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+//r30//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad30Points = function(){
+
+    /////HERE/////////////////////////
+    this.r30Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r30Points[i] = this.splinePoint(this.getPointsRoad30(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r30Points[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r30Points;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad30 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1200, 225);
+    var tempPoint2 = new Kiwi.Geom.Point(1360, 380);
+    var tempPoint3 = new Kiwi.Geom.Point(1430, 200);
+    var tempPoint4 = new Kiwi.Geom.Point(1520, 235);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    tempGroup[3] = tempPoint4;
+    return tempGroup;
+}
+
+//r30a//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad30aPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r30aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r30aPoints[i] = this.splinePoint(this.getPointsRoad30a(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r30aPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r30aPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad30a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1520, 235);
+    var tempPoint2 = new Kiwi.Geom.Point(1600, 235);
+    var tempPoint3 = new Kiwi.Geom.Point(1650, 355);
+    var tempPoint4 = new Kiwi.Geom.Point(1790, 345);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    tempGroup[3] = tempPoint4;
+    return tempGroup;
+}
+
+//r30b//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad30bPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r30bPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r30bPoints[i] = this.splinePoint(this.getPointsRoad30b(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r30bPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r30bPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad30b = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1790, 345);
+    var tempPoint2 = new Kiwi.Geom.Point(1940, 405);
+    var tempPoint3 = new Kiwi.Geom.Point(2010, 395);
+    var tempPoint4 = new Kiwi.Geom.Point(2030, 520);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    tempGroup[3] = tempPoint4;
+    return tempGroup;
+}
+
+//r30c//////////////////////////////////////////////////////HERE////////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createRoad30cPoints = function(){
+
+    /////HERE/////////////////////////
+    this.r30cPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        /////HERE////////////////////////////////////////////HERE/////////////////////
+        this.r30cPoints[i] = this.splinePoint(this.getPointsRoad30c(), i * this.lineDivideAmount)[0];
+        //////HERE////////////
+        this.r30cPoints[i].isOn = this.startLineOn;
+    }
+    ////////////////////////////////////////////////////HERE//////
+    this.allRoadPoints[this.allRoadPoints.length] = this.r30cPoints;
+}
+/////////////////////////////////////////////////////////////HERE/////////////
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad30c = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(2030, 520);
+    var tempPoint2 = new Kiwi.Geom.Point(2045, 695);
+    var tempPoint3 = new Kiwi.Geom.Point(2010, 890);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+

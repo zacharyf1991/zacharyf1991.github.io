@@ -36,6 +36,11 @@ PoriruaGame.Loading.preload = function () {
     this.addImage('kiwiName', 'assets/img/kiwijs-name.png');
     this.addSpriteSheet('icons', 'assets/img/kiwijs-icons.png', 100, 90);
 
+    this.addImage('startBackground', 'assets/img/start-screen-bg.jpg');
+    this.addSpriteSheet('startButtons', 'assets/img/start-screen-buttons.png', 258, 91);
+    this.addImage('howToPlay', 'assets/img/how-to-play.png');
+    this.addSpriteSheet('okButton', 'assets/img/ok-button.png', 128, 49);
+
 
     this.addImage('background', 'assets/img/porirua-map.jpg');
     this.addSpriteSheet('player', 'assets/img/player.png', 57, 79);

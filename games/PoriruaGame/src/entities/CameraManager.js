@@ -6,8 +6,12 @@ CameraManager = function(state){
 
     this.camera = game.cameras.defaultCamera;
 
-    // this.camera.transform.scaleX=0.75;
-    // this.camera.transform.scaleY=0.75;
+    this.camera.transform.scaleX=0.75;
+    this.camera.transform.scaleY=0.75;
+
+    // this.camera.transform.scaleX=1.25;
+    // this.camera.transform.scaleY=1.25;
+
 
 
 }
@@ -19,6 +23,7 @@ CameraManager = function(state){
 */
 CameraManager.prototype.update = function () {
     this.updatePosition();
+    //console.log(this.camera.transform.x * -1, this.camera.transform.y * -1);
     if(this.damageState){
         this.shakeCameraDamage();
     }
@@ -56,19 +61,19 @@ CameraManager.prototype.damageReset = function() {
 
 
 CameraManager.prototype.updatePosition = function() {
-    if (this.state.player.x < this.state.game.stage.width / 2) {
-        this.state.camera.transform.x = 0;
-    } else if (this.state.player.x > (2098 - (this.state.game.stage.width / 2))) {
-        this.state.camera.transform.x = -(2098 - this.state.game.stage.width);
+    if (this.state.player.x < (this.state.game.stage.width/0.75) / 2) {
+        this.state.camera.transform.x = -(game.stage.width * 1/8);
+    } else if (this.state.player.x > (2098  - ((game.stage.width/ 0.75) / 2))) {
+        this.state.camera.transform.x = -901;
     } else {
-        this.state.camera.transform.x = -this.state.player.x + this.state.game.stage.width / 2;
+        this.state.camera.transform.x = (-this.state.player.x + this.state.game.stage.width / 2) * 0.75;
     }
     
-    if (this.state.player.y < this.state.game.stage.height / 2) {
-        this.state.camera.transform.y = 0;
-    } else if (this.state.player.y > (2161 - (this.state.game.stage.height / 2))) {
-        this.state.camera.transform.y = -(2161 - this.state.game.stage.height);
+    if (this.state.player.y < (this.state.game.stage.height / 0.75) / 2) {
+        this.state.camera.transform.y = -(game.stage.height * 1/8);
+    } else if (this.state.player.y > (2161 - ((game.stage.height/ 0.75) / 2))) {
+        this.state.camera.transform.y = -1172;// - (game.stage.height/0.75)/2); 
     } else {
-        this.state.camera.transform.y = -this.state.player.y + this.state.game.stage.height / 2; // was 2
+        this.state.camera.transform.y = (-this.state.player.y + this.state.game.stage.height / 2) * 0.75; // was 2
     }
 };
