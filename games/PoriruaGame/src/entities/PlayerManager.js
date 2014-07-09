@@ -27,7 +27,7 @@ var PlayerManager = function (state, x, y){
 
     this.animation.play('idle');    
 
-    this.box.hitbox = new Kiwi.Geom.Rectangle(25, 20, 35, 80); 
+    this.box.hitbox = new Kiwi.Geom.Rectangle(28, 65, 1, 1); 
     this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
     
 
@@ -43,6 +43,9 @@ var PlayerManager = function (state, x, y){
     this.jumpKeyDown = false;
     this.upKeyDown = false;
     this.downKeyDown = false;
+
+
+    this.previousLocation = new Kiwi.Geom.Vector2(x, y);
 
 
 
@@ -82,7 +85,32 @@ PlayerManager.prototype.update = function(){
     } else if(this.y < -50){
         this.y = 2200;
     }
+    
     this.updateMovement();
+
+    var offTrack = true;
+    this.minDist = 1000;
+    for (var i = this.state.rect1.allRoadPoints.length - 1; i >= 0; i--) {
+        for (var j = this.state.rect1.allRoadPoints[i].length - 1; j >= 0; j--) {
+            var tempDist = this.state.rect1.allRoadPoints[i][j].distanceToXY(this.x + 28  + this.physics.velocity.x, this.y + 79+ this.physics.velocity.y)
+            if( tempDist < this.minDist){
+                this.minDist = tempDist;
+                //console.log("Test");
+            }
+        };
+    };
+    if(this.minDist >= 40){
+        // console.log("Hello?");
+        this.physics.velocity.x = 0;
+        this.physics.velocity.y = 0;
+        // this.x = this.previousLocation.x;
+        // this.y = this.previousLocation.y;
+        // this.x += -(this.physics.velocity.x * 0.5);
+        // this.y += -(this.physics.velocity.y * 0.5);
+    }
+    this.physics.update();
+
+    this.previousLocation.setTo(this.x, this.y);
     
 }
 
@@ -135,33 +163,28 @@ PlayerManager.prototype.updateMovement = function(direction){
         if(this.physics.velocity.x < this.maxRunVelo){
             
             this.physics.velocity.x += this.force;
-        } else if(!this.jumping){
-            this.physics.velocity.x = this.maxRunVelo
-        }
+        } 
 
-    } else if(this.leftKeyDown){
+    } 
+    if(this.leftKeyDown){
         //this.physics.velocity.x -= this.force;
         if(this.physics.velocity.x > -this.maxRunVelo){
             //console.log(this.physics.velocity.x);
             this.physics.velocity.x -= (this.force);
-        } else if(!this.jumping){
-            this.physics.velocity.x = -this.maxRunVelo
-        }
+        } 
 
-    } else if(this.downKeyDown){
+    } 
+    if(this.downKeyDown){
         if(this.physics.velocity.y < this.maxRunVelo){
             
             this.physics.velocity.y += this.force;
-        } else if(!this.jumping){
-            this.physics.velocity.y = this.maxRunVelo
-        }
+        } 
 
-    } else if(this.upKeyDown){
+    } 
+     if(this.upKeyDown){
         if(this.physics.velocity.y > -this.maxRunVelo){
             this.physics.velocity.y -= (this.force);
-        } else if(!this.jumping){
-            this.physics.velocity.y = -this.maxRunVelo
-        }
+        } 
 
     }
 

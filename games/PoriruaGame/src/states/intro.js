@@ -33,7 +33,7 @@ PoriruaGame.Intro.create = function () {
 
 PoriruaGame.Intro.mouseUp = function () {
 	if(this.howToPlay.alpha == 1){
-    	game.states.switchState("Play");
+    	//game.states.switchState("Play");
 		
 	} else {
 		this.howToPlay.alpha = 1;
@@ -43,6 +43,8 @@ PoriruaGame.Intro.mouseUp = function () {
 }
 PoriruaGame.Intro.okUp = function () {
 	if(this.okButton.alpha == 1){
+        this.okButton.input.onRelease.remove(this.okUp, this);
+        this.startButton.input.onRelease.remove(this.mouseUp, this);
     	game.states.switchState("Play");
 		
 	} 
