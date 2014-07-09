@@ -59,7 +59,7 @@ PoriruaGame.Loading.preload = function () {
     ///////////////////////////////
     //Buildings
 
-    this.addImage('roadblock1', 'assets/img/buildings/_0000s_0000_roadblock-1.png');
+    this.addImage('roadblock1', 'assets/img/buildings/0000s_0000_roadblock-1.png');
     this.addImage('roadblock2', 'assets/img/buildings/_0000s_0001_roadblock-2.png');
     this.addImage('roadblock3', 'assets/img/buildings/_0000s_0002_roadblock-3.png');
     this.addImage('roadblock4', 'assets/img/buildings/_0000s_0003_roadblock-4.png');
