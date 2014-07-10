@@ -41,6 +41,8 @@ PoriruaGame.Loading.preload = function () {
     this.addImage('howToPlay', 'assets/img/how-to-play.png');
     this.addSpriteSheet('okButton', 'assets/img/ok-button.png', 128, 49);
 
+    this.addImage('chocBar', 'assets/img/items/sante-whittakers-chocolate-bar.png');
+
     this.addImage('heart', 'assets/img/hud/heart.png');
     this.addImage('heartGray', 'assets/img/hud/heartGray.png');
     this.addImage('zombieHead', 'assets/img/hud/zombie-head.png');
@@ -114,8 +116,24 @@ PoriruaGame.Loading.preload = function () {
     this.addImage('tiki', 'assets/img/buildings/0002s0045tiki.png');
     this.addImage('golf', 'assets/img/buildings/0002s0046golf.png');
 
+    this.addLeaderboardAssets();
+};
+
+PoriruaGame.Loading.addLeaderboardAssets = function () {
+    this.addImage('overlay', 'assets/img/leaderboard/leaderboardfromstartmenu/black-overlay-70pc.png');
+    this.addImage('leaderboardBackground', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-background.png');
+    this.addImage('LeaderboardImage', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-title-image.png');
+
+
+    this.addImage('backButtonPressed', 'assets/img/leaderboard/loginoverlay/back-pressed.png');
+    this.addImage('okButtonLoginPressed', 'assets/img/leaderboard/loginoverlay/ok-pressed.png');
+    this.addImage('facebookLoginButtonPressed', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-title-image.png');
     
 
+    this.addImage('loginOverlay', 'assets/img/leaderboard/loginoverlay/login-overlay.png');
+    this.addImage('registerOverlay', 'assets/img/leaderboard/loginoverlay/sign-up-overlay.png');
 
 
-};
+
+
+}

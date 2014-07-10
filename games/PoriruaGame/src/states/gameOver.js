@@ -11,12 +11,18 @@ PoriruaGame.GameOver = new Kiwi.State('GameOver');
 */
 
 
-PoriruaGame.GameOver.create = function () {
+PoriruaGame.GameOver.create = function (params) {
     game.cameras.defaultCamera.transform.x = 0;
     game.cameras.defaultCamera.transform.y = 0;
     game.cameras.defaultCamera.transform.scale = 1;
     this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.gameOverBackground, 0, 0);
     this.addChild(this.background);
+    this.params = params;
+
+    this.chocBars = this.params.bars;
+    console.log(this.chocBars);
+
+    this.scores = this.getHighScore();
 
     // this.startButton = new Kiwi.GameObjects.Sprite(this, this.textures.startButtons, 450, 300);
     // this.addChild(this.startButton);
@@ -42,3 +48,20 @@ PoriruaGame.GameOver.gameOverUp = function () {
 	
 
 }
+
+PoriruaGame.GameOver.getHighScore = function () {
+    
+
+}
+PoriruaGame.GameOver.setHighScore = function () {
+
+
+
+}
+
+
+// PoriruaGame.GameOver.shareGame = function () {
+//     var myText = "I scored " + this.currHighScore + " points at -90, can you last longer? %20%23negativeNinety via @kiwijsengine"
+//     var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+myText
+//     window.open(myURL);
+// }

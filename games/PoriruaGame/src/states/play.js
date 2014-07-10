@@ -1,6 +1,17 @@
 var PoriruaGame = PoriruaGame || {};
 
 PoriruaGame.Play = new Kiwi.State('Play');
+
+PoriruaGame.Play.init = function () {
+
+
+
+  this.timer  = this.game.time.clock.createTimer('changeVisible', 3, -1, false);
+  this.timerEvent = this.timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.addBar, this);
+
+}
+
+
 PoriruaGame.Play.create = function () {
   	this.name = new Kiwi.GameObjects.StaticImage(this, this.textures.kiwiName, 10, 10);
     this.camera = game.cameras.defaultCamera;
@@ -24,9 +35,15 @@ PoriruaGame.Play.create = function () {
 
     this.hudManager = new HUDManager(this);
 
+    this.chocBarManager = new ChocBarManager(this);
+    this.timer.start();
+
 
 
     this.addChild(this.player);
+
+    this.score = 0;
+    this.linePointScore = 1;
 
 
   
@@ -43,6 +60,8 @@ PoriruaGame.Play.update = function(){
   this.cameraManager.update();
   this.junctionPointManager.update();
   this.environmentManager.update();
+  this.chocBarManager.update();
+  this.hudManager.update();
 
   //console.log(this.rect1.checkAllOn(), this.junctionPointManager.allPointsOn());
   if(this.rect1.checkAllOn() && this.junctionPointManager.allPointsOn()){
@@ -55,9 +74,26 @@ PoriruaGame.Play.gameOver = function(){
   console.log("Game Over!");
   this.inputManager.endState();
   this.hudManager.endState();
-  game.states.switchState("GameOver");
+  this.timer.stop();
+
+  var params = { thing: {
+        bars: this.chocBarManager.barsCollected,
+        cats: 5
+      }
+
+
+    }
+
+  game.states.switchState("GameOver", null, null, params);
 
 }
+
+
+PoriruaGame.Play.addBar = function(){
+  this.chocBarManager.addBar();
+}
+
+
 
 
 

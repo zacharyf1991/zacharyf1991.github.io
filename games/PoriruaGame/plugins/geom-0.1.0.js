@@ -318,6 +318,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.update = function() {
             if(!this.allRoadPoints[i][j].isOn){
                 if(this.allRoadPoints[i][j].distanceToXY(this.state.player.x + 28, this.state.player.y + 59) < this.collisionDistance){
                 this.allRoadPoints[i][j].isOn = true;
+                this.state.score += this.state.linePointScore;
             }
         }
         }

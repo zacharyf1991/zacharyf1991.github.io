@@ -36,7 +36,7 @@ HUDManager = function(state){
     ////////////////////////////
     //Choco COUNT
 
-    this.hudChocCount = new Kiwi.HUD.Widget.TextField(this.state.game, '15', 275, 5);
+    this.hudChocCount = new Kiwi.HUD.Widget.TextField(this.state.game, '0', 275, 5);
     
     this.hudChocCount.style.fontFamily = 'myFirstFont';
     this.hudChocCount.style.color = '#FC0';
@@ -83,7 +83,8 @@ HUDManager.prototype.update = function(){
 	// this.playersEnergy.counter.current = this.energy;
  //    this.playersHealth.counter.current = this.health;
 
- //    this.hudScore.text = "$"+this.score;
+ //   this.hudScore.text = "$"+this.score;
+    this.hudChocCount.text = this.state.chocBarManager.barsCollected;
 
 
 }

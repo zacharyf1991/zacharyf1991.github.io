@@ -1,0 +1,2 @@
+start-screen-buttons,31,251 (uses same PLAY button from start screen)leaderboard title image,0,0leaderboard background,32,8black overlay 70pc,0,0(these are the same from the win/lose leaderboard)player-position.png,316,127scroller.png,704,120
+facebook-pressed,152,348gplus-pressed,201,348twitter-pressed,249,348

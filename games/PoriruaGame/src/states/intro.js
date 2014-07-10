@@ -28,6 +28,8 @@ PoriruaGame.Intro.create = function () {
     this.okButton.input.onRelease.add(this.okUp, this);
     this.okButton.alpha = 0;
 
+    Kiwi.Plugins.GamefrootAccount.create(game);
+
 
 }
 
