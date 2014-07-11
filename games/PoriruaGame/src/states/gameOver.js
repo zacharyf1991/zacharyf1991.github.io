@@ -16,6 +16,9 @@ PoriruaGame.GameOver.create = function (params) {
     game.cameras.defaultCamera.transform.y = 0;
     game.cameras.defaultCamera.transform.scale = 1;
 
+    this.fadedBackground = new Kiwi.GameObjects.Sprite(this, this.textures.fadedBackground, 0, 0);
+    this.addChild(this.fadedBackground);
+
     this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.gameOverBackground, 0, 0);
     this.addChild(this.background);
     this.params = params;

@@ -156,6 +156,7 @@ PoriruaGame.Loading.addLeaderboardAssets = function () {
     this.addImage('loseGameOver', 'assets/img/leaderboard/lose.png');
     this.addImage('leaderboardBackgroundGameOver', 'assets/img/leaderboard/leaderboard-screen.png');
     this.addImage('scrollerGameOver', 'assets/img/leaderboard/scroller.png');
+    this.addImage('fadedBackground', 'assets/img/leaderboard/faded-background.jpg');
     
 
 
