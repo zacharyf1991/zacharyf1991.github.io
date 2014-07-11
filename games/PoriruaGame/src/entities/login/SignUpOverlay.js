@@ -175,5 +175,19 @@ SignUpOverlay.prototype.facebookSignUpHit = function(){
 
 	console.log("facebookSignUpHit");
 	this.stopCalls = true;
-	this.remove();
+
+	this.game.user.facebookLogin( function(loggedIn) {
+
+		if(loggedIn) {
+			this.remove();
+			this.state.submitScore();
+		} else {
+			//
+			alert('Could not log you in.');	
+		}
+
+		this.stopCalls = false;
+
+	}, this);
+
 }

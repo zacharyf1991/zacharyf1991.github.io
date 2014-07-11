@@ -19,23 +19,25 @@ PoriruaGame.GameOver.create = function (params) {
     this.fadedBackground = new Kiwi.GameObjects.Sprite(this, this.textures.fadedBackground, 0, 0);
     this.addChild(this.fadedBackground);
 
+
     this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.gameOverBackground, 0, 0);
     this.addChild(this.background);
     this.params = params;
 
+    this.theEndScore = this.params.bars * this.params.time;
     this.chocBars = this.params.bars;
-    console.log(this.params);
+    //console.log(this.params);
 
     this.scores = this.getHighScore();
 
     if(this.params.condition == 'win'){
-        this.win = new Kiwi.GameObjects.Sprite(this, this.textures.winGameOver, 147, 10);
+        this.win = new Kiwi.GameObjects.Sprite(this, this.textures.winGameOver, 20, 10);
         this.addChild(this.win);
-    } else{
-        this.lose = new Kiwi.GameObjects.Sprite(this, this.textures.loseGameOver, 147, 10);
+    } else if(this.params.condition == 'lose'){
+        this.lose = new Kiwi.GameObjects.Sprite(this, this.textures.loseGameOver, 20, 10);
         this.addChild(this.lose);
 
-    }
+    } 
 
 
     this.submitButton = new Kiwi.GameObjects.Sprite(this, this.textures.submitGameOver, 184, 450);
@@ -46,9 +48,17 @@ PoriruaGame.GameOver.create = function (params) {
 
     //Post Score
     this.submitButton.input.onUp.add(this.submitScore, this);
-    game.input.onUp.add(this.mouseLoc, this);
+    // game.input.onUp.add(this.mouseLoc, this);
     this.addScoreUI();
 
+    this.leaderBoardX = 317;
+    this.leaderBoardY = 125;
+    this.leaderBoardYStep = 70;
+    this.scoreboard = [];
+
+    this.playAgain = new Kiwi.GameObjects.Sprite(this, this.textures.againGameOver, 35, 252);
+    this.addChild(this.playAgain);
+    this.playAgain.input.onUp.add(this.playAgainHit, this);
 
 }
 
@@ -63,8 +73,31 @@ PoriruaGame.GameOver.getHighScore = function () {
     
 
 }
+PoriruaGame.GameOver.playAgainHit = function () {
+    game.huds.defaultHUD.removeAllWidgets();
+    this.playAgain.input.onRelease.remove(this.playAgainHit, this);
+    this.submitButton.input.onRelease.remove(this.submitScore, this);
+    game.states.switchState("Intro");
+
+}
 PoriruaGame.GameOver.setHighScore = function () {
 
+
+
+}
+
+PoriruaGame.GameOver.update = function () {
+    Kiwi.State.prototype.update.call(this);
+    //this.updateScoreboard();
+
+
+
+}
+
+PoriruaGame.GameOver.updateScoreboard = function () {
+    for (var i = this.scoresboard.length - 1; i >= 0; i--) {
+        //this.scoresboard[i].update();
+    };
 
 
 }
@@ -86,12 +119,18 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
 
     //Loop through the scores
     for(var i = 0; i < data.length; i++) {
+    //for(var i = 0; i < 4; i++) {
 
         var leader = data[i];
+        console.log(leader);
+
         // date
         // game
         // score
-        // user 
+        // user
+        this.scoreboard[this.scoreboard.length] = new HighScoreBlock(this, this.leaderBoardX, this.leaderBoardYStep * i + this.leaderBoardY, leader.score, leader.user, i + 1);
+        this.addChild(this.scoreboard[this.scoreboard.length-1]);
+
 
     }
 
@@ -99,24 +138,30 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
 
 
 PoriruaGame.GameOver.submitScore = function () {
+    game.huds.defaultHUD.removeAllWidgets();
     
+    this.addScoreUI();
     if(this.game.user.loggedIn == false) {
         console.log("Yo zach, login");
         this.loginOverlay = new LoginOverlay( this );
 
-    } else {
 
+
+    } else {
+        this.addBoard();
         console.log('Yo zach.');
 
         //Post score code here...
-        var score = 20;
+        var score = this.theEndScore;
         this.game.gfleaderboard.post( score, this.game.user.userData.name, function(success, data) {
 
             this.getScores();
 
         }, this );
+        this.playAgainHit();
 
     }
+    
 
 }
 
@@ -175,9 +220,31 @@ PoriruaGame.GameOver.addScoreUI = function(){
     this.hudZombieCount.style.fontSize ="32px";
     this.hudZombieCount.style.letterSpacing ="1px";
 
+    ////////////////////////////
+    //Score COUNT
+
+    this.theScoreText = new Kiwi.HUD.Widget.TextField(game, this.theEndScore + "", 200, 207);
+    
+    this.theScoreText.style.fontFamily = 'myFirstFont';
+    this.theScoreText.style.color = '#ffffff';
+    this.theScoreText.style.textShadow ="1.5px 1.5px  #000, -1.5px 1.5px  #000, 1.5px -1.5px  #000, -1.5px -1.5px  #000";
+    this.theScoreText.style.fontSize ="32px";
+    this.theScoreText.style.letterSpacing ="1px";
+
+
+
     
 
     game.huds.defaultHUD.addWidget(this.hudTime);
     game.huds.defaultHUD.addWidget(this.hudZombieCount);
     game.huds.defaultHUD.addWidget(this.hudChocCount);
+    game.huds.defaultHUD.addWidget(this.theScoreText);
+}
+
+PoriruaGame.GameOver.addBoard = function(){
+    console.log("Yes");
+
+    for (var i = this.scoreboard.length - 1; i >= 0; i--) {
+        this.scoreboard[i].addScores();
+    };
 }

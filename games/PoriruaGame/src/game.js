@@ -13,7 +13,7 @@ var gameOptions = {
 	renderer: Kiwi.RENDERER_CANVAS, 
 	width: 768,
 	height: 512,
-	plugins: ['Lines', 'GamefrootAccount', 'GamefrootLeaderboard'],
+	plugins: ['Lines', 'GamefrootAccount', 'GamefrootLeaderboard', 'SaveGame', 'FacebookConnect'],
 	bootCallback: function( game ) {
 
 		game.user = new PoriruaGame.Managers.User( game );

@@ -72,15 +72,17 @@ LoginOverlay.prototype.remove = function() {
 	this.facebookLogin.exists = false;
 
 
-	//////////////////
-	//Create two HUDinput objects
 	this.state.game.huds.defaultHUD.removeAllWidgets();
+	this.state.addBoard();
 
 
 	this.createAccountLogin.input.onUp.remove(this.createAccount, this);
 	this.okButton.input.onUp.remove(this.okButtonHit, this);
 	this.backLogin.input.onUp.remove(this.backLoginHit, this);
 	this.facebookLogin.input.onUp.remove(this.facebookLoginHit, this);
+
+	this.state.addScoreUI();
+	this.state.addBoard();
 };
 
 LoginOverlay.prototype.createAccount = function(){
@@ -99,7 +101,9 @@ LoginOverlay.prototype.okButtonHit = function(){
 
 	if(this.stopCalls) return;
 
-	this.game.user.login( this.usernameText.input.value, this.passwordText.input.value, function(loggedIn) {
+	var data = { username: this.usernameText.input.value, password: this.passwordText.input.value };
+
+	this.game.user.login( data, function(loggedIn) {
 
 		if(loggedIn) {
 
@@ -128,6 +132,7 @@ LoginOverlay.prototype.backLoginHit = function(){
 	console.log("backLoginHit");
 	this.stopCalls = true;
 	this.remove();
+
 }
 
 
@@ -137,5 +142,18 @@ LoginOverlay.prototype.facebookLoginHit = function(){
 
 	console.log("facebookLoginHit");
 	this.stopCalls = true;
-	this.remove();
+
+	this.game.user.facebookLogin( function(loggedIn) {
+
+		if(loggedIn) {
+			this.remove();
+			this.state.submitScore();
+		} else {
+			//
+			alert('Could not log you in.');	
+		}
+
+		this.stopCalls = false;
+
+	}, this);
 }

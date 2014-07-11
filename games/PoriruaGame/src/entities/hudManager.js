@@ -3,9 +3,11 @@ HUDManager = function(state){
 
 	/////////////////////////////
     //HUD
-    this.playersHealth = new Kiwi.HUD.Widget.IconBar(game, this.state.textures.heart, 3, 3, 20, 10);
-    this.playersGrayHealth = new Kiwi.HUD.Widget.IconBar(game, this.state.textures.heartGray, 3, 3, 20, 10);
-   
+    this.playersHealth = new Kiwi.HUD.Widget.IconBar(game, this.state.textures.heart, 3, 3, 40, 10);
+    this.playersGrayHealth = new Kiwi.HUD.Widget.IconBar(game, this.state.textures.heartGray, 3, 3, 40, 10);
+    
+    this.nickFace = new Kiwi.HUD.Widget.Icon(game, this.state.textures.nickHead, 15, 8);
+    this.clockFace = new Kiwi.HUD.Widget.Icon(game, this.state.textures.clock, 405, 8);
 
 
 
@@ -68,6 +70,9 @@ HUDManager = function(state){
     this.state.game.huds.defaultHUD.addWidget(this.hudTime);
     this.state.game.huds.defaultHUD.addWidget(this.hudZombieCount);
     this.state.game.huds.defaultHUD.addWidget(this.hudChocCount);
+
+    this.state.game.huds.defaultHUD.addWidget(this.nickFace);
+    this.state.game.huds.defaultHUD.addWidget(this.clockFace);
 
 
 }

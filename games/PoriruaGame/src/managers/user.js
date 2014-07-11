@@ -7,10 +7,81 @@ PoriruaGame.Managers.User = function( game ) {
 	this.userData = {};
 
 	this.game = game;
+	this.facebook = new PoriruaGame.Managers.Facebook( game );
+
+/*
+	if(this.game.saveManager.exists('userData') && this.game.saveManager.exists('password') ) {
+
+		var tempData = this.game.saveManager.getData( 'userData' );
+		var tempPass = this.game.saveManager.getData( 'password' ); // Save the password	
+
+		var data = {
+			username: tempData.name,
+			password: tempPass
+		}
+
+		this.login( data, function(loggedIn, data) {
+			
+			console.log('User auto logged in');
+
+		}, this );
+
+	}*/
+
 
 }  
 
-PoriruaGame.Managers.User.prototype.login = function(username, password, callback, context) {
+
+/**
+* Executed when the user wants to login via facebook.
+**/
+PoriruaGame.Managers.User.prototype.facebookLogin = function( callback, context ) {
+
+	if(this.loggedIn == true) {
+		console.warn('User is already logged in.');
+		return false;
+	}
+
+	// Login the user via facebook.
+	this.facebook.login( function(loggedIn) {
+
+		//If he has logged in.
+		if(loggedIn) {
+			this.gamefrootLogin( callback, context );
+		} else {
+			callback.call( context, false, { result: 'fail' } );
+		}
+
+	}, this);
+
+
+	return true;
+}
+
+
+PoriruaGame.Managers.User.prototype.gamefrootLogin = function(callback, context) {
+
+	//Get the users information
+	this.facebook.me( function(resp, error) {
+
+		//If it didn't error
+		if(!resp.error) {
+
+			//Login to Gamefroot with that information
+			var data = { fb: true, fullRes: resp };
+			this.login( data, callback, context );
+
+		} else {
+			callback.call( context, false, { result: 'fail' });
+
+		}
+	
+	}, this);
+
+}
+
+
+PoriruaGame.Managers.User.prototype.login = function(data, callback, context) {
 
 	if(this.loggedIn) {
 		console.warn('You are already logged in');
@@ -18,7 +89,7 @@ PoriruaGame.Managers.User.prototype.login = function(username, password, callbac
 	}
 
 
-	return this.game.gf.login({ username: username, password: password }, function(transError, data) {
+	return this.game.gf.login( data, function(transError, data) {
 
 		if( transError == false && data.result !== "fail" && data.id) {
 
@@ -26,6 +97,11 @@ PoriruaGame.Managers.User.prototype.login = function(username, password, callbac
 			//Save their information
 			this.userData = data;
 			this.loggedIn = true;
+
+			if(data.password) {
+				this.game.saveManager.add( 'userData', this.userData );
+				this.game.saveManager.add( 'password', password, true ); // Save the password	
+			}
 
 		}
 
@@ -49,6 +125,8 @@ PoriruaGame.Managers.User.prototype.logout = function(callback, context) {
 		if(transError == false) {
 			this.loggedIn = false;
 			this.userData = {};
+			this.game.saveManager.remove( 'userData' );
+			this.game.saveManager.remove( 'password', true ); // Save the password	
 		}
 
 	}, this);

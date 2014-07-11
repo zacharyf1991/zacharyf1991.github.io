@@ -48,6 +48,9 @@ PoriruaGame.Play.create = function () {
     this.startTime = this.game.time.clock.elapsed();
     this.visibleTime = 0;
 
+    this.backgroundMusic = new Kiwi.Sound.Audio(this.game, 'loop', 0.3, true);
+    this.backgroundMusic.play();
+
 
   
 }
@@ -79,6 +82,7 @@ PoriruaGame.Play.gameOver = function(condition){
   this.inputManager.endState();
   this.hudManager.endState();
   this.timer.stop();
+  this.backgroundMusic.stop();
 
   var params = { thing: {
         bars: this.chocBarManager.barsCollected,
