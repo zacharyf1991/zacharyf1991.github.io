@@ -13,10 +13,16 @@ var gameOptions = {
 	renderer: Kiwi.RENDERER_CANVAS, 
 	width: 768,
 	height: 512,
-	plugins: ['Lines']
+	plugins: ['Lines', 'GamefrootAccount', 'GamefrootLeaderboard'],
+	bootCallback: function( game ) {
+
+		game.user = new PoriruaGame.Managers.User( game );
+	
+	}
 }
 
 var game = new Kiwi.Game('content', 'PoriruaGame', null, gameOptions);
+
 
 //Add all the States we are going to use.
 game.states.addState(PoriruaGame.Loading);

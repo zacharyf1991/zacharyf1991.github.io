@@ -44,6 +44,9 @@ PoriruaGame.Play.create = function () {
 
     this.score = 0;
     this.linePointScore = 1;
+    this.maxTime = 300;
+    this.startTime = this.game.time.clock.elapsed();
+    this.visibleTime = 0;
 
 
   
@@ -62,15 +65,16 @@ PoriruaGame.Play.update = function(){
   this.environmentManager.update();
   this.chocBarManager.update();
   this.hudManager.update();
+  this.updateTime();
 
   //console.log(this.rect1.checkAllOn(), this.junctionPointManager.allPointsOn());
   if(this.rect1.checkAllOn() && this.junctionPointManager.allPointsOn()){
-    this.gameOver();
+    this.gameOver('win');
   }
 }
 
 
-PoriruaGame.Play.gameOver = function(){
+PoriruaGame.Play.gameOver = function(condition){
   console.log("Game Over!");
   this.inputManager.endState();
   this.hudManager.endState();
@@ -78,7 +82,10 @@ PoriruaGame.Play.gameOver = function(){
 
   var params = { thing: {
         bars: this.chocBarManager.barsCollected,
-        cats: 5
+        time: Math.floor(this.game.time.clock.elapsed() - this.startTime),
+        zombies: 5,
+        condition: condition,
+        visibleTime: this.visibleTime
       }
 
 
@@ -93,6 +100,40 @@ PoriruaGame.Play.addBar = function(){
   this.chocBarManager.addBar();
 }
 
+PoriruaGame.Play.updateTime = function(){
+  var raw = this.game.time.clock.elapsed() - this.startTime;
+
+  var rawSec = this.maxTime - Math.floor(raw);
+  if (rawSec <= 0) {
+      this.gameOver('lose');
+      return;
+  }
+
+  var t = '';
+  var sec = 0;
+  if (rawSec > 60) {
+      var min = Math.floor(rawSec / 60);
+      sec = rawSec - min * 60;
+      if(min>9){
+          //this.topText.text = '9:59';
+          return;
+      }
+      t += min + ':';
+  }else{
+      t += '0:';
+      sec = rawSec;
+  }
+
+  if (sec > 9) {
+      t += sec;
+  } else {
+      t += '0'+sec
+  }
+  //this.topText.text = t;
+  //console.log(t);
+  this.visibleTime = t;
+  this.hudManager.updateTime(t);
+}
 
 
 

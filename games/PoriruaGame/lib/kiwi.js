@@ -190,6 +190,10 @@ var Kiwi;
                 console.log('  Kiwi.Game: Targeted device not specified. Defaulting to BROWSER');
             }
 
+            var renderDefault = Kiwi.RENDERER_WEBGL;
+            var renderFallback = Kiwi.RENDERER_CANVAS;
+
+            // Optimise renderer request
             if (options.renderer !== 'undefined' && typeof options.renderer === 'number') {
                 switch (options.renderer) {
                     case Kiwi.RENDERER_CANVAS:
@@ -201,18 +205,37 @@ var Kiwi;
                             this._renderOption = options.renderer;
                             console.log('  Kiwi.Game: Rendering using WEBGL.');
                         } else {
-                            this._renderOption = Kiwi.RENDERER_CANVAS;
+                            this._renderOption = renderFallback;
                             console.log('  Kiwi.Game: WEBGL renderer requested but device does not support WEBGL. Rendering using CANVAS.');
                         }
                         break;
+                    case Kiwi.RENDERER_AUTO:
+                        if (Kiwi.DEVICE.webGL) {
+                            this._renderOption = renderDefault;
+                            console.log('  Kiwi.Game: Renderer auto-detected WEBGL.');
+                        } else {
+                            this._renderOption = renderFallback;
+                            console.log('  Kiwi.Game: Renderer auto-detected CANVAS.');
+                        }
+                        break;
                     default:
-                        this._renderOption = Kiwi.RENDERER_CANVAS;
-                        console.log('  Kiwi.Game: Renderer specified, but is not a valid option. Defaulting to CANVAS.');
+                        if (Kiwi.DEVICE.webGL) {
+                            this._renderOption = renderDefault;
+                            console.log('  Kiwi.Game: Renderer specified, but is not a valid option. Defaulting to WEBGL.');
+                        } else {
+                            this._renderOption = renderFallback;
+                            console.log('  Kiwi.Game: Renderer specified, but is not a valid option. WEBGL renderer sought by default but device does not support WEBGL. Defaulting to CANVAS.');
+                        }
                         break;
                 }
             } else {
-                this._renderOption = Kiwi.RENDERER_CANVAS;
-                console.log('  Kiwi.Game: Renderer not specified. Defaulting to CANVAS');
+                if (Kiwi.DEVICE.webGL) {
+                    this._renderOption = renderDefault;
+                    console.log('  Kiwi.Game: Renderer not specified. Defaulting to WEBGL.');
+                } else {
+                    this._renderOption = renderFallback;
+                    console.log('  Kiwi.Game: Renderer not specified. WEBGL renderer sought by default but device does not support WEBGL. Defaulting to CANVAS.');
+                }
             }
 
             this.id = Kiwi.GameManager.register(this);
@@ -259,11 +282,7 @@ var Kiwi;
 
             this.stage = new Kiwi.Stage(this, name, width, height, options.scaleType);
 
-            if (this._renderOption === Kiwi.RENDERER_CANVAS) {
-                this.renderer = new Kiwi.Renderers.CanvasRenderer(this);
-            } else {
-                this.renderer = new Kiwi.Renderers.GLRenderManager(this);
-            }
+            this.renderer = null;
 
             this.cameras = new Kiwi.CameraManager(this);
 
@@ -404,7 +423,14 @@ var Kiwi;
         Game.prototype._start = function () {
             var _this = this;
             this.stage.boot(this._startup);
+
+            if (!this.stage.renderer)
+                console.error("Could not create rendering context");
+            if (this._renderOption === Kiwi.RENDERER_WEBGL && this.stage.ctx)
+                this._renderOption = Kiwi.RENDERER_CANVAS; // Adapt to fallback if WebGL failed
+            this.renderer = this.stage.renderer;
             this.renderer.boot();
+
             this.cameras.boot();
             if (this._deviceTargetOption !== Kiwi.TARGET_COCOON)
                 this.huds.boot();
@@ -428,7 +454,7 @@ var Kiwi;
 
             if (this.bootCallbackOption) {
                 console.log("  Kiwi.Game: invoked boot callback");
-                this.bootCallbackOption();
+                this.bootCallbackOption(this);
             }
         };
 
@@ -530,6 +556,8 @@ var Kiwi;
 
             this.onResize = new Kiwi.Signal();
             this.onWindowResize = new Kiwi.Signal();
+
+            this._renderer = null;
         }
         /**
         * Returns the type of this object.
@@ -761,6 +789,22 @@ var Kiwi;
             configurable: true
         });
 
+        Object.defineProperty(Stage.prototype, "renderer", {
+            /**
+            * Get the renderer associated with the canvas context. This is either a GLRenderManager or a CanvasRenderer. If the Kiwi.RENDERER_WEBGL renderer was requested but could not be created, it will fall back to CanvasRenderer.
+            * This is READ ONLY.
+            * @property renderer
+            * @type number
+            * @public
+            * @since 1.1.0
+            */
+            get: function () {
+                return this._renderer;
+            },
+            enumerable: true,
+            configurable: true
+        });
+
         /**
         * Is executed when the DOM has loaded and the game is just starting.
         * This is a internal method used by the core of Kiwi itself.
@@ -862,7 +906,7 @@ var Kiwi;
             this.canvas.width = this.width;
             this.canvas.height = this.height;
 
-            //Get 2D or GL Context - Should add in error checking here
+            //Get 2D or GL Context; do error detection and fallback to valid rendering context
             if (this._game.renderOption === Kiwi.RENDERER_CANVAS) {
                 this.ctx = this.canvas.getContext("2d");
                 this.ctx.fillStyle = '#fff';
@@ -872,14 +916,29 @@ var Kiwi;
                 if (!this.gl) {
                     this.gl = this.canvas.getContext("experimental-webgl");
                     if (!this.gl) {
-                        console.error("Kiwi.Stage: WebGL rendering is not available despite the device apparently supporting it.");
+                        console.warn("Kiwi.Stage: WebGL rendering is not available despite the device apparently supporting it. Reverting to CANVAS.");
+
+                        // Reset to canvas mode
+                        this.ctx = this.canvas.getContext("2d");
+                        this.ctx.fillStyle = '#fff';
+                        this.gl = null;
                     } else {
                         console.warn("Kiwi.Stage: 'webgl' context is not available. Using 'experimental-webgl'");
                     }
                 }
-                this.gl.clearColor(1, 1, 1, 1);
-                this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-                this.ctx = null;
+                if (this.gl) {
+                    this.gl.clearColor(1, 1, 1, 1);
+                    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+                    this.ctx = null;
+                }
+            }
+
+            // Create render manager
+            // This is reported back to the Kiwi.Game that created the Stage.
+            if (this.ctx) {
+                this._renderer = new Kiwi.Renderers.CanvasRenderer(this._game);
+            } else if (this.gl) {
+                this._renderer = new Kiwi.Renderers.GLRenderManager(this._game);
             }
 
             if (this._game.deviceTargetOption === Kiwi.TARGET_BROWSER) {
@@ -1670,11 +1729,41 @@ var Kiwi;
 
         /**
         * Removes all cameras in the camera Manager except the default camera. Does nothing if in multi camera mode.
-        * @method removeAll - note should not remove default
+        * @method removeAll
         * @public
         */
         CameraManager.prototype.removeAll = function () {
             this._cameras = [];
+        };
+
+        /**
+        * Returns all cameras to origin. Called when starting a new state.
+        * @method zeroAllCameras
+        * @public
+        * @since 1.1.0
+        */
+        CameraManager.prototype.zeroAllCameras = function () {
+            for (var i = 0; i < this._cameras.length; i++) {
+                this.zeroCamera(this._cameras[i]);
+            }
+            this.zeroCamera(this.defaultCamera);
+        };
+
+        /**
+        * Returns camera to origin.
+        * @method zeroCamera
+        * @param camera {Kiwi.Camera}
+        * @public
+        * @since 1.1.0
+        */
+        CameraManager.prototype.zeroCamera = function (camera) {
+            camera.transform.x = 0;
+            camera.transform.y = 0;
+            camera.transform.rotation = 0;
+            camera.transform.scaleX = 1;
+            camera.transform.scaleY = 1;
+            camera.transform.rotPointX = camera.width / 2;
+            camera.transform.rotPointY = camera.height / 2;
         };
         return CameraManager;
     })();
@@ -1974,6 +2063,7 @@ var Kiwi;
                 this.current.destroy(true); //Destroy ALL IChildren ever created on that state.
                 this._game.fileStore.removeStateFiles(this.current); //Clear the fileStore of not global files.
                 this.current.config.reset(); //Reset the config setting
+                this._game.cameras.zeroAllCameras(); // Reset cameras
             }
 
             //Set the current state, reset the key
@@ -2068,18 +2158,13 @@ var Kiwi;
             //Rebuild the Libraries before the preload is executed
             this.rebuildLibraries();
 
-            if (this.current.config.hasPreloader === true) {
-                this._game.loader.init(function (percent, bytes, file) {
-                    return _this.onLoadProgress(percent, bytes, file);
-                }, function () {
-                    return _this.onLoadComplete();
-                });
-                this.current.preload();
-                this._game.loader.startLoad();
-            } else {
-                this.current.config.isReady = true;
-                this.callCreate();
-            }
+            this._game.loader.init(function (percent, bytes, file) {
+                return _this.onLoadProgress(percent, bytes, file);
+            }, function () {
+                return _this.onLoadComplete();
+            });
+            this.current.preload();
+            this._game.loader.startLoad();
         };
 
         /**
@@ -2248,14 +2333,6 @@ var Kiwi;
             */
             this._alpha = 1;
             /**
-            * A boolean that indicates whether or not this entity is visible or not. Note that is does not get set to false if the alpha is 0.
-            * @property _visible
-            * @type boolean
-            * @default true
-            * @private
-            */
-            this._visible = true;
-            /**
             * The width of the entity in pixels.
             * @property width
             * @type number
@@ -2310,7 +2387,7 @@ var Kiwi;
 
             this._exists = true;
             this._active = true;
-            this._willRender = true;
+            this._visible = true;
             this.components = new Kiwi.ComponentManager(Kiwi.ENTITY, this);
             this.transform = new Kiwi.Geom.Transform();
             this.transform.x = x;
@@ -2493,8 +2570,8 @@ var Kiwi;
                 return this._visible;
             },
             /**
-            * Set the visiblity of this entity. True or False.
-            * @property visibility
+            * Set the visibility of this entity. True or False.
+            * @property visible
             * @type boolean
             * @default true
             * @public
@@ -2584,6 +2661,7 @@ var Kiwi;
             * @type boolean
             * @default true
             * @public
+            * @deprecated Use visible instead
             */
             set: function (value) {
                 this._willRender = value;
@@ -2892,7 +2970,6 @@ var Kiwi;
 
             this._exists = true;
             this._active = true;
-            this._willRender = true;
             this._visible = true;
 
             this.transform = new Kiwi.Geom.Transform();
@@ -3572,6 +3649,7 @@ var Kiwi;
         * @method render
         * @param camera {Kiwi.Camera}
         * @public
+        * @deprecated
         */
         Group.prototype.render = function (camera) {
         };
@@ -3701,11 +3779,12 @@ var Kiwi;
                 return this._willRender;
             },
             /**
-            * Controls whether render is automatically caleld by the parent.
+            * Controls whether render is automatically called by the parent.
             * @property willRender
             * @type boolean
             * @return {boolean}
             * @public
+            * @deprecated Use visible instead
             */
             set: function (value) {
                 this._willRender = value;
@@ -3719,11 +3798,12 @@ var Kiwi;
                 return this._visible;
             },
             /**
-            * Set the visiblity of this entity. True or False.
-            * @property visibility
+            * Set the visibility of this entity. True or False.
+            * @property visible
             * @type boolean
             * @default true
             * @public
+            * @since 1.0.1
             */
             set: function (value) {
                 this._visible = value;
@@ -5122,8 +5202,8 @@ var Kiwi;
                 this.state.textureLibrary.add(this.atlas);
                 this.atlas.dirty = true;
 
-                // Render text
-                this._renderText();
+                // Track actual text width - not canvas width (which rounds up to powers of 2), necessary for proper alignment
+                this._alignWidth = 0;
             }
             /**
             * Returns the type of object that this is
@@ -5264,6 +5344,9 @@ var Kiwi;
                 var width = _measurements.width;
                 var height = this._fontSize * 1.3;
 
+                // Cache alignment width
+                this._alignWidth = width;
+
                 //Is the width base2?
                 if (Kiwi.Utils.Common.base2Sizes.indexOf(width) == -1) {
                     var i = 0;
@@ -5283,6 +5366,9 @@ var Kiwi;
                 //Apply the width/height
                 this._canvas.width = width;
                 this._canvas.height = height;
+
+                //Clear the canvas
+                this._ctx.clearRect(0, 0, width, height);
 
                 //Reapply the styles....cause it unapplies after a measurement...?!?
                 this._ctx.font = this._fontWeight + ' ' + this._fontSize + 'px ' + this._fontFamily;
@@ -5326,10 +5412,10 @@ var Kiwi;
                             x = 0;
                             break;
                         case Kiwi.GameObjects.Textfield.TEXT_ALIGN_CENTER:
-                            x = this._canvas.width * 0.5;
+                            x = this._alignWidth * 0.5;
                             break;
                         case Kiwi.GameObjects.Textfield.TEXT_ALIGN_RIGHT:
-                            x = this._canvas.width;
+                            x = this._alignWidth;
                             break;
                     }
 
@@ -5371,10 +5457,10 @@ var Kiwi;
                         x = 0;
                         break;
                     case Kiwi.GameObjects.Textfield.TEXT_ALIGN_CENTER:
-                        x = -(this._canvas.width * 0.5);
+                        x = -(this._alignWidth * 0.5);
                         break;
                     case Kiwi.GameObjects.Textfield.TEXT_ALIGN_RIGHT:
-                        x = -(this._canvas.width);
+                        x = -(this._alignWidth);
                         break;
                 }
 
@@ -7414,29 +7500,31 @@ var Kiwi;
             /**
             * Draws the various bounds on a context that is passed. Useful for debugging and using in combination with the debug canvas.
             * @method draw
-            * @param {CanvasRenderingContext2D} ctx
+            * @param ctx {CanvasRenderingContext2D} Context of the canvas that this box component is to be rendered on top of.
+            * @param [camera] {Kiwi.Camera} A camera that should be taken into account before rendered. This is the default camera by default.
             * @public
             */
-            Box.prototype.draw = function (ctx) {
+            Box.prototype.draw = function (ctx, camera) {
+                if (typeof camera === "undefined") { camera = this.game.cameras.defaultCamera; }
                 var t = this.entity.transform;
+                var ct = camera.transform;
 
                 // Draw raw bounds and raw center
                 ctx.strokeStyle = "red";
-                ctx.strokeRect(this.rawBounds.x, this.rawBounds.y, this.rawBounds.width, this.rawBounds.height);
-                ctx.fillRect(this.rawCenter.x - 1, this.rawCenter.y - 1, 3, 3);
-                ctx.strokeRect(t.x + t.rotPointX - 3, t.y + t.rotPointY - 3, 7, 7);
+                ctx.fillRect(this.rawCenter.x + ct.x - 1, this.rawCenter.y + ct.y - 1, 3, 3);
+                ctx.strokeRect(t.x + ct.x + t.rotPointX - 3, t.y + ct.y + t.rotPointY - 3, 7, 7);
 
                 // Draw bounds
                 ctx.strokeStyle = "blue";
-                ctx.strokeRect(this.bounds.x, this.bounds.y, this.bounds.width, this.bounds.height);
+                ctx.strokeRect(this.bounds.x + ct.x, this.bounds.y + ct.y, this.bounds.width, this.bounds.height);
 
                 // Draw hitbox
                 ctx.strokeStyle = "green";
-                ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
+                ctx.strokeRect(this.hitbox.x + ct.x, this.hitbox.y + ct.y, this.hitbox.width, this.hitbox.height);
 
                 // Draw raw hitbox
                 ctx.strokeStyle = "white";
-                ctx.strokeRect(this.rawHitbox.x, this.rawHitbox.y, this.rawHitbox.width, this.rawHitbox.height);
+                ctx.strokeRect(this.rawHitbox.x + ct.x, this.rawHitbox.y + ct.y, this.rawHitbox.width, this.rawHitbox.height);
 
                 // Draw world bounds
                 ctx.strokeStyle = "purple";
@@ -11678,7 +11766,9 @@ var Kiwi;
                 if (typeof window['Blob'] !== 'undefined')
                     this.blob = true;
 
+                // Check availability of rendering contexts
                 this.canvas = !!window['CanvasRenderingContext2D'];
+                this.webGL = !!window['WebGLRenderingContext'];
 
                 try  {
                     this.localStorage = !!localStorage.getItem;
@@ -11688,7 +11778,6 @@ var Kiwi;
 
                 this.file = !!window['File'] && !!window['FileReader'] && !!window['FileList'] && !!window['Blob'];
                 this.fileSystem = !!window['requestFileSystem'];
-                this.webGL = !!window['WebGLRenderingContext'];
                 this.worker = !!window['Worker'];
 
                 if ('ontouchstart' in document.documentElement || (window.navigator.msPointerEnabled && window.navigator.msMaxTouchPoints > 0) || (window.navigator.pointerEnabled && window.navigator.maxTouchPoints > 0)) {
@@ -11929,7 +12018,9 @@ var Kiwi;
             * Will reload the texture into video memory for WebGL rendering.
             *
             * @method refreshTextureGL
+            * @param glContext {WebGLRenderingContext}
             * @public
+            * @since 1.0.1
             */
             TextureAtlas.prototype.refreshTextureGL = function (glContext) {
                 if (this.glTextureWrapper)
@@ -14225,11 +14316,12 @@ var Kiwi;
 
             /**
             * Performs initialisation required when switching to a different state. Called when a state has been switched to.
-            * The textureManager is told to rebuild its cache of textures from the states textuer library.
+            * The textureManager is told to clear its contents from video memory, then rebuild its cache of textures from the state's texture library.
             * @method initState
             * @public
             */
             GLRenderManager.prototype.initState = function (state) {
+                this._textureManager.clearTextures(this._game.stage.gl);
                 this._textureManager.uploadTextureLibrary(this._game.stage.gl, state.textureLibrary);
             };
 
@@ -14369,16 +14461,8 @@ var Kiwi;
             * @public
             */
             GLRenderManager.prototype.renderBatches = function (gl, camera) {
-                for (var i = 0; i < this._batches.length; i++) {
-                    var batch = this._batches[i];
-
-                    //if first is batch then they all are
-                    if (batch[0].isBatchRenderer) {
-                        this.renderBatch(gl, batch, camera);
-                    } else {
-                        this.renderEntity(gl, batch[0].entity, camera);
-                    }
-                }
+                for (var i = 0; i < this._batches.length; i++)
+                    this.renderBatch(gl, this._batches[i], camera);
             };
 
             /**
@@ -14390,13 +14474,21 @@ var Kiwi;
             * @public
             */
             GLRenderManager.prototype.renderBatch = function (gl, batch, camera) {
-                this.setupGLState(gl, batch[0].entity);
+                // Acquire renderer
+                if (batch[0].entity.glRenderer !== this._currentRenderer)
+                    this._switchRenderer(gl, batch[0].entity);
+
+                // Clear renderer for fresh data
                 this._currentRenderer.clear(gl, { camMatrix: this.camMatrix });
-                for (var i = 0; i < batch.length; i++) {
+
+                for (var i = 0; i < batch.length; i++)
                     batch[i].entity.renderGL(gl, camera);
-                }
-                if (batch[0].texture.dirty)
-                    batch[0].texture.refreshTextureGL(gl);
+
+                // Upload textures
+                if (batch[0].entity.atlas !== this._currentTextureAtlas || batch[0].entity.atlas.dirty)
+                    this._switchTexture(gl, batch[0].entity);
+
+                // Render
                 this._currentRenderer.draw(gl);
             };
 
@@ -14407,14 +14499,10 @@ var Kiwi;
             * @param {Kiwi.Entity} entity
             * @param {Kiwi.Camera} camera
             * @public
+            * @deprecated Used internally; should not be called from external functions
             */
             GLRenderManager.prototype.renderEntity = function (gl, entity, camera) {
-                this.setupGLState(gl, entity);
-                this._currentRenderer.clear(gl, { camMatrix: this.camMatrix });
-                entity.renderGL(gl, camera);
-                if (entity.atlas.dirty)
-                    entity.atlas.refreshTextureGL(gl);
-                this._currentRenderer.draw(gl);
+                this.renderBatch(gl, [entity], camera);
             };
 
             /**
@@ -14422,6 +14510,7 @@ var Kiwi;
             * @method setupGLState
             * @param {WebGLRenderingContext} gl
             * @public
+            * @deprecated Used internally; should not be called from external functions.
             */
             GLRenderManager.prototype.setupGLState = function (gl, entity) {
                 if (entity.atlas !== this._currentTextureAtlas)
@@ -14456,6 +14545,7 @@ var Kiwi;
                 if (this._currentRenderer)
                     this._currentRenderer.updateTextureSize(gl, new Float32Array([this._currentTextureAtlas.glTextureWrapper.image.width, this._currentTextureAtlas.glTextureWrapper.image.height]));
                 this._textureManager.useTexture(gl, entity.atlas.glTextureWrapper);
+                this._currentTextureAtlas.refreshTextureGL(gl);
             };
             return GLRenderManager;
         })();
@@ -14748,6 +14838,7 @@ var Kiwi;
             * @public
             */
             GLTextureWrapper.prototype.refreshTexture = function (gl) {
+                this.numBytes = this.image.width * this.image.height * 4;
                 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image);
             };
 
@@ -14758,7 +14849,6 @@ var Kiwi;
             * @public
             */
             GLTextureWrapper.prototype.deleteTexture = function (gl) {
-                gl.bindTexture(gl.TEXTURE_2D, this.texture);
                 gl.deleteTexture(this.texture);
                 this._uploaded = false;
                 this._created = false;
@@ -14898,8 +14988,8 @@ var Kiwi;
             */
             GLTextureManager.prototype.clearTextures = function (gl) {
                 for (var i = 0; i < this._textureWrapperCache.length; i++) {
-                    //delete it from g mem
-                    this._textureWrapperCache[i].deleteTexture(gl);
+                    // Delete from graphics memory
+                    this._deleteTexture(gl, i);
 
                     //kill the reference on the atlas
                     this._textureWrapperCache[i].textureAtlas.glTextureWrapper = null;
@@ -15381,8 +15471,6 @@ var Kiwi;
                 //Other uniforms
                 gl.uniform2fv(this.shaderPair.uniforms.uResolution.location, params.stageResolution);
                 gl.uniformMatrix3fv(this.shaderPair.uniforms.uCamMatrix.location, false, params.camMatrix);
-
-                this.updateTextureSize(gl, new Float32Array([params.textureAtlas.glTextureWrapper.image.width, params.textureAtlas.glTextureWrapper.image.height]));
             };
 
             /**
@@ -17014,7 +17102,7 @@ var Kiwi;
                 /*
                 * Add the fingers/cursors to the list of 'pointers'
                 */
-                this._pointers = this.touch.fingers;
+                this._pointers = this.touch.fingers.slice();
                 this._pointers.push(this.mouse.cursor);
 
                 this.isDown = false;
@@ -17595,7 +17683,7 @@ var Kiwi;
                 /**
                 * The developer defined maximum number of touch events.
                 * By default this is set to 10 but this can be set to be lower.
-                * @property _maxTouchEvents
+                * @property _maxPointers
                 * @type number
                 * @default 10
                 * @private
@@ -17792,6 +17880,7 @@ var Kiwi;
                 /**
                 * Sets the maximum number of point of contact that are allowed on the game stage at one point.
                 * The maximum number of points that are allowed is 10, and the minimum is 0.
+                * @property maximumPointers
                 * @type number
                 * @public
                 */
@@ -17845,13 +17934,12 @@ var Kiwi;
             * @private
             */
             Touch.prototype._deregisterFinger = function (event, id) {
+                var finger = null;
                 for (var f = 0; f < this._fingers.length; f++) {
                     if (this._fingers[f].active && this._fingers[f].id === id) {
                         this._fingers[f].stop(event);
                         this.latestFinger = this._fingers[f];
-
-                        this.touchUp.dispatch(this._fingers[f].x, this._fingers[f].y, this._fingers[f].timeDown, this._fingers[f].timeUp, this._fingers[f].duration, this._fingers[f]);
-
+                        finger = this._fingers[f];
                         this.isDown = false;
                         this.isUp = true;
                         break;
@@ -17859,11 +17947,16 @@ var Kiwi;
                 }
 
                 for (var i = 0; i < this._fingers.length; i++) {
-                    if (this._fingers[i].active) {
+                    if (this._fingers[i].active === true) {
                         this.isDown = true;
                         this.isUp = false;
                     }
                 }
+
+                if (finger !== null) {
+                    this.touchUp.dispatch(finger.x, finger.y, finger.timeDown, finger.timeUp, finger.duration, finger);
+                }
+
             };
 
             /**
@@ -20528,6 +20621,7 @@ var Kiwi;
             * @Param rotPointX {Number} Rotation point offset on x axis.
             * @Param rotPointY {Number} Rotation point offset on y axis.
             * @return {Object} This object.
+            * @since 1.0.1
             */
             Matrix.prototype.setFromOffsetTransform = function (tx, ty, scaleX, scaleY, rotation, rotPointX, rotPointY) {
                 this.identity();
@@ -21568,12 +21662,14 @@ var Kiwi;
 
             /**
             * Copies all the rectangle data from this Rectangle object into the destination Rectangle object.
+            * Creates a new rectangle if one was not passed.
             * @method copyTo
             * @param target {Rectangle} The destination rectangle object to copy in to
             * @return {Rectangle} The destination rectangle object
             * @public
             **/
             Rectangle.prototype.copyTo = function (target) {
+                if (typeof target === "undefined") { target = new Rectangle(); }
                 return target.copyFrom(this);
             };
 
@@ -29900,7 +29996,7 @@ var Kiwi;
     * @type string
     * @public
     */
-    Kiwi.VERSION = "1.0.1";
+    Kiwi.VERSION = "1.1.0";
 
     //DIFFERENT RENDERER STATIC VARIABLES
     /**
@@ -29922,6 +30018,17 @@ var Kiwi;
     * @public
     */
     Kiwi.RENDERER_WEBGL = 1;
+
+    /**
+    * A Static property that contains the number associated with RENDERER AUTODETECTION
+    * @property RENDERER_AUTO
+    * @static
+    * @type number
+    * @default 2
+    * @public
+    * @since 1.1.0
+    */
+    Kiwi.RENDERER_AUTO = 2;
 
     // DEVICE TARGET STATIC VARIABLES
     /**

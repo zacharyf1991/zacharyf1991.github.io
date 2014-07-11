@@ -9,6 +9,7 @@ var HUDInput = function(game, type, x, y) {
     this.input.id = 'HUD-input-field' + this.game.rnd.uuid();
     this.input.placeholder = placeholder;
     this.input.className = 'HUD-input-widget';
+    
 
     this.container.appendChild(this.input);
 

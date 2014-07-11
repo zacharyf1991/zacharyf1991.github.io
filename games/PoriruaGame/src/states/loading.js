@@ -55,7 +55,7 @@ PoriruaGame.Loading.preload = function () {
     this.addSpriteSheet('junctionPoint', 'assets/img/junction-point.png', 62, 63);
 
 
-    this.addImage('gameOverBackground', 'assets/img/gameover/leaderboard-preview-1.png');
+    this.addImage('gameOverBackground', 'assets/img/leaderboard/leaderboard-screen.png');
 
 
     ///////////////////////////////
@@ -121,17 +121,43 @@ PoriruaGame.Loading.preload = function () {
 
 PoriruaGame.Loading.addLeaderboardAssets = function () {
     this.addImage('overlay', 'assets/img/leaderboard/leaderboardfromstartmenu/black-overlay-70pc.png');
+
+
     this.addImage('leaderboardBackground', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-background.png');
     this.addImage('LeaderboardImage', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-title-image.png');
 
 
-    this.addImage('backButtonPressed', 'assets/img/leaderboard/loginoverlay/back-pressed.png');
-    this.addImage('okButtonLoginPressed', 'assets/img/leaderboard/loginoverlay/ok-pressed.png');
-    this.addImage('facebookLoginButtonPressed', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-title-image.png');
+    /////////////////////
+    //Login 
+    this.addSpriteSheet('backLogin', 'assets/img/leaderboard/loginoverlay/back.png', 128, 49);
+    this.addSpriteSheet('okLogin', 'assets/img/leaderboard/loginoverlay/ok.png', 128, 49);
+    this.addSpriteSheet('createAccountLogin', 'assets/img/leaderboard/loginoverlay/create-account.png', 145, 16);
+    this.addSpriteSheet('facebookLogin', 'assets/img/leaderboard/loginoverlay/facebook.png', 35, 36);
+    this.addImage('overlayLogin', 'assets/img/leaderboard/loginoverlay/login-overlay.png');
+
+
+    //////////////////////////
+    ///Sign Up
+    this.addSpriteSheet('backSignUp', 'assets/img/leaderboard/signupoverlay/back.png', 128, 49);
+    this.addSpriteSheet('confirmSignUp', 'assets/img/leaderboard/signupoverlay/confirm.png', 128, 49);
+    this.addSpriteSheet('termsOfUseSignUp', 'assets/img/leaderboard/signupoverlay/terms-of-use.png', 110, 16);
+    this.addSpriteSheet('facebookSignUp', 'assets/img/leaderboard/signupoverlay/facebook.png', 35, 36);
+    this.addImage('overlaySignUp', 'assets/img/leaderboard/signupoverlay/sign-up-overlay.png');
+
+    ////////////////////
+    //GAME OVER
+    this.addSpriteSheet('againGameOver', 'assets/img/leaderboard/again.png', 260, 93);
+    this.addSpriteSheet('submitGameOver', 'assets/img/leaderboard/submit.png', 102, 52);
+    this.addSpriteSheet('gPlusGameOver', 'assets/img/leaderboard/gplus.png', 41, 44);
+    this.addSpriteSheet('facebookGameOver', 'assets/img/leaderboard/facebook.png', 41, 44);
+    this.addSpriteSheet('twitterGameOver', 'assets/img/leaderboard/facebook.png', 41, 44);
+
+    this.addImage('winGameOver', 'assets/img/leaderboard/win.png');
+    this.addImage('loseGameOver', 'assets/img/leaderboard/lose.png');
+    this.addImage('leaderboardBackgroundGameOver', 'assets/img/leaderboard/leaderboard-screen.png');
+    this.addImage('scrollerGameOver', 'assets/img/leaderboard/scroller.png');
     
 
-    this.addImage('loginOverlay', 'assets/img/leaderboard/loginoverlay/login-overlay.png');
-    this.addImage('registerOverlay', 'assets/img/leaderboard/loginoverlay/sign-up-overlay.png');
 
 
 

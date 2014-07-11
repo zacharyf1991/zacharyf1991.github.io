@@ -92,3 +92,8 @@ HUDManager.prototype.endState = function() {
     this.state.game.huds.defaultHUD.removeAllWidgets();
 };
 
+
+HUDManager.prototype.updateTime = function(t) {
+    this.hudTime.text = t;
+};
+
