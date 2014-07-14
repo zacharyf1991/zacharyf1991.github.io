@@ -12,7 +12,9 @@ PoriruaGame.Intro = new Kiwi.State('Intro');
 
 
 PoriruaGame.Intro.init = function() {
-    this.game.facebook.init("475189252617071")
+    this.game.facebook.init("475189252617071");
+    this.backgroundMusic = new Kiwi.Sound.Audio(this.game, 'loop', 0.3, true);
+    this.backgroundMusic.play();
 }
 
 
@@ -20,10 +22,19 @@ PoriruaGame.Intro.create = function () {
     this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.startBackground, 0, 0);
     this.addChild(this.background);
 
-    this.startButton = new Kiwi.GameObjects.Sprite(this, this.textures.startButtons, 495, 280);
+
+    this.soundToggleButton = new Kiwi.GameObjects.Sprite(this, this.textures.soundToggleButton, 515, 460);
+    this.addChild(this.soundToggleButton);
+    this.soundToggleButton.input.onRelease.add(this.soundToggleButtonHit, this);
+    this.soundToggleButton.animation.add('on', [0], 0.1, false);
+    this.soundToggleButton.animation.add('off', [1], 0.1, false);
+    this.soundToggleButton.animation.play('on');
+
+    
+    this.startButton = new Kiwi.GameObjects.Sprite(this, this.textures.startButtons, 495, 270);
     this.addChild(this.startButton);
     this.startButton.input.onRelease.add(this.mouseUp, this);
-    this.highScoreButton = new Kiwi.GameObjects.Sprite(this, this.textures.highScoreButton, 495, 375 );
+    this.highScoreButton = new Kiwi.GameObjects.Sprite(this, this.textures.highScoreButton, 495, 365 );
     this.addChild(this.highScoreButton);
 
     this.howToPlay = new Kiwi.GameObjects.StaticImage(this, this.textures.howToPlay, 100, 40);
@@ -40,6 +51,24 @@ PoriruaGame.Intro.create = function () {
 
     Kiwi.Plugins.GamefrootAccount.create(game);
 
+
+    game.audioIsOn = true;
+
+
+
+
+}
+
+PoriruaGame.Intro.soundToggleButtonHit = function () {
+    if(game.audio.mute){
+        game.audio.mute = false;
+        this.soundToggleButton.animation.play('on');
+
+    } else {
+        game.audio.mute = true;
+        this.soundToggleButton.animation.play('off');
+    }
+    
 
 }
 
@@ -70,18 +99,9 @@ PoriruaGame.Intro.highScoreHit = function () {
         this.startButton.input.onRelease.remove(this.mouseUp, this);
         this.highScoreButton.input.onRelease.remove(this.highScoreHit, this);
 
-        var params = { thing: {
-        bars: 0,
-        time: 0,
-        zombies: 0,
-        condition: 'cats',
-        visibleTime: '0'
-      }
+    
 
-
-    }
-
-    game.states.switchState("GameOver", null, null, params);
+    game.states.switchState("HighscoreState");
         
     } 
 

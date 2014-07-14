@@ -2,6 +2,7 @@ var LoginOverlay = function(state){
 	Kiwi.Group.call(this, state);
 	this.state = state;
 	this.game = this.state.game;
+	game.huds.defaultHUD.removeAllWidgets();
 
 	this.background = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures.overlay, 0, 0);
 	this.overlayLogin = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures.overlayLogin, 305, 112);
@@ -73,7 +74,7 @@ LoginOverlay.prototype.remove = function() {
 
 
 	this.state.game.huds.defaultHUD.removeAllWidgets();
-	this.state.addBoard();
+	//this.state.addBoard();
 
 
 	this.createAccountLogin.input.onUp.remove(this.createAccount, this);

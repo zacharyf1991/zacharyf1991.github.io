@@ -61,6 +61,11 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle = function(state) {
     this.atlas.dirty = true;
     this.state = state;
 
+
+    this.drawMapTimer = this.game.time.clock.createTimer('drawMapTimer', 0.25, 0, false);
+    this.drawMapTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.drawMap, this);
+    this.drawMapTimer.repeatCount = -1;
+    this.drawMapTimer.start();
 }
 
 Kiwi.extend(Kiwi.Plugins.GameObjects.Geom.Rectangle, Kiwi.Entity);
@@ -325,7 +330,18 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.update = function() {
     };
 
 
+    
+
+
+    //this.r6Points
+
+
+
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawMap = function(){
     this.ctx.clearRect(0, 0, 2098,2161);
+    // console.log("Draw Map");
 
     this.ctx.beginPath();
     for (var i = this.allRoadPoints.length - 1; i >= 0; i--) {
@@ -334,11 +350,9 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.update = function() {
     this.ctx.stroke();
 
 
-    //this.r6Points
+    }
 
 
-
-}
 
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawRoad = function(points){
     this.ctx.lineCap="round";

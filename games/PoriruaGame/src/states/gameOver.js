@@ -23,8 +23,12 @@ PoriruaGame.GameOver.create = function (params) {
     this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.gameOverBackground, 0, 0);
     this.addChild(this.background);
     this.params = params;
+    var barPoints = 10;
+    var zombiePoints = 25;
 
-    this.theEndScore = this.params.bars * this.params.time;
+    this.theEndScore = ((this.params.time + 100) / 100) * ((this.params.zombies * zombiePoints) + (this.params.bars * barPoints));
+    console.log(this.theEndScore);
+    this.theEndScore = Math.round(this.theEndScore);
     this.chocBars = this.params.bars;
     //console.log(this.params);
 
@@ -122,7 +126,7 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
     //for(var i = 0; i < 4; i++) {
 
         var leader = data[i];
-        console.log(leader);
+        //console.log(leader);
 
         // date
         // game
@@ -142,14 +146,14 @@ PoriruaGame.GameOver.submitScore = function () {
     
     this.addScoreUI();
     if(this.game.user.loggedIn == false) {
-        console.log("Yo zach, login");
+        //console.log("Yo zach, login");
         this.loginOverlay = new LoginOverlay( this );
 
 
 
     } else {
         this.addBoard();
-        console.log('Yo zach.');
+       // console.log('Yo zach.');
 
         //Post score code here...
         var score = this.theEndScore;

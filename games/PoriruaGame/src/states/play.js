@@ -12,6 +12,8 @@ PoriruaGame.Play.init = function () {
 }
 
 
+
+
 PoriruaGame.Play.create = function () {
   	this.name = new Kiwi.GameObjects.StaticImage(this, this.textures.kiwiName, 10, 10);
     this.camera = game.cameras.defaultCamera;
@@ -27,7 +29,7 @@ PoriruaGame.Play.create = function () {
     this.addChild(this.name);
     //this.rect1.render();
     this.inputManager = new InputManager(this);
-    this.player = new PlayerManager(this, 1400, 1000);
+    this.player = new PlayerManager(this, 403, 938);
     this.junctionPointManager = new JunctionPointManager(this);
 
     this.junctionPointManager.createPoints();
@@ -41,15 +43,19 @@ PoriruaGame.Play.create = function () {
 
 
     this.addChild(this.player);
+	
+	// Create and add zombies
+	this.zombieManager = new ZombieManager(this);
+	this.addChild(this.zombieManager);
 
     this.score = 0;
     this.linePointScore = 1;
     this.maxTime = 300;
     this.startTime = this.game.time.clock.elapsed();
     this.visibleTime = 0;
+    this.zombieCounter = 0;
 
-    this.backgroundMusic = new Kiwi.Sound.Audio(this.game, 'loop', 0.3, true);
-    this.backgroundMusic.play();
+    
 
 
   
@@ -74,6 +80,9 @@ PoriruaGame.Play.update = function(){
   if(this.rect1.checkAllOn() && this.junctionPointManager.allPointsOn()){
     this.gameOver('win');
   }
+  if(this.player.health <= 0 ){
+    this.gameOver('lose');
+  }
 }
 
 
@@ -82,12 +91,11 @@ PoriruaGame.Play.gameOver = function(condition){
   this.inputManager.endState();
   this.hudManager.endState();
   this.timer.stop();
-  this.backgroundMusic.stop();
 
   var params = { thing: {
         bars: this.chocBarManager.barsCollected,
         time: Math.floor(this.game.time.clock.elapsed() - this.startTime),
-        zombies: 5,
+        zombies: this.zombieCounter,
         condition: condition,
         visibleTime: this.visibleTime
       }

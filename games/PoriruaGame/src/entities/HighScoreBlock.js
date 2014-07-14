@@ -16,7 +16,7 @@ var HighScoreBlock = function (state, x, y, score, name, position){
     this.nameText.style.fontFamily = 'myFirstFont';
     this.nameText.style.color = '#ffffff';
     this.nameText.style.textShadow ="1.5px 1.5px  #000, -1.5px 1.5px  #000, 1.5px -1.5px  #000, -1.5px -1.5px  #000";
-    this.nameText.style.fontSize ="32px";
+    this.nameText.style.fontSize ="24px";
     this.nameText.style.letterSpacing ="1px";
         ////////////////////////////
     //TIME

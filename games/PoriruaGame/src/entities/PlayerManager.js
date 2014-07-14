@@ -44,8 +44,20 @@ var PlayerManager = function (state, x, y){
     this.upKeyDown = false;
     this.downKeyDown = false;
 
+    this.canKillZombie = false;
+    this.invincible = false;
+
+    this.takeDamageTimer = this.game.time.clock.createTimer('takeDamageTimer', 0.25, 0, false);
+    this.chocPowerTime = this.game.time.clock.createTimer('chocPowerTime', 0.25, 0, false);
+
+    this.damage = new Kiwi.Sound.Audio(this.game, 'damageZombie', 0.3, false);
+
+
 
     this.previousLocation = new Kiwi.Geom.Vector2(x, y);
+
+    //hitByEnemy
+    //canKillZombie
 
 
 
@@ -54,6 +66,8 @@ var PlayerManager = function (state, x, y){
     //BOOLEANS
     this.currDir = this.RIGHT;
     this.jumping = false;
+    this.health = 3;
+    this.damageFromZombie = 1;
 
     // this.takeDamageTimer = this.game.time.clock.createTimer('takeDamageTimer', 0.25, 0, false);
 
@@ -227,4 +241,58 @@ PlayerManager.prototype.updateKeyUp = function(key) {
     if(key == 'JUMP'){
         this.jumpKeyDown = false;
     }
+};
+
+PlayerManager.prototype.hitByEnemy = function() {
+    if(!this.invincible){
+        this.invincible = true;
+        this.health -= this.damageFromZombie;
+        this.damage.play();
+
+        this.takeDamageTimer.clear();
+        this.takeDamageTimer.stop();
+        this.takeDamageTimer.delay = 0.14;
+        this.takeDamageTimer.repeatCount = 6;
+        this.takeDamageTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.flash, this);
+        this.takeDamageTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.stopFlash, this);
+        this.takeDamageTimer.start();
+        
+    }
+
+
+
+};
+
+PlayerManager.prototype.flash = function() {
+    if(this.alpha == 0.25){
+        this.alpha = 1;
+    } else {
+        this.alpha = 0.25;
+    }
+};
+PlayerManager.prototype.stopFlash = function() {
+    
+    this.alpha = 1;
+    this.invincible = false;
+    
+};
+
+
+PlayerManager.prototype.pickBarUp = function() {
+    this.canKillZombie = true;
+
+        this.chocPowerTime.clear();
+        this.chocPowerTime.stop();
+        this.chocPowerTime.delay = 4;
+        this.chocPowerTime.repeatCount = 1;
+        // this.chocPowerTime.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.flash, this);
+        this.chocPowerTime.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.stopChocPower, this);
+        this.chocPowerTime.start();
+        
+}
+
+PlayerManager.prototype.stopChocPower = function() {
+    this.canKillZombie = false;
+
+    
 };

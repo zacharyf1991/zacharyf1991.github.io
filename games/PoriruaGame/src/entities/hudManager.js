@@ -14,7 +14,7 @@ HUDManager = function(state){
     ////////////////////////////
     //TIME
 
-    this.hudTime = new Kiwi.HUD.Widget.TextField(this.state.game, '3:10', 450, 5);
+    this.hudTime = new Kiwi.HUD.Widget.TextField(this.state.game, '0:00', 450, 5);
     
     this.hudTime.style.fontFamily = 'myFirstFont';
     this.hudTime.style.color = '#ffffff';
@@ -90,6 +90,8 @@ HUDManager.prototype.update = function(){
 
  //   this.hudScore.text = "$"+this.score;
     this.hudChocCount.text = this.state.chocBarManager.barsCollected;
+    this.hudZombieCount.text = this.state.zombieCounter;
+    this.playersHealth.counter.current = this.state.player.health;
 
 
 }

@@ -41,6 +41,7 @@ PoriruaGame.Loading.preload = function () {
     this.addSpriteSheet('highScoreButton', 'assets/img/high-score.png', 258, 93);
     this.addImage('howToPlay', 'assets/img/how-to-play.png');
     this.addSpriteSheet('okButton', 'assets/img/ok-button.png', 128, 49);
+    this.addSpriteSheet('soundToggleButton', 'assets/img/sound-on-off-buttons.png', 233, 37);
 
     this.addImage('chocBar', 'assets/img/items/sante-whittakers-chocolate-bar.png');
 
@@ -56,6 +57,7 @@ PoriruaGame.Loading.preload = function () {
     this.addImage('background', 'assets/img/porirua-map.jpg');
     this.addSpriteSheet('player', 'assets/img/player.png', 57, 79);
     this.addSpriteSheet('junctionPoint', 'assets/img/junction-point.png', 62, 63);
+	this.addSpriteSheet('zombie', 'assets/img/zombie-sprite-sheet.png', 57, 79);
 
 
     this.addImage('gameOverBackground', 'assets/img/leaderboard/leaderboard-screen.png');
@@ -153,7 +155,7 @@ PoriruaGame.Loading.addLeaderboardAssets = function () {
     this.addSpriteSheet('submitGameOver', 'assets/img/leaderboard/submit.png', 102, 52);
     this.addSpriteSheet('gPlusGameOver', 'assets/img/leaderboard/gplus.png', 41, 44);
     this.addSpriteSheet('facebookGameOver', 'assets/img/leaderboard/facebook.png', 41, 44);
-    this.addSpriteSheet('twitterGameOver', 'assets/img/leaderboard/facebook.png', 41, 44);
+    this.addSpriteSheet('twitterGameOver', 'assets/img/leaderboard/twitter.png', 41, 44);
 
     this.addImage('winGameOver', 'assets/img/leaderboard/win.png');
     this.addImage('loseGameOver', 'assets/img/leaderboard/lose.png');
@@ -167,6 +169,7 @@ PoriruaGame.Loading.addLeaderboardAssets = function () {
     this.addAudio('loop', 'assets/audio/looping-music.mp3');
     this.addAudio('eatChoc', 'assets/audio/eatChoc.mp3');
     this.addAudio('damage', 'assets/audio/hero-damage.mp3');
+    this.addAudio('damageZombie', 'assets/audio/enemy_damage2.mp3');
 
 
 

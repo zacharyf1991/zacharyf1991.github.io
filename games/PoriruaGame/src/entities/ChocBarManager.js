@@ -44,6 +44,7 @@ ChocBarManager.prototype.checkCollision = function() {
 			tempBar = this.bars[this.bars.length -1];
 			this.bars[i].exists = false;
 			this.bars.splice(i, 1);
+			this.state.player.pickBarUp();
 
 
 			break;
