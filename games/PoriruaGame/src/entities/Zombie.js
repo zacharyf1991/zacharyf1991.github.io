@@ -10,6 +10,7 @@ var Zombie = function(state, x, y) {
 	this.animation.add('walkRight', [14, 15, 16, 17, 18, 19, 20], 0.1 / this.relSpeed, true);
 	this.animation.add('walkLeft', [21, 22, 23, 24, 25, 26, 27], 0.1 / this.relSpeed, true);
 	this.animation.play('walkDown');
+	this.lastPosition = new Kiwi.Geom.Point(this.x, this.y);
 	
 	// Add AI
 	this.navCurrentRoad = null;
@@ -23,7 +24,7 @@ var Zombie = function(state, x, y) {
 Kiwi.extend(Zombie, Kiwi.GameObjects.Sprite);
 
 
-Zombie.prototype.WALKSPEED = 0.4;
+Zombie.prototype.WALKSPEED = 0.3;
 Zombie.prototype.NAVRADIUS = 8;
 
 
@@ -37,6 +38,42 @@ Zombie.prototype.update = function() {
 		this.followRoad();
 	
 	// Set facing
+	this.setFacing();
+}
+
+
+Zombie.prototype.setFacing = function() {
+	var dx = this.x - this.lastPosition.x;
+	var dy = this.y - this.lastPosition.y;
+	var ang = Math.atan2(dy, dx);
+	// Distort angle for easy checks
+	ang += Math.PI / 4;		// Map onto quadrants starting at 0
+	if(ang < 0)
+		ang += Math.PI * 2;	// Make positive
+	// Determine angle animation
+	if(ang < Math.PI * 0.5) {
+		// Facing RIGHT
+		if(this.animation.currentAnimation != this.animation.getAnimation('walkRight'))
+			this.animation.playAt(this.animation.currentAnimation.frameIndex + 1, 'walkRight');
+	}
+	else if(ang < Math.PI) {
+		// Facing DOWN
+		if(this.animation.currentAnimation != this.animation.getAnimation('walkDown'))
+			this.animation.playAt(this.animation.currentAnimation.frameIndex + 1, 'walkDown');
+	}
+	else if(ang < Math.PI * 1.5) {
+		// Facing LEFT
+		if(this.animation.currentAnimation != this.animation.getAnimation('walkLeft'))
+			this.animation.playAt(this.animation.currentAnimation.frameIndex + 1, 'walkLeft');
+	}
+	else {
+		// Facing UP
+		if(this.animation.currentAnimation != this.animation.getAnimation('walkUp'))
+			this.animation.playAt(this.animation.currentAnimation.frameIndex + 1, 'walkUp');
+	}
+
+	// Cache position for next check
+	this.lastPosition.setTo(this.x, this.y);
 }
 
 /*
@@ -57,9 +94,7 @@ Zombie.prototype.findNearestRoad = function() {
 			{
 				var pt = roads[i][j];
 				var distToCandidatePoint = pt.distanceToXY(this.x + this.rotPointX, this.y + this.rotPointY);
-				// Wiggle
-				//distToCandidatePoint += Math.random() * 16 * this.NAVRADIUS;
-				
+
 				if(distToCandidatePoint < distToNearestRoad)
 				{
 					bestRoad = i;
@@ -77,11 +112,6 @@ Zombie.prototype.findNearestRoad = function() {
 		this.navDirection = 1;
 	else
 		this.navDirection = -1;
-	/*
-	// Pick a random direction
-	if(Math.random() < 0.5)	this.navDirection = 1;
-	else	this.navDirection = -1;
-	*/
 }
 
 Zombie.prototype.moveTowardsTarget = function() {
@@ -89,8 +119,9 @@ Zombie.prototype.moveTowardsTarget = function() {
 	var dx = pt.x - (this.x + this.rotPointX);
 	var dy = pt.y - (this.y + this.rotPointY);
 	var ang = Math.atan2(dy, dx);
-	var vx = Math.cos(ang) * this.WALKSPEED * this.relSpeed;
-	var vy = Math.sin(ang) * this.WALKSPEED * this.relSpeed;
+	var t = this.state.game.speedGovernor.t();
+	var vx = Math.cos(ang) * this.WALKSPEED * this.relSpeed * t;
+	var vy = Math.sin(ang) * this.WALKSPEED * this.relSpeed * t;
 	this.x += vx;
 	this.y += vy;
 }

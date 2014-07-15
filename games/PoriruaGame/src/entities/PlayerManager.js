@@ -31,10 +31,16 @@ var PlayerManager = function (state, x, y){
     this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
     
 
-    this.force = 4;
-    this.maxRunVelo = 26;
+    this.force = 3;
+    this.maxRunVelo = 18;
     this.beamStage = 0;
     this.jumpHeight = 40;
+
+    // Raw physics data
+    // This is relative to TIME, not to FRAMES
+    // It will be modulated by speed governance before being passed to physics
+    this.velocityX = 0;
+    this.velocityY = 0;
 
     ///////////////////
     //KEYBOARD
@@ -102,21 +108,51 @@ PlayerManager.prototype.update = function(){
     
     this.updateMovement();
 
-    var offTrack = true;
     this.minDist = 1000;
+    //var minPt = null;
     for (var i = this.state.rect1.allRoadPoints.length - 1; i >= 0; i--) {
         for (var j = this.state.rect1.allRoadPoints[i].length - 1; j >= 0; j--) {
             var tempDist = this.state.rect1.allRoadPoints[i][j].distanceToXY(this.x + 28  + this.physics.velocity.x, this.y + 79+ this.physics.velocity.y)
             if( tempDist < this.minDist){
                 this.minDist = tempDist;
+                //minPt = this.state.rect1.allRoadPoints[i][j];
                 //console.log("Test");
             }
         };
     };
     if(this.minDist >= 40){
         // console.log("Hello?");
+
+        /*
+        // Some non-successful physics models
+        var restitution = 0.25;
+        // Bounce back a fraction of a frame along current trajectory
+        var dx = this.physics.velocity.x * restitution;
+        var dy = this.physics.velocity.y * restitution;
+        this.x -= dx;
+        this.y -= dy;
+        // Bounce forward towards the nearest ideal point, CONSERVING momentum
+        var d = Math.sqrt(dx*dx + dy*dy);
+        var dx2 = minPt.x - this.x;
+        var dy2 = minPt.y - this.y;
+        var ang = Math.atan2(dy2, dx2);
+        this.x += d * Math.cos(ang);
+        this.y += d * Math.sin(ang);
+        */
+
         this.physics.velocity.x = 0;
         this.physics.velocity.y = 0;
+        
+        /*
+        // Direct the player towards the nearest point
+        var dx = this.x - minPt.x;
+        var dy = this.y - minPt.y;
+        var ang = Math.atan2(dy, dx);
+        var v = Math.sqrt( Math.pow( this.physics.velocity.x, 2 ) + Math.pow( this.physics.velocity.y, 2 ) );
+        this.physics.velocity.setTo( v * Math.cos(ang) * restitution, v * Math.sin(ang) * restitution);
+        */
+        
+
         // this.x = this.previousLocation.x;
         // this.y = this.previousLocation.y;
         // this.x += -(this.physics.velocity.x * 0.5);
@@ -138,17 +174,24 @@ PlayerManager.prototype.update = function(){
 
 PlayerManager.prototype.updateMovement = function(direction){
 
+    // Govern speed
+    var t = this.state.game.speedGovernor.timeScaleFactor();
+    var friction = 0.08;
+    var restitution = (1.0 - friction * t);
+    this.velocityX = this.physics.velocity.x / t;
+    this.velocityY = this.physics.velocity.y / t;
+
     //BOTH MOVE KEYS UP
     if(!this.rightKeyDown && !this.leftKeyDown){
-        if(this.physics.velocity.x > 6 || this.physics.velocity.x < -6){
-            this.physics.velocity.x *= 0.92;
-        } else {this.physics.velocity.x = 0;}
+        if(this.velocityX > 6 || this.velocityX < -6){
+            this.velocityX *= restitution;
+        } else {this.velocityX = 0;}
     }
 
     if(!this.upKeyDown && !this.downKeyDown){
-        if(this.physics.velocity.y > 6 || this.physics.velocity.y < -6){
-            this.physics.velocity.y *= 0.92;
-        } else {this.physics.velocity.y = 0;}
+        if(this.velocityY > 6 || this.velocityY < -6){
+            this.velocityY *= restitution;
+        } else {this.velocityY = 0;}
     }
 
     //EITHER MOVE KEYS DOWN
@@ -174,34 +217,47 @@ PlayerManager.prototype.updateMovement = function(direction){
 
 
     if(this.rightKeyDown){
-        if(this.physics.velocity.x < this.maxRunVelo){
+        if(this.velocityX < this.maxRunVelo){
             
-            this.physics.velocity.x += this.force;
+            this.velocityX += this.force * t;
         } 
 
     } 
     if(this.leftKeyDown){
         //this.physics.velocity.x -= this.force;
-        if(this.physics.velocity.x > -this.maxRunVelo){
+        if(this.velocityX > -this.maxRunVelo){
             //console.log(this.physics.velocity.x);
-            this.physics.velocity.x -= (this.force);
+            this.velocityX -= (this.force * t);
         } 
 
     } 
     if(this.downKeyDown){
-        if(this.physics.velocity.y < this.maxRunVelo){
+        if(this.velocityY < this.maxRunVelo){
             
-            this.physics.velocity.y += this.force;
+            this.velocityY += this.force * t;
         } 
 
     } 
      if(this.upKeyDown){
-        if(this.physics.velocity.y > -this.maxRunVelo){
-            this.physics.velocity.y -= (this.force);
+        if(this.velocityY > -this.maxRunVelo){
+            this.velocityY -= (this.force * t);
         } 
 
     }
 
+    // Govern max velocity
+    if(this.velocityX < -this.maxRunVelo)
+        this.velocityX = -this.maxRunVelo;
+    if(this.maxRunVelo < this.velocityX)
+        this.velocityX = this.maxRunVelo;
+    if(this.velocityY < -this.maxRunVelo)
+        this.velocityY = -this.maxRunVelo;
+    if(this.maxRunVelo < this.velocityY)
+        this.velocityY = this.maxRunVelo;
+
+    // Pass to physics
+    this.physics.velocity.x = this.velocityX * t;
+    this.physics.velocity.y = this.velocityY * t;
 }
 
 
@@ -252,7 +308,7 @@ PlayerManager.prototype.hitByEnemy = function() {
         this.takeDamageTimer.clear();
         this.takeDamageTimer.stop();
         this.takeDamageTimer.delay = 0.14;
-        this.takeDamageTimer.repeatCount = 6;
+        this.takeDamageTimer.repeatCount = 12;
         this.takeDamageTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.flash, this);
         this.takeDamageTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.stopFlash, this);
         this.takeDamageTimer.start();
@@ -283,7 +339,7 @@ PlayerManager.prototype.pickBarUp = function() {
 
         this.chocPowerTime.clear();
         this.chocPowerTime.stop();
-        this.chocPowerTime.delay = 4;
+        this.chocPowerTime.delay = 8;
         this.chocPowerTime.repeatCount = 1;
         // this.chocPowerTime.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.flash, this);
         this.chocPowerTime.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.stopChocPower, this);

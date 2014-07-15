@@ -9,7 +9,7 @@ var ChocBar = function (state, x, y){
     // //this.animation.add('walkLeft', [34, 35, 36, 37, 38, 39], 0.1, true);
 
     // this.animation.play('off');  
-    this.collisionDistance = 25;
+    this.collisionDistance = 40;
 
     this.x -= this.width/2;
     this.y -= this.width/2;
@@ -38,7 +38,7 @@ ChocBar.prototype.update = function(){
 
 
 ChocBar.prototype.checkCollision = function(col) {
-    var colPoint = new Kiwi.Geom.Point(col.x + 27, col.y + 79);
+    var colPoint = new Kiwi.Geom.Point(col.x + col.width/2, col.y + col.height/2);
     if(this.collisionPoint.distanceTo(colPoint) < this.collisionDistance){
         //this.alpha = 0;
         this.pickedUp();

@@ -12,7 +12,7 @@ var JunctionPoint = function (state, x, y){
     this.connectedTo = [];
     this.visiblePoint = true;
     this.isOn = false; 
-    this.collisionDistance = 25;
+    this.collisionDistance = 40;
 
     this.collisionPoint = new Kiwi.Geom.Point(x + this.width/2, y +this.height/2); // == this.x + this.width/2 && y
 
@@ -42,7 +42,7 @@ JunctionPoint.prototype.addConnected = function(con) {
 
 JunctionPoint.prototype.checkCollision = function(col) {
     if(!this.isOn){
-        var colPoint = new Kiwi.Geom.Point(col.x + 27, col.y + 79);
+        var colPoint = new Kiwi.Geom.Point(col.x + col.width/2, col.y + col.height/2);
         if(this.collisionPoint.distanceTo(colPoint) < this.collisionDistance){
             this.isOn = true;
             this.animation.play('on');

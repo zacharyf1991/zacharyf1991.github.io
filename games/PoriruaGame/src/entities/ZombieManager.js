@@ -12,7 +12,8 @@ var ZombieManager = function(state){
 
 	// Spawn difficulty
 	this.framesToZombie = 100;
-	this.spawnFrames = 0;
+	this.spawnFrames = -20 * 60;	// No zombies appear for the first few seconds
+	this.maxZombies = 8;
 }
 Kiwi.extend(ZombieManager, Kiwi.Group);
 
@@ -42,10 +43,10 @@ ZombieManager.prototype.update = function(){
 	Kiwi.Group.prototype.update.call(this);
 	
 	// Spawn zombies
-	this.spawnFrames++;
-	if(this.framesToZombie <= this.spawnFrames)
+	this.spawnFrames += this.state.game.speedGovernor.t();
+	if(this.framesToZombie <= this.spawnFrames  &&  this.enemiesLength <= this.maxZombies)
 	{
-		this.spawnFrames = 0;
+		this.spawnFrames -= this.framesToZombie;
 		this.addRandomZombie();
 	}
 	
