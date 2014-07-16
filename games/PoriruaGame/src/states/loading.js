@@ -30,11 +30,6 @@ PoriruaGame.Loading.preload = function () {
     //Otherwise the loading graphics will load last, and that defies the whole point in loading them. 
     KiwiLoadingScreen.prototype.preload.call(this);
 
-    /**
-    * Replace with your own in-assets to load.
-    **/
-    this.addImage('kiwiName', 'assets/img/kiwijs-name.png');
-    this.addSpriteSheet('icons', 'assets/img/kiwijs-icons.png', 100, 90);
 
     this.addImage('startBackground', 'assets/img/start-screen-bg.jpg');
     this.addSpriteSheet('startButtons', 'assets/img/start-screen-buttons.png', 258, 91);
@@ -65,15 +60,6 @@ PoriruaGame.Loading.preload = function () {
 
     ///////////////////////////////
     //Buildings
-
-    this.addImage('roadblock1', 'assets/img/buildings/0000s0000roadblock-1.png');
-    this.addImage('roadblock2', 'assets/img/buildings/0000s0001roadblock-2.png');
-    this.addImage('roadblock3', 'assets/img/buildings/0000s0002roadblock-3.png');
-    this.addImage('roadblock4', 'assets/img/buildings/0000s0003roadblock-4.png');
-    this.addImage('roadblock5', 'assets/img/buildings/0000s0004roadblock-5.png');
-    this.addImage('roadblock6', 'assets/img/buildings/0000s0005roadblock-6.png');
-    this.addImage('roadblock7', 'assets/img/buildings/0000s0006roadblock-7.png');
-    this.addImage('roadblock8', 'assets/img/buildings/0000s0007roadblock-8.png');
     this.addImage('boatShed', 'assets/img/buildings/0002s0001boat-sheds.png');
     this.addImage('houses1', 'assets/img/buildings/0002s0002houses-1.png');
     this.addImage('arena', 'assets/img/buildings/0002s0003arena.png');
@@ -131,6 +117,8 @@ PoriruaGame.Loading.addLeaderboardAssets = function () {
     this.addImage('leaderboardBackground', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-background.png');
     this.addImage('LeaderboardImage', 'assets/img/leaderboard/leaderboardfromstartmenu/leaderboard-title-image.png');
 
+    this.addImage('scrollBar', 'assets/img/leaderboard/scroller.png');
+
 
     /////////////////////
     //Login 
@@ -170,6 +158,15 @@ PoriruaGame.Loading.addLeaderboardAssets = function () {
     this.addAudio('eatChoc', 'assets/audio/eatChoc.mp3');
     this.addAudio('damage', 'assets/audio/hero-damage.mp3');
     this.addAudio('damageZombie', 'assets/audio/enemy_damage2.mp3');
+
+
+    //////////////////////////////
+    //Animated Features 
+    this.addSpriteSheet('animBeachball1', 'assets/img/animatedfeatures/anim-beachball1.png', 87, 133);
+    this.addSpriteSheet('animBoat', 'assets/img/animatedfeatures/anim-boat.png', 107, 109);
+    this.addSpriteSheet('animPlane', 'assets/img/animatedfeatures/anim-boatplane.png', 164, 118);
+    this.addSpriteSheet('animFish', 'assets/img/animatedfeatures/anim-fish.png', 300, 330);
+    this.addSpriteSheet('animWaka', 'assets/img/animatedfeatures/anim-waka.png', 198, 62);
 
 
 

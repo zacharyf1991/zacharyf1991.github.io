@@ -83,7 +83,7 @@ Zombie.prototype.setFacing = function() {
 
 Zombie.prototype.findNearestRoad = function() {
 	// Locates the nearest road segment, with a little bit of wiggle to induce random choice at intersections
-	var roads = this.state.rect1.allRoadPoints;
+	var roads = this.state.rect1.allZombieRoadPoints;
 	var bestPoint = 0;
 	var bestRoad = 0;
 	var distToNearestRoad = 999999;
@@ -115,7 +115,7 @@ Zombie.prototype.findNearestRoad = function() {
 }
 
 Zombie.prototype.moveTowardsTarget = function() {
-	var pt = this.state.rect1.allRoadPoints[this.navCurrentRoad][this.navNextPoint];
+	var pt = this.state.rect1.allZombieRoadPoints[this.navCurrentRoad][this.navNextPoint];
 	var dx = pt.x - (this.x + this.rotPointX);
 	var dy = pt.y - (this.y + this.rotPointY);
 	var ang = Math.atan2(dy, dx);
@@ -131,7 +131,7 @@ Zombie.prototype.followRoad = function() {
 	// Update targeting
 	this.navNextPoint += this.navDirection;
 	// Get navpoint data
-	var road = this.state.rect1.allRoadPoints[this.navCurrentRoad];
+	var road = this.state.rect1.allZombieRoadPoints[this.navCurrentRoad];
 	var pt = road[this.navNextPoint];
 	// Have we reached the limits of the road?
 	if(this.navDirection == 1  &&  road.length - 1 < this.navNextPoint)
@@ -147,7 +147,7 @@ Zombie.prototype.followRoad = function() {
 }
 
 Zombie.prototype.isAtNavpoint = function() {
-	var pt = this.state.rect1.allRoadPoints[this.navCurrentRoad][this.navNextPoint];
+	var pt = this.state.rect1.allZombieRoadPoints[this.navCurrentRoad][this.navNextPoint];
 	if(pt.distanceToXY(this.x + this.rotPointX, this.y + this.rotPointY) < this.NAVRADIUS)
 		return( true );
 	return( false );
@@ -159,7 +159,7 @@ Zombie.prototype.chooseNewRoadAtRandom = function() {
 
 	var validPointRadius = 64;
 	var candidatePoints = [];
-	var roads = this.state.rect1.allRoadPoints;
+	var roads = this.state.rect1.allZombieRoadPoints;
 	// Assemble all nearby points
 	for( var i = 0;  i < roads.length;  i++ )
 	{

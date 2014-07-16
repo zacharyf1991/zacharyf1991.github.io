@@ -14,6 +14,7 @@ var gameOptions = {
 	width: 768,
 	height: 512,
 	plugins: ['Lines', 'GamefrootAccount', 'GamefrootLeaderboard', 'SaveGame', 'FacebookConnect', 'SpeedGovernor'],
+	debug: Kiwi.DEBUG_OFF,
 	bootCallback: function( game ) {
 
 		game.user = new PoriruaGame.Managers.User( game );

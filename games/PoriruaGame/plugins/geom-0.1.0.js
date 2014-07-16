@@ -61,6 +61,7 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle = function(state) {
     this.atlas.dirty = true;
     this.state = state;
 
+    this._initMap();
 
     this.drawMapTimer = this.game.time.clock.createTimer('drawMapTimer', 0.25, 0, false);
     this.drawMapTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.drawMap, this);
@@ -71,71 +72,12 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle = function(state) {
 Kiwi.extend(Kiwi.Plugins.GameObjects.Geom.Rectangle, Kiwi.Entity);
 
 
-Object.defineProperty(Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype, "width", {
-    get: function () {
-        return this._width;
-    },
-    set: function (val) {
-        this._width = val;
-        this.dirty = true;
-    },
-    enumerable: true,
-    configurable: true
-});
 
-Object.defineProperty(Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype, "height", {
-    get: function () {
-        return this._height;
-    },
-    set: function (val) {
-        this._height = val;
-        this.dirty = true;
-    },
-    enumerable: true,
-    configurable: true
-});
-
-Object.defineProperty(Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype, "color", {
-    get: function () {
-        return this._color;
-    },
-    set: function (val) {
-        this._color = val;
-        this.dirty = true;
-    },
-    enumerable: true,
-    configurable: true
-});
-
-Object.defineProperty(Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype, "rect", {
-    get: function () {
-        return new Kiwi.Geom.Rectangle(this.x, this.y, this.width, this.height);
-    },
-    enumerable: true,
-    configurable: true
-});
-
-
-//Renders the raw rectangle to the stage
-Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._renderRect = function() {
-
+// Sets up initial draw data
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._initMap = function() {
     //Calculate the Dimensions
     var width = this.width;
     var height = this.height;
-
-    //Is the width base2?
-    if (Kiwi.Utils.Common.base2Sizes.indexOf(width) == -1) {
-        var i = 0;
-        while (width > Kiwi.Utils.Common.base2Sizes[i]) i++;
-        width = Kiwi.Utils.Common.base2Sizes[i];
-    }
-
-    //Is the height base2?
-    if (Kiwi.Utils.Common.base2Sizes.indexOf(height) == -1) {
-        var i = 0;
-        while (height > Kiwi.Utils.Common.base2Sizes[i]) i++;
-        height = Kiwi.Utils.Common.base2Sizes[i];
-    }
 
     //size of stage map size 
     this.canvas.width = 2098;
@@ -232,21 +174,33 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._renderRect = function() {
     this.createRoad30aPoints();
     this.createRoad30bPoints();
     this.createRoad30cPoints();
-    
-
-    
 
 
 
+    // Create zombie-only road system
+    this.allZombieRoadPoints = [];
+    for( var i = 0;  i < this.allRoadPoints.length;  i++ )
+    {
+        this.allZombieRoadPoints.push( this.allRoadPoints[i] );
+    }
+    this.createZombieRoad100Points();
+    this.createZombieRoad101Points();
+    this.createZombieRoad102Points();
+
+    // Tag for initial draw
+    this.dirty = true;
+}
+
+
+
+
+
+//Renders the raw rectangle to the stage
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._renderRect = function() {
     this.dirty = false;
     this.atlas.dirty = true;
 }
 
-
-Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawRectOne = function(){
-    this.ctx.fillStyle = '#00FF00';
-    this.ctx.fillRect(100,100, 50, 50);
-}
 
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.lineStyle = function(){
     this.ctx.lineWidth = 14;
@@ -260,57 +214,45 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.lineStyle = function(){
 
 
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.splinePoint = function(points, prog){
-
     cursorPoints = [points.length - 1];
     
     for (var i = 0; i < points.length - 1;  i++) {
         cursorPoints[i] = this.lerp(points[i], points[i+1], prog);
-       
     };
     if(cursorPoints.length > 1){
         cursorPoints = this.splinePoint(cursorPoints, prog);
     }
     return cursorPoints;
-
-    
-
 }
-Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.lerp = function(start, final, progress){
 
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.lerp = function(start, final, progress){
    var x = start.x + (final.x - start.x) * progress;
    var y = start.y + (final.y - start.y) * progress;
    var point = new Kiwi.Geom.Point(x, y);
-   //console.log(point);
    return point;
-    
-
 }
 
 
 //Canvas rendering method
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.render = function() {
 
-    if(this.visible == false || this.alpha <= 0) return;
-
     if(this.dirty) this._renderRect();
 
     var ctx = this.game.stage.ctx;
     ctx.save();
-
-    if (this.alpha > 0 && this.alpha <= 1) {
-        ctx.globalAlpha = this.alpha;
-    }
 
     //get entity/view matrix
     var t = this.transform;
     var m = t.getConcatenatedMatrix();
 
     ctx.transform(m.a, m.b, m.c, m.d, m.tx, m.ty);
-                 
     ctx.drawImage(this.canvas, 0, 0, 2098, 2161, 0, 0, 2098, 2161);
     ctx.restore();
+}
 
-
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.renderGL = function(gl, camera) {
+    if (typeof params === "undefined") { params = null; }
+    this.glRenderer.addToBatch(gl, this, camera);
 }
 
 
@@ -330,27 +272,18 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.update = function() {
     };
 
 
-    
-
-
-    //this.r6Points
-
-
-
 }
 
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawMap = function(){
     this.ctx.clearRect(0, 0, 2098,2161);
-    // console.log("Draw Map");
-
     this.ctx.beginPath();
     for (var i = this.allRoadPoints.length - 1; i >= 0; i--) {
         this.drawRoad(this.allRoadPoints[i]);
     };
     this.ctx.stroke();
 
-
-    }
+    this.dirty = true;
+}
 
 
 
@@ -358,7 +291,6 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawRoad = function(points){
     this.ctx.lineCap="round";
     this.ctx.moveTo(points[0].x, points[0].y);
     for(var i = 0; i < points.length; i ++){
-        //console.log(game.cameras.defaultCamera.transform.x);
         if(points[i].isOn ){
             if(points[i].x > (game.cameras.defaultCamera.transform.x * -1) / 0.75 - 150 && points[i].x < (game.cameras.defaultCamera.transform.x * -1)/ 0.75 + game.stage.width + 150){
                 if(points[i].y > (game.cameras.defaultCamera.transform.y * -1)/ 0.75 - 150 && points[i].y < (game.cameras.defaultCamera.transform.y * -1)/ 0.75 + game.stage.height + 150){
@@ -1782,3 +1714,198 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsRoad30c = function(){
     return tempGroup;
 }
 
+
+
+
+
+
+/**
+* Zombie Road 100
+* Segments A-D
+*/
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad100Points = function(){
+    this.createZombieRoad100aPoints();
+    this.createZombieRoad100bPoints();
+    this.createZombieRoad100cPoints();
+    this.createZombieRoad100dPoints();
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad100aPoints = function(){
+
+    this.r100aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r100aPoints[i] = this.splinePoint(this.getPointsZombieRoad100a(), i * this.lineDivideAmount)[0];
+        this.r100aPoints[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r100aPoints;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad100a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(260, 1390);
+    var tempPoint2 = new Kiwi.Geom.Point(270, 1420);
+    var tempPoint3 = new Kiwi.Geom.Point(255, 1480);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad100bPoints = function(){
+
+    this.r100bPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r100bPoints[i] = this.splinePoint(this.getPointsZombieRoad100b(), i * this.lineDivideAmount)[0];
+        this.r100bPoints[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r100bPoints;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad100b = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(255, 1480);
+    var tempPoint2 = new Kiwi.Geom.Point(255, 1540);
+    var tempPoint3 = new Kiwi.Geom.Point(260, 1605);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad100cPoints = function(){
+
+    this.r100cPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r100cPoints[i] = this.splinePoint(this.getPointsZombieRoad100c(), i * this.lineDivideAmount)[0];
+        this.r100cPoints[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r100cPoints;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad100c = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(255, 1605);
+    var tempPoint2 = new Kiwi.Geom.Point(250, 1660);
+    var tempPoint3 = new Kiwi.Geom.Point(255, 1720);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad100dPoints = function(){
+
+    this.r100dPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r100dPoints[i] = this.splinePoint(this.getPointsZombieRoad100d(), i * this.lineDivideAmount)[0];
+        this.r100dPoints[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r100dPoints;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad100d = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(255, 1720);
+    var tempPoint2 = new Kiwi.Geom.Point(255, 1765);
+    var tempPoint3 = new Kiwi.Geom.Point(270, 1810);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+/**
+* Zombie road 101
+*/
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad101Points = function(){
+    this.createZombieRoad101aPoints();
+    this.createZombieRoad101bPoints();
+    this.createZombieRoad101cPoints();
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad101aPoints = function(){
+
+    this.r101aPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r101aPoints[i] = this.splinePoint(this.getPointsZombieRoad101a(), i * this.lineDivideAmount)[0];
+        this.r101aPoints[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r101aPoints;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad101a = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1095, 1425);
+    var tempPoint2 = new Kiwi.Geom.Point(1015, 1395);
+    var tempPoint3 = new Kiwi.Geom.Point(920, 1395);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad101bPoints = function(){
+
+    this.r101bPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r101bPoints[i] = this.splinePoint(this.getPointsZombieRoad101b(), i * this.lineDivideAmount)[0];
+        this.r101bPoints[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r101bPoints;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad101b = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1095, 1425);
+    var tempPoint2 = new Kiwi.Geom.Point(1120, 1380);
+    var tempPoint3 = new Kiwi.Geom.Point(1135, 1340);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad101cPoints = function(){
+
+    this.r101cPoints = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r101cPoints[i] = this.splinePoint(this.getPointsZombieRoad101c(), i * this.lineDivideAmount)[0];
+        this.r101cPoints[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r101cPoints;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad101c = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(1095, 1425);
+    var tempPoint2 = new Kiwi.Geom.Point(1035, 1500);
+    var tempPoint3 = new Kiwi.Geom.Point(1025, 1580);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}
+
+/**
+* Zombie road 102
+*/
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.createZombieRoad102Points = function(){
+
+    this.r102Points = [];
+
+    for(var i = 0; i <= this.linePointsAmount; i += 1){
+        this.r102Points[i] = this.splinePoint(this.getPointsZombieRoad102(), i * this.lineDivideAmount)[0];
+        this.r102Points[i].isOn = this.startLineOn;
+    }
+    this.allZombieRoadPoints[this.allZombieRoadPoints.length] = this.r102Points;
+}
+Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.getPointsZombieRoad102 = function(){
+    var tempPoint1 = new Kiwi.Geom.Point(2025, 980);
+    var tempPoint2 = new Kiwi.Geom.Point(2060, 1100);
+    var tempPoint3 = new Kiwi.Geom.Point(2115, 1180);
+    var tempGroup = [];
+    tempGroup[0] = tempPoint1;
+    tempGroup[1] = tempPoint2;
+    tempGroup[2] = tempPoint3;
+    return tempGroup;
+}

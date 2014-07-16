@@ -12,7 +12,7 @@ var JunctionPoint = function (state, x, y){
     this.connectedTo = [];
     this.visiblePoint = true;
     this.isOn = false; 
-    this.collisionDistance = 40;
+    this.collisionDistance = 64;
 
     this.collisionPoint = new Kiwi.Geom.Point(x + this.width/2, y +this.height/2); // == this.x + this.width/2 && y
 

@@ -1,25 +1,10 @@
 //PlayerManager / Player
 var PlayerManager = function (state, x, y){
-    Kiwi.GameObjects.Sprite.call(this, state, state.textures['player'], x, y);
+    Kiwi.GameObjects.Sprite.call(this, state, state.textures['player'], x, y, false);
     this.state = state;
-
-
-    //DIRECTIONS
-    //based of numpad
-    this.RIGHT = 6;
-    this.RIGHTDOWN = 3;
-    this.DOWN = 2;
-    this.LEFTDOWN = 1;
-    this.LEFT = 4;
-    this.LEFTUP = 7;
-    this.UP = 8;
-    this.RIGHTUP = 9;
-
     
-    this.keyboard = this.state.game.input.keyboard;
-    this.mouse = this.state.game.input.mouse;
 
-    this.animation.add('idle', [21], 0.1, true);
+    this.animation.add('idle', [11], 0.1, true);
     this.animation.add('walkUp', [1, 2, 3, 4, 5,  6], 0.1, true);
     this.animation.add('walkDown', [12, 13, 14, 15,  16, 17], 0.1, true);
     this.animation.add('walkRight', [ 23, 24, 25,  26, 27, 28], 0.1, true);
@@ -70,7 +55,6 @@ var PlayerManager = function (state, x, y){
 
     /////////////////////////
     //BOOLEANS
-    this.currDir = this.RIGHT;
     this.jumping = false;
     this.health = 3;
     this.damageFromZombie = 1;
@@ -341,7 +325,6 @@ PlayerManager.prototype.pickBarUp = function() {
         this.chocPowerTime.stop();
         this.chocPowerTime.delay = 8;
         this.chocPowerTime.repeatCount = 1;
-        // this.chocPowerTime.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.flash, this);
         this.chocPowerTime.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.stopChocPower, this);
         this.chocPowerTime.start();
         

@@ -17,14 +17,6 @@ Kiwi.extend(EnvironmentManager , Kiwi.Group);
 
 
 EnvironmentManager.prototype.addBuildings = function(){
-	this.buildings[00] = new Building(this.state, this.state.textures.roadblock1, 226, 0);
-	this.buildings[01] = new Building(this.state, this.state.textures.roadblock2, 1971, 918);
-	this.buildings[02] = new Building(this.state, this.state.textures.roadblock3, 805, 2084);
-	this.buildings[03] = new Building(this.state, this.state.textures.roadblock4, 1115, 1257);
-	this.buildings[04] = new Building(this.state, this.state.textures.roadblock5, 967, 1601);
-	this.buildings[05] = new Building(this.state, this.state.textures.roadblock6, 803, 1361);
-	this.buildings[06] = new Building(this.state, this.state.textures.roadblock7, 246, 1829);
-	this.buildings[07] = new Building(this.state, this.state.textures.roadblock8, 1189, 0);
 	this.buildings[08] = new Building(this.state, this.state.textures.boatShed, 264, 392);
 	this.buildings[09] = new Building(this.state, this.state.textures.houses1, 309, 229);
 	this.buildings[10] = new Building(this.state, this.state.textures.arena, 420, 1151);
@@ -65,14 +57,14 @@ EnvironmentManager.prototype.addBuildings = function(){
 	this.buildings[43] = new Building(this.state, this.state.textures.teWanaga, 272, 1542);
 	this.buildings[44] = new Building(this.state, this.state.textures.northCity, 456, 1519);
 	this.buildings[45] = new Building(this.state, this.state.textures.police, 441, 1366);
-	this.buildings[46] = new Building(this.state, this.state.textures.whittakers, 164, 1005);
-	this.buildings[47] = new Building(this.state, this.state.textures.mega, 524, 904);
-	this.buildings[48] = new Building(this.state, this.state.textures.whitireia, 493, 819);
-	this.buildings[49] = new Building(this.state, this.state.textures.marae, 248, 791);
-	this.buildings[50] = new Building(this.state, this.state.textures.houses2, 426, 597);
-	this.buildings[51] = new Building(this.state, this.state.textures.houses3, 212, 683);
-	this.buildings[52] = new Building(this.state, this.state.textures.tiki, 612, 522);
-	this.buildings[53] = new Building(this.state, this.state.textures.golf, 429, 369);
+	this.buildings[00] = new Building(this.state, this.state.textures.whittakers, 164, 1005);
+	this.buildings[07] = new Building(this.state, this.state.textures.mega, 524, 904);
+	this.buildings[06] = new Building(this.state, this.state.textures.whitireia, 493, 819);
+	this.buildings[05] = new Building(this.state, this.state.textures.marae, 255, 774);
+	this.buildings[04] = new Building(this.state, this.state.textures.houses2, 426, 597);
+	this.buildings[03] = new Building(this.state, this.state.textures.houses3, 212, 683);
+	this.buildings[02] = new Building(this.state, this.state.textures.tiki, 612, 522);
+	this.buildings[01] = new Building(this.state, this.state.textures.golf, 429, 369);
 
 	for (var i = this.buildings.length - 1; i >= 0; i--) {
 		this.state.addChild(this.buildings[i]);

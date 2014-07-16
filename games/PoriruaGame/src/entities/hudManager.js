@@ -13,7 +13,6 @@ HUDManager = function(state){
 
     ////////////////////////////
     //TIME
-
     this.hudTime = new Kiwi.HUD.Widget.TextField(this.state.game, '0:00', 450, 5);
     
     this.hudTime.style.fontFamily = 'myFirstFont';
@@ -21,11 +20,9 @@ HUDManager = function(state){
     this.hudTime.style.textShadow ="1.5px 1.5px  #000, -1.5px 1.5px  #000, 1.5px -1.5px  #000, -1.5px -1.5px  #000";
     this.hudTime.style.fontSize ="32px";
     this.hudTime.style.letterSpacing ="1px";
-    // this.hudTime.style.fontWeight="bold"
 
     ////////////////////////////
     //ZOMBIE COUNT
-
     this.hudZombieCount = new Kiwi.HUD.Widget.TextField(this.state.game, '5', 665, 5);
     
     this.hudZombieCount.style.fontFamily = 'myFirstFont';
@@ -33,11 +30,9 @@ HUDManager = function(state){
     this.hudZombieCount.style.textShadow ="1.5px 1.5px  #000, -1.5px 1.5px  #000, 1.5px -1.5px  #000, -1.5px -1.5px  #000";
     this.hudZombieCount.style.fontSize ="32px";
     this.hudZombieCount.style.letterSpacing ="1px";
-    // this.hudZombieCount.style.fontWeight="bold"
 
     ////////////////////////////
     //Choco COUNT
-
     this.hudChocCount = new Kiwi.HUD.Widget.TextField(this.state.game, '0', 275, 5);
     
     this.hudChocCount.style.fontFamily = 'myFirstFont';
@@ -45,11 +40,6 @@ HUDManager = function(state){
     this.hudChocCount.style.textShadow="1.5px 1.5px  #000, -1.5px 1.5px  #000, 1.5px -1.5px  #000, -1.5px -1.5px  #000";
     this.hudChocCount.style.fontSize ="32px";
     this.hudChocCount.style.letterSpacing ="1px";
-    // this.hudChocCount.style.fontWeight="bold"
-
-
-
-
 
     ////////////////////////////////
     //Bar
@@ -59,8 +49,6 @@ HUDManager = function(state){
     ////////////////////////////////
     //Zombie
     this.zombieIcon = new Kiwi.HUD.Widget.Icon(this.state.game, this.state.textures.zombieHead, 600, 5);
-
-
     this.state.game.huds.defaultHUD.addWidget(this.barIcon);
     this.state.game.huds.defaultHUD.addWidget(this.zombieIcon);
 
@@ -74,21 +62,10 @@ HUDManager = function(state){
     this.state.game.huds.defaultHUD.addWidget(this.nickFace);
     this.state.game.huds.defaultHUD.addWidget(this.clockFace);
 
-
 }
 
 
 HUDManager.prototype.update = function(){
-
-	// this.energy = this.state.gameManager.playersEnergy;
-
- //    this.health = this.state.gameManager.playersHealth;
- //    this.score  = this.state.gameManager.score;
-
-	// this.playersEnergy.counter.current = this.energy;
- //    this.playersHealth.counter.current = this.health;
-
- //   this.hudScore.text = "$"+this.score;
     this.hudChocCount.text = this.state.chocBarManager.barsCollected;
     this.hudZombieCount.text = this.state.zombieCounter;
     this.playersHealth.counter.current = this.state.player.health;

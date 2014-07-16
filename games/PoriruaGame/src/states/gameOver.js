@@ -56,13 +56,36 @@ PoriruaGame.GameOver.create = function (params) {
     this.addScoreUI();
 
     this.leaderBoardX = 317;
-    this.leaderBoardY = 125;
-    this.leaderBoardYStep = 70;
+    this.leaderBoardY = 128;
+    this.leaderBoardYStep = 72;
     this.scoreboard = [];
 
     this.playAgain = new Kiwi.GameObjects.Sprite(this, this.textures.againGameOver, 35, 252);
     this.addChild(this.playAgain);
     this.playAgain.input.onUp.add(this.playAgainHit, this);
+
+    this.pointer = null;
+    this.scrolling = false;
+    this.initY = 0;
+
+    this.game.input.mouse.onDown.add(this.checkDown, this);
+    this.game.input.mouse.onUp.add(this.checkInput, this);
+    this.data = null;
+    this.percent = 0;
+    this.noOverlay = true;
+
+    this.createScrollBar();
+
+
+    this.facebookButton = new Kiwi.GameObjects.Sprite(this, this.textures.facebookGameOver,249, 348);
+    this.addChild(this.facebookButton);
+    this.facebookButton.input.onUp.add(this.facebookButtonHit, this);
+    this.twitterButton = new Kiwi.GameObjects.Sprite(this, this.textures.twitterGameOver, 201, 348);
+    this.addChild(this.twitterButton);
+    this.twitterButton.input.onUp.add(this.twitterButtonHit, this);
+    this.googlePlusButton = new Kiwi.GameObjects.Sprite(this, this.textures.gPlusGameOver, 249, 348);
+    // this.addChild(this.googlePlusButton);
+    // this.googlePlusButton.input.onUp.add(this.googlePlusButtonHit, this);
 
 }
 
@@ -81,6 +104,8 @@ PoriruaGame.GameOver.playAgainHit = function () {
     game.huds.defaultHUD.removeAllWidgets();
     this.playAgain.input.onRelease.remove(this.playAgainHit, this);
     this.submitButton.input.onRelease.remove(this.submitScore, this);
+    this.game.input.mouse.onDown.remove(this.checkDown, this);
+    this.game.input.mouse.onUp.remove(this.checkInput, this);
     game.states.switchState("Intro");
 
 }
@@ -90,9 +115,45 @@ PoriruaGame.GameOver.setHighScore = function () {
 
 }
 
+PoriruaGame.GameOver.facebookButtonHit = function () {
+    console.log("facebookGameOver");
+
+
+    var u = location.href,
+    t="",
+    text="Help connect Porirua City with ultra fast fibre! Play our Gigatown game and do your bit for the city!";
+
+    window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer','toolbar=0, status=0, left=200, top=200, width=550, height=440');
+
+
+   
+}
+
+PoriruaGame.GameOver.twitterButtonHit = function () {
+    console.log("twitterGameOver");
+    var u = location.href,
+        t="",
+        text="Help connect Porirua City with ultra fast fibre! Play our Gigatown game and do your bit for the city!";
+
+     window.open('http://twitter.com/share?text='+ text +'&url='+ u, '_blank', 'scrollbars=0, resizable=1, menubar=0, left=200, top=200, width=550, height=440');
+
+}
+
 PoriruaGame.GameOver.update = function () {
     Kiwi.State.prototype.update.call(this);
     //this.updateScoreboard();
+    if(this.scrolling) {
+
+        this.scrollBar.y = Kiwi.Utils.GameMath.clamp( this.initY + this.pointer.y, this.maxScroll.y, this.minScroll.y);
+
+        var percent = Math.abs((this.minScroll.y - this.scrollBar.y) / (this.minScroll.y - this.maxScroll.y) );
+        //console.log(percent);
+        this.percent = percent;
+    }
+
+    if(this.data != null && this.noOverlay){
+        this.addBoard();
+    }
 
 
 
@@ -120,9 +181,16 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
         console.warn('Leaderboard Errored', transmissionError, data);
         return;
     }
+    console.log(data);
+    this.data = data;
 
+    var scrollBarPos = Math.round(data.length * this.percent);
+    console.log(scrollBarPos);
+    if(data.length < 4){
+        var loopNum = data.length;
+    } else {loopNum = 5;}
     //Loop through the scores
-    for(var i = 0; i < data.length; i++) {
+    for(var i = 0; i < 5; i++) {
     //for(var i = 0; i < 4; i++) {
 
         var leader = data[i];
@@ -132,8 +200,7 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
         // game
         // score
         // user
-        this.scoreboard[this.scoreboard.length] = new HighScoreBlock(this, this.leaderBoardX, this.leaderBoardYStep * i + this.leaderBoardY, leader.score, leader.user, i + 1);
-        this.addChild(this.scoreboard[this.scoreboard.length-1]);
+        this.scoreboard[this.scoreboard.length] = new HighScoreBlock(this, this.leaderBoardX, this.leaderBoardYStep * i + this.leaderBoardY, leader.score, leader.user, i + scrollBarPos+ 1);
 
 
     }
@@ -143,6 +210,7 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
 
 PoriruaGame.GameOver.submitScore = function () {
     game.huds.defaultHUD.removeAllWidgets();
+    this.noOverlay = false;
     
     this.addScoreUI();
     if(this.game.user.loggedIn == false) {
@@ -245,10 +313,76 @@ PoriruaGame.GameOver.addScoreUI = function(){
     game.huds.defaultHUD.addWidget(this.theScoreText);
 }
 
-PoriruaGame.GameOver.addBoard = function(){
-    console.log("Yes");
 
-    for (var i = this.scoreboard.length - 1; i >= 0; i--) {
-        this.scoreboard[i].addScores();
+
+
+
+PoriruaGame.GameOver.createScrollBar = function() {
+    var tempX = 704;
+    var tempY = 115;
+    this.scrollBar = new Kiwi.GameObjects.StaticImage(this, this.textures.scrollBar, tempX, tempY);
+    this.addChild(this.scrollBar);
+
+    this.minScroll = new Kiwi.Geom.Point(this.scrollBar.x, this.scrollBar.y);
+    this.maxScroll = new Kiwi.Geom.Point(this.scrollBar.x, this.scrollBar.y + 342);
+
+}
+
+PoriruaGame.GameOver.checkDown = function(x,y,td,tu,duration,pointer) {
+
+    if(this.scrollBar.box.hitbox.contains(x,y)) {
+
+        this.initY = this.scrollBar.y - y;
+
+        this.scrolling = true;
+        this.pointer = pointer;
+    }
+
+}
+
+PoriruaGame.GameOver.checkInput = function(x, y) {
+
+    if(this.scrolling) {
+        this.scrolling = false;
+        this.pointer = null;
+
+    } else {
+      
+        
+    }
+
+}
+
+
+
+PoriruaGame.GameOver.addBoard = function(){
+    //console.log("Yes");
+
+    var scrollBarPos = Math.round(this.data.length * this.percent);
+
+    for (var j = this.scoreboard.length - 1; j >= 0; j--) {
+        this.scoreboard[j].removeBlock();
     };
+    this.scoreboard = [];
+    if(this.data.length < 4){
+        var loopNum = this.data.length;
+    } else {loopNum = 5;}
+    //Loop through the scores
+    if(scrollBarPos >= this.data.length - 5){
+        scrollBarPos = this.data.length - 5; 
+    }
+    for(var i = 0; i  < 5; i++) {
+    //for(var i = 0; i < 4; i++) {
+
+        var leader = this.data[scrollBarPos + i];
+        //console.log(leader);
+
+        // date
+        // game
+        // score
+        // user
+        this.scoreboard[this.scoreboard.length] = new HighScoreBlock(this, this.leaderBoardX, this.leaderBoardYStep * i + this.leaderBoardY, leader.score, leader.user, i + scrollBarPos + 1);
+
+
+    }
 }

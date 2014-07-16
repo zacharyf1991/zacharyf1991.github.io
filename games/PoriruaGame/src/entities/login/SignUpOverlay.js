@@ -4,6 +4,7 @@ var SignUpOverlay = function(state){
 
 	this.stopCalls = false;
 	game.huds.defaultHUD.removeAllWidgets();
+	this.state.noOverlay = false;
 
 	this.background = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures.overlay, 0, 0);
 	this.overlaySignUp = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures.overlaySignUp, 172, 37);

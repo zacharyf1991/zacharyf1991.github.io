@@ -14,6 +14,24 @@ var ZombieManager = function(state){
 	this.framesToZombie = 100;
 	this.spawnFrames = -20 * 60;	// No zombies appear for the first few seconds
 	this.maxZombies = 8;
+	this.reserveZombies = 24;
+
+	// Spawn set dressing zombies
+	// Western hill zombies
+	for( var i = 0;  i < 6;  i++ )
+	{
+		this.addZombie(230,1520 + i * 20);
+	}
+	// Central quarantine zone zombies
+	for( var i = 0;  i < 10;  i++ )
+	{
+		this.addZombie(1095, 1405 + i * 10);
+	}
+	// Eastern highway zombies
+	for( var i = 0;  i < 8;  i++ )
+	{
+		this.addZombie(2025 + i * 15, 980 + i * 30);
+	}
 }
 Kiwi.extend(ZombieManager, Kiwi.Group);
 
@@ -44,7 +62,7 @@ ZombieManager.prototype.update = function(){
 	
 	// Spawn zombies
 	this.spawnFrames += this.state.game.speedGovernor.t();
-	if(this.framesToZombie <= this.spawnFrames  &&  this.enemiesLength <= this.maxZombies)
+	if(this.framesToZombie <= this.spawnFrames  &&  this.enemiesLength <= this.maxZombies + this.reserveZombies)
 	{
 		this.spawnFrames -= this.framesToZombie;
 		this.addRandomZombie();

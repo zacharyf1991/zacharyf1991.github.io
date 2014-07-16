@@ -3835,7 +3835,7 @@ var Kiwi;
                         this.members[i].destroy(true);
                     }
                 } else {
-                    this.removeChildren();
+                    //this.removeChildren();
                 }
 
                 if (this.parent !== null)

@@ -62,6 +62,7 @@ LoginOverlay.prototype.update = function(){
 LoginOverlay.prototype.remove = function() {
 	this.background.exists = false;
 	this.overlayLogin.exists = false;
+	this.state.noOverlay = true;
 
 
 

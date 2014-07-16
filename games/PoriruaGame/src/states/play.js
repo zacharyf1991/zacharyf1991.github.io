@@ -15,7 +15,6 @@ PoriruaGame.Play.init = function () {
 
 
 PoriruaGame.Play.create = function () {
-  	this.name = new Kiwi.GameObjects.StaticImage(this, this.textures.kiwiName, 10, 10);
     this.camera = game.cameras.defaultCamera;
     this.cameraManager = new CameraManager(this);
 
@@ -26,8 +25,6 @@ PoriruaGame.Play.create = function () {
 
     this.rect1 = new Kiwi.Plugins.GameObjects.Geom.Rectangle(this);
     this.addChild(this.rect1);
-    this.addChild(this.name);
-    //this.rect1.render();
     this.inputManager = new InputManager(this);
     this.player = new PlayerManager(this, 403, 938);
     this.junctionPointManager = new JunctionPointManager(this);
@@ -39,6 +36,7 @@ PoriruaGame.Play.create = function () {
 
     this.chocBarManager = new ChocBarManager(this);
     this.timer.start();
+    this.animManager = new AnimatedFeatureManager(this);
 
 
 
@@ -63,8 +61,8 @@ PoriruaGame.Play.create = function () {
 
 PoriruaGame.Play.update = function(){
   Kiwi.State.prototype.update.call(this);
-  this.rect1.render();
-  this.rect1.update();
+  //this.rect1.render();
+  //this.rect1.update();
 
   // this.player.update();
   // this.player.physics.update();
