@@ -12,9 +12,9 @@ var HighScoreBlock = function (state, x, y, score, name, position){
     //Choco COUNT
     this.backgroundHighScore = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.scoreBlock, x, y);
 
-    this.nameText = new Kiwi.GameObjects.Textfield(this.state, this.name, this.x + 60, this.y+ 10, '#ffffff', 16, 'normal', 'myFirstFont');
-    this.scoreText = new Kiwi.GameObjects.Textfield(this.state, this.score + "", this.x + 300, this.y+ 10, '#ffffff', 32, 'normal', 'myFirstFont');
-    this.postitionText = new Kiwi.GameObjects.Textfield(this.state, this.position + "", this.x + 10, this.y+ 10, '#ffffff', 32, 'normal', 'myFirstFont');
+    this.nameText = new Kiwi.GameObjects.Textfield(this.state, this.name, this.x + 60, this.y+ 22, '#ffffff', 16, 'normal', 'myFirstFont');
+    this.scoreText = new Kiwi.GameObjects.Textfield(this.state, this.score + "", this.x + 300, this.y+ 18, '#ffffff', 24, 'normal', 'myFirstFont');
+    this.postitionText = new Kiwi.GameObjects.Textfield(this.state, this.position + "", this.x + 10, this.y+ 13, '#ffffff', 32, 'normal', 'myFirstFont');
     
     // this.nameText.style.fontFamily = 'myFirstFont';
     // this.nameText.style.color = '#ffffff';

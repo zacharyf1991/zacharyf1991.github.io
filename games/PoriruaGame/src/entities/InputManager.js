@@ -11,18 +11,18 @@ var InputManager = function (state, x, y){
 
     ///////////////////
     //KEYBOARD
-    this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
-    this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.A);
-    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W);
-    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S);
+    this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D, true);
+    this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.A, true);
+    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W, true);
+    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S, true);
 
-    this.rightArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT);
-    this.leftArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT);
-    this.upArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.UP);
-    this.downArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN);
+    this.rightArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT, true);
+    this.leftArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT, true);
+    this.upArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.UP, true);
+    this.downArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
 
-    this.spawnKey = this.keyboard.addKey(Kiwi.Input.Keycodes.Q);
-    this.restartKey = this.keyboard.addKey(Kiwi.Input.Keycodes.R);
+    this.spawnKey = this.keyboard.addKey(Kiwi.Input.Keycodes.Q, true);
+    this.restartKey = this.keyboard.addKey(Kiwi.Input.Keycodes.R, true);
 
 
     ////////////////////////

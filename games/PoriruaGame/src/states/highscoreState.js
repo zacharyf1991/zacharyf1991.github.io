@@ -90,9 +90,9 @@ PoriruaGame.HighscoreState.facebookButtonHit = function () {
 
     var u = location.href,
     t="",
-    text="Help connect Porirua City with ultra fast fibre! Play our Gigatown game and do your bit for the city!";
+    text="Fight off zombies & light up Porirua! Play this game, get a highscore, & win FREE Whittaker's Chocolate! bit.ly/1jDf43r #gigatownporirua";
 
-    window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer','toolbar=0, status=0, left=200, top=200, width=550, height=440');
+    window.open('http://www.facebook.com/sharer.php?t='+encodeURIComponent(t),'sharer','toolbar=0, status=0, left=200, top=200, width=550, height=440');
 
 
    
@@ -100,13 +100,11 @@ PoriruaGame.HighscoreState.facebookButtonHit = function () {
 
 PoriruaGame.HighscoreState.twitterButtonHit = function () {
     console.log("twitterGameOver");
-    var u = location.href,
-        t="",
-        text="Help connect Porirua City with ultra fast fibre! Play our Gigatown game and do your bit for the city!";
-
-     window.open('http://twitter.com/share?text='+ text +'&url='+ u, '_blank', 'scrollbars=0, resizable=1, menubar=0, left=200, top=200, width=550, height=440');
-
+    var myText = "Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua"
+    var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+encodeURIComponent(myText)
+    window.open(myURL);
 }
+
 
 
 

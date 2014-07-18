@@ -42,13 +42,13 @@ AnimatedFeatureManager.prototype.createAnimations = function() {
 	this.state.addChild(this.animPlane);
 
 
-	this.animFish = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.animFish, 55, 286);
-	this.animFish.animation.add('play', [0, 1, 2, 3], 0.35, true);
+	this.animFish = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.animFish, -05, 346);
+	this.animFish.animation.add('play', [0, 1, 2, 3, 4, 5, 6, 7], 0.15, true);
 	this.animFish.animation.play('play');
 	this.state.addChild(this.animFish);
 
 	this.animFish_2 = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.animFish, 1276, 391);
-	this.animFish_2.animation.add('play', [0, 1, 2, 3], 0.35, true);
+	this.animFish_2.animation.add('play', [0, 1, 2, 3, 4, 5, 6, 7], 0.15, true);
 	this.animFish_2.animation.play('play');
 	this.state.addChild(this.animFish_2);
 

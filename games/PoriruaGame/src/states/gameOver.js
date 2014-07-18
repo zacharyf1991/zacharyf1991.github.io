@@ -101,12 +101,14 @@ PoriruaGame.GameOver.getHighScore = function () {
 
 }
 PoriruaGame.GameOver.playAgainHit = function () {
-    game.huds.defaultHUD.removeAllWidgets();
-    this.playAgain.input.onRelease.remove(this.playAgainHit, this);
-    this.submitButton.input.onRelease.remove(this.submitScore, this);
-    this.game.input.mouse.onDown.remove(this.checkDown, this);
-    this.game.input.mouse.onUp.remove(this.checkInput, this);
-    game.states.switchState("Intro");
+    if(this.noOverlay){
+        game.huds.defaultHUD.removeAllWidgets();
+        this.playAgain.input.onRelease.remove(this.playAgainHit, this);
+        this.submitButton.input.onRelease.remove(this.submitScore, this);
+        this.game.input.mouse.onDown.remove(this.checkDown, this);
+        this.game.input.mouse.onUp.remove(this.checkInput, this);
+        game.states.switchState("Intro");
+    }
 
 }
 PoriruaGame.GameOver.setHighScore = function () {
@@ -116,27 +118,29 @@ PoriruaGame.GameOver.setHighScore = function () {
 }
 
 PoriruaGame.GameOver.facebookButtonHit = function () {
-    console.log("facebookGameOver");
+    if(this.noOverlay){
+        console.log("facebookGameOver");
 
 
-    var u = location.href,
-    t="",
-    text="Help connect Porirua City with ultra fast fibre! Play our Gigatown game and do your bit for the city!";
+        var u = location.href,
+        t="",
+        text="Help connect Porirua City with ultra fast fibre! Play our Gigatown game and do your bit for the city!";
 
-    window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer','toolbar=0, status=0, left=200, top=200, width=550, height=440');
-
+        window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer','toolbar=0, status=0, left=200, top=200, width=550, height=440');
+    }
 
    
 }
 
 PoriruaGame.GameOver.twitterButtonHit = function () {
-    console.log("twitterGameOver");
-    var u = location.href,
-        t="",
-        text="Help connect Porirua City with ultra fast fibre! Play our Gigatown game and do your bit for the city!";
-
-     window.open('http://twitter.com/share?text='+ text +'&url='+ u, '_blank', 'scrollbars=0, resizable=1, menubar=0, left=200, top=200, width=550, height=440');
-
+    if(this.noOverlay){
+        console.log("twitterGameOver");
+        
+         console.log("twitterGameOver");
+        var myText = "Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua"
+        var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+encodeURIComponent(myText)
+        window.open(myURL);
+     }
 }
 
 PoriruaGame.GameOver.update = function () {
@@ -210,7 +214,7 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
 
 PoriruaGame.GameOver.submitScore = function () {
     game.huds.defaultHUD.removeAllWidgets();
-    this.noOverlay = false;
+    this.noOverlay = false;;
     
     this.addScoreUI();
     if(this.game.user.loggedIn == false) {
@@ -230,6 +234,8 @@ PoriruaGame.GameOver.submitScore = function () {
             this.getScores();
 
         }, this );
+        console.log("Game should switch back to introState");
+        this.noOverlay = true;
         this.playAgainHit();
 
     }

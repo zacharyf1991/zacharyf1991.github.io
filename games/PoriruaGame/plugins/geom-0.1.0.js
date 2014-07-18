@@ -48,8 +48,15 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle = function(state) {
         this.glRenderer = this.game.renderer.requestSharedRenderer("TextureAtlasRenderer");
     }
 
-    this._width = 2098;
-    this._height = 2161;
+    // Canvas Dimensions
+    this.width = 4096;
+    this.height = 4096;
+
+    this._scaleDown = 2;
+    this._scaleDownMatrix = new Kiwi.Geom.Matrix(1 / this._scaleDown, 0, 0 , 1 / this._scaleDown, 0, 0);
+
+    this._width = this.width / this._scaleDown;
+    this._height = this.height / this._scaleDown;
 
     this.canvas = document.createElement('canvas');
     this.ctx = this.canvas.getContext('2d');
@@ -75,13 +82,10 @@ Kiwi.extend(Kiwi.Plugins.GameObjects.Geom.Rectangle, Kiwi.Entity);
 
 // Sets up initial draw data
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype._initMap = function() {
-    //Calculate the Dimensions
-    var width = this.width;
-    var height = this.height;
 
     //size of stage map size 
-    this.canvas.width = 2098;
-    this.canvas.height = 2161;
+    this.canvas.width = this._width;
+    this.canvas.height = this._height;
 
 
     this.lineStyle();
@@ -246,12 +250,16 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.render = function() {
     var m = t.getConcatenatedMatrix();
 
     ctx.transform(m.a, m.b, m.c, m.d, m.tx, m.ty);
-    ctx.drawImage(this.canvas, 0, 0, 2098, 2161, 0, 0, 2098, 2161);
+    ctx.drawImage(this.canvas, 0, 0, this.width, this.height);
     ctx.restore();
 }
 
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.renderGL = function(gl, camera) {
+    // This doesn't work
     if (typeof params === "undefined") { params = null; }
+
+    if(this.dirty) this._renderRect();
+
     this.glRenderer.addToBatch(gl, this, camera);
 }
 
@@ -275,12 +283,22 @@ Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.update = function() {
 }
 
 Kiwi.Plugins.GameObjects.Geom.Rectangle.prototype.drawMap = function(){
-    this.ctx.clearRect(0, 0, 2098,2161);
+    this.ctx.clearRect(0, 0, this._width,this._height);
+
+    // Accelerate scale
+    this.ctx.save();
+    this.ctx.transform(this._scaleDownMatrix.a, this._scaleDownMatrix.b, 
+        this._scaleDownMatrix.c, this._scaleDownMatrix.d, 
+        this._scaleDownMatrix.tx, this._scaleDownMatrix.ty );
+
     this.ctx.beginPath();
     for (var i = this.allRoadPoints.length - 1; i >= 0; i--) {
         this.drawRoad(this.allRoadPoints[i]);
     };
     this.ctx.stroke();
+
+    // Pop scale styling
+    this.ctx.restore();
 
     this.dirty = true;
 }

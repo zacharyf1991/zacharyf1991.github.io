@@ -165,8 +165,10 @@ PoriruaGame.Loading.addLeaderboardAssets = function () {
     this.addSpriteSheet('animBeachball1', 'assets/img/animatedfeatures/anim-beachball1.png', 87, 133);
     this.addSpriteSheet('animBoat', 'assets/img/animatedfeatures/anim-boat.png', 107, 109);
     this.addSpriteSheet('animPlane', 'assets/img/animatedfeatures/anim-boatplane.png', 164, 118);
-    this.addSpriteSheet('animFish', 'assets/img/animatedfeatures/anim-fish.png', 300, 330);
+    this.addSpriteSheet('animFish', 'assets/img/animatedfeatures/anim-fish.png', 300, 165);
     this.addSpriteSheet('animWaka', 'assets/img/animatedfeatures/anim-waka.png', 198, 62);
+
+    this.addSpriteSheet('hashTag', 'assets/img/hashtag-button.png', 371, 40);
 
 
 

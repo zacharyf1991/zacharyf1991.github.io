@@ -46,6 +46,10 @@ PoriruaGame.Intro.create = function () {
     this.okButton.input.onRelease.add(this.okUp, this);
     this.okButton.alpha = 0;
 
+    this.hashTag = new Kiwi.GameObjects.Sprite(this, this.textures.hashTag, 28, 460);
+    this.addChild(this.hashTag);
+    this.hashTag.input.onRelease.add(this.hashTagHit, this);
+
 
     this.highScoreButton.input.onUp.add(this.highScoreHit, this);
 
@@ -90,6 +94,15 @@ PoriruaGame.Intro.okUp = function () {
     	game.states.switchState("Play");
 		
 	} 
+
+}
+
+PoriruaGame.Intro.hashTagHit = function () {
+    console.log("hashTagHit");
+        
+    var myText = "Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua"
+    var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+encodeURIComponent(myText)
+    window.open(myURL);
 
 }
 
