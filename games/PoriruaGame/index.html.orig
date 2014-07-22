@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
@@ -6,15 +6,18 @@
 
     <script type="text/javascript" src="//connect.facebook.net/en_UK/all.js"></script>
 
-    <script src="lib/kiwi.min.js"></script>
+    <script src="lib/kiwi.js"></script>
     <script src="lib/kiwipreloader.js"></script>
     <script type="text/javascript" src="plugins/geom-0.1.0.js"></script>
     <script type="text/javascript" src="plugins/Roads.js"></script>
     <script type="text/javascript" src="plugins/gamefroot-account-0.1.0.js"></script>
     <script type="text/javascript" src="plugins/gamefroot-leaderboard-0.1.0.js"></script>
+<<<<<<< HEAD
+	<script type="text/javascript" src="plugins/AITreePlugin.js"></script>
+=======
     <script type="text/javascript" src="plugins/saveManager-1.0.1.js"></script>
     <script type="text/javascript" src="plugins/facebook-connect-0.1.0.js"></script>
-    <script type="text/javascript" src="plugins/SpeedGovernor.js"></script>
+>>>>>>> master
 
 
     <script type="text/javascript" src="src/managers/user.js"></script>
@@ -25,7 +28,6 @@
     <script type="text/javascript" src="src/entities/InputManager.js"></script>
     <script type="text/javascript" src="src/entities/CameraManager.js"></script>
     <script type="text/javascript" src="src/entities/hudManager.js"></script>
-    <script type="text/javascript" src="src/entities/AnimatedFeatureManager.js"></script>
 
     <script type="text/javascript" src="src/entities/login/LoginOverlay.js"></script>
     <script type="text/javascript" src="src/entities/login/SignUpOverlay.js"></script>
@@ -49,7 +51,6 @@
     <script type="text/javascript" src="src/states/play.js"></script>
     <script type="text/javascript" src="src/states/intro.js"></script>
     <script type="text/javascript" src="src/states/loading.js"></script>
-    <script type="text/javascript" src="src/states/submitted.js"></script>
     <script type="text/javascript" src="src/game.js"></script>
 
     <style>

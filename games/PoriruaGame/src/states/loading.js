@@ -47,6 +47,8 @@ PoriruaGame.Loading.preload = function () {
     this.addImage('nickHead', 'assets/img/hud/nicks-head.png');
     this.addImage('clock', 'assets/img/hud/hud-clock.png');
 
+    this.addImage('scoreSubmit', 'assets/img/leaderboard/score-submitted-modal.png');
+
 
 
     this.addImage('background', 'assets/img/porirua-map.jpg');

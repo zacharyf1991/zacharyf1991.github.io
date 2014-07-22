@@ -2,14 +2,6 @@ var PoriruaGame = PoriruaGame || {};
 
 PoriruaGame.GameOver = new Kiwi.State('GameOver');
 
-/**
-* The IntroState is the state which would manage any main-menu functionality for your game.
-* Generally this State would switch to other sub 'states' which would handle the individual features. 
-*  
-* Right now we are just switching straight to the PlayState.
-*
-*/
-
 
 PoriruaGame.GameOver.create = function (params) {
     game.cameras.defaultCamera.transform.x = 0;
@@ -26,23 +18,26 @@ PoriruaGame.GameOver.create = function (params) {
     var barPoints = 10;
     var zombiePoints = 25;
 
-    this.theEndScore = ((this.params.time + 100) / 100) * ((this.params.zombies * zombiePoints) + (this.params.bars * barPoints));
-    console.log(this.theEndScore);
+
+
+    if(this.params.condition == 'win'){
+        this.win = new Kiwi.GameObjects.Sprite(this, this.textures.winGameOver, 20, 10);
+        this.theEndScore = ((this.params.time + 400) / 100) * ((this.params.zombies * zombiePoints) + (this.params.bars * barPoints));
+        this.addChild(this.win);
+    } else if(this.params.condition == 'lose'){
+        this.lose = new Kiwi.GameObjects.Sprite(this, this.textures.loseGameOver, 20, 10);
+        this.theEndScore = ((this.params.time + 100) / 100) * ((this.params.zombies * zombiePoints) + (this.params.bars * barPoints));
+        this.addChild(this.lose);
+
+    } else{
+        this.theEndScore = 0;
+    }
+
     this.theEndScore = Math.round(this.theEndScore);
     this.chocBars = this.params.bars;
     //console.log(this.params);
 
     this.scores = this.getHighScore();
-
-    if(this.params.condition == 'win'){
-        this.win = new Kiwi.GameObjects.Sprite(this, this.textures.winGameOver, 20, 10);
-        this.addChild(this.win);
-    } else if(this.params.condition == 'lose'){
-        this.lose = new Kiwi.GameObjects.Sprite(this, this.textures.loseGameOver, 20, 10);
-        this.addChild(this.lose);
-
-    } 
-
 
     this.submitButton = new Kiwi.GameObjects.Sprite(this, this.textures.submitGameOver, 184, 450);
     this.addChild(this.submitButton);
@@ -111,6 +106,18 @@ PoriruaGame.GameOver.playAgainHit = function () {
     }
 
 }
+
+PoriruaGame.GameOver.scoreSubmitted = function () {
+    if(this.noOverlay){
+        game.huds.defaultHUD.removeAllWidgets();
+        this.playAgain.input.onRelease.remove(this.playAgainHit, this);
+        this.submitButton.input.onRelease.remove(this.submitScore, this);
+        this.game.input.mouse.onDown.remove(this.checkDown, this);
+        this.game.input.mouse.onUp.remove(this.checkInput, this);
+        game.states.switchState("Submitted");
+    }
+
+}
 PoriruaGame.GameOver.setHighScore = function () {
 
 
@@ -134,12 +141,11 @@ PoriruaGame.GameOver.facebookButtonHit = function () {
 
 PoriruaGame.GameOver.twitterButtonHit = function () {
     if(this.noOverlay){
-        console.log("twitterGameOver");
-        
-         console.log("twitterGameOver");
-        var myText = "Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua"
-        var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+encodeURIComponent(myText)
-        window.open(myURL);
+        var u="",
+        text="Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua";
+   
+        window.open('http://twitter.com/share?text='+ encodeURIComponent(text) +'&url='+ encodeURIComponent(u), '_blank', 'scrollbars=0, resizable=1, menubar=0, left=200, top=200, width=550, height=440');
+    
      }
 }
 
@@ -185,11 +191,9 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
         console.warn('Leaderboard Errored', transmissionError, data);
         return;
     }
-    console.log(data);
     this.data = data;
 
     var scrollBarPos = Math.round(data.length * this.percent);
-    console.log(scrollBarPos);
     if(data.length < 4){
         var loopNum = data.length;
     } else {loopNum = 5;}
@@ -198,8 +202,6 @@ PoriruaGame.GameOver.updateLeaderboard = function(transmissionError, data) {
     //for(var i = 0; i < 4; i++) {
 
         var leader = data[i];
-        //console.log(leader);
-
         // date
         // game
         // score
@@ -234,9 +236,9 @@ PoriruaGame.GameOver.submitScore = function () {
             this.getScores();
 
         }, this );
-        console.log("Game should switch back to introState");
+        console.log("Game should switch back to IntroState");
         this.noOverlay = true;
-        this.playAgainHit();
+        this.scoreSubmitted();
 
     }
     
@@ -256,12 +258,6 @@ PoriruaGame.GameOver.mouseLoc = function () {
 
 }
 
-
-// PoriruaGame.GameOver.shareGame = function () {
-//     var myText = "I scored " + this.currHighScore + " points at -90, can you last longer? %20%23negativeNinety via @kiwijsengine"
-//     var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+myText
-//     window.open(myURL);
-// }
 
 
 PoriruaGame.GameOver.addScoreUI = function(){
@@ -301,7 +297,7 @@ PoriruaGame.GameOver.addScoreUI = function(){
     ////////////////////////////
     //Score COUNT
 
-    this.theScoreText = new Kiwi.HUD.Widget.TextField(game, this.theEndScore + "", 200, 207);
+    this.theScoreText = new Kiwi.HUD.Widget.TextField(game, this.theEndScore + "", 195, 207);
     
     this.theScoreText.style.fontFamily = 'myFirstFont';
     this.theScoreText.style.color = '#ffffff';

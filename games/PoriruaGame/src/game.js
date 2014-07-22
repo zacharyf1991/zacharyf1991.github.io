@@ -31,5 +31,6 @@ game.states.addState(PoriruaGame.Intro);
 game.states.addState(PoriruaGame.Play);
 game.states.addState(PoriruaGame.GameOver);
 game.states.addState(PoriruaGame.HighscoreState);
+game.states.addState(PoriruaGame.Submitted);
 
 game.states.switchState("Loading");

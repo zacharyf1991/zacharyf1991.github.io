@@ -12,7 +12,9 @@ PoriruaGame.Intro = new Kiwi.State('Intro');
 
 
 PoriruaGame.Intro.init = function() {
-    this.game.facebook.init("475189252617071");
+    var id = 253547578175655;  
+
+    this.game.facebook.init( id );
     this.backgroundMusic = new Kiwi.Sound.Audio(this.game, 'loop', 0.3, true);
     this.backgroundMusic.play();
 }
@@ -21,6 +23,8 @@ PoriruaGame.Intro.init = function() {
 PoriruaGame.Intro.create = function () {
     this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.startBackground, 0, 0);
     this.addChild(this.background);
+
+
 
 
     this.soundToggleButton = new Kiwi.GameObjects.Sprite(this, this.textures.soundToggleButton, 515, 460);
@@ -45,10 +49,6 @@ PoriruaGame.Intro.create = function () {
     this.addChild(this.okButton);
     this.okButton.input.onRelease.add(this.okUp, this);
     this.okButton.alpha = 0;
-
-    this.hashTag = new Kiwi.GameObjects.Sprite(this, this.textures.hashTag, 28, 460);
-    this.addChild(this.hashTag);
-    this.hashTag.input.onRelease.add(this.hashTagHit, this);
 
 
     this.highScoreButton.input.onUp.add(this.highScoreHit, this);

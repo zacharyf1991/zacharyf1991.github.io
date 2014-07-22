@@ -69,7 +69,9 @@ PoriruaGame.Managers.User.prototype.gamefrootLogin = function(callback, context)
 
 			//Login to Gamefroot with that information
 			var data = { fb: true, fullRes: resp };
-			this.login( data, callback, context );
+			if(this.login( data, callback, context ) == false) {
+				callback.call( context, false, { result: 'fail' });
+			}
 
 		} else {
 			callback.call( context, false, { result: 'fail' });

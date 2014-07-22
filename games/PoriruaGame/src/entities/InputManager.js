@@ -11,18 +11,10 @@ var InputManager = function (state, x, y){
 
     ///////////////////
     //KEYBOARD
-    this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D, true);
-    this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.A, true);
-    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W, true);
-    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S, true);
-
     this.rightArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT, true);
     this.leftArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT, true);
     this.upArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.UP, true);
     this.downArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
-
-    this.spawnKey = this.keyboard.addKey(Kiwi.Input.Keycodes.Q, true);
-    this.restartKey = this.keyboard.addKey(Kiwi.Input.Keycodes.R, true);
 
 
     ////////////////////////
@@ -46,13 +38,13 @@ InputManager.prototype.keyDownOnce = function(keyCode, key) {
     // body...
     //console.log(keyCode, key);
 
-    if(keyCode == this.rightKey.keyCode || this.rightArrowKey.keyCode == keyCode){
+    if(this.rightArrowKey.keyCode == keyCode){
         this.state.player.updateKeyDown('RIGHT');
-    } else if(keyCode == this.leftKey.keyCode || this.leftArrowKey.keyCode == keyCode){
+    } else if(this.leftArrowKey.keyCode == keyCode){
         this.state.player.updateKeyDown('LEFT');
-    } else if(keyCode == this.upKey.keyCode || this.upArrowKey.keyCode == keyCode){
+    } else if(this.upArrowKey.keyCode == keyCode){
         this.state.player.updateKeyDown('UP');
-    } else if(keyCode == this.downKey.keyCode || this.downArrowKey.keyCode == keyCode){
+    } else if(this.downArrowKey.keyCode == keyCode){
         this.state.player.updateKeyDown('DOWN');
     } 
     
@@ -65,14 +57,14 @@ InputManager.prototype.keyUp = function(keyCode, key) {
     // body...
     //console.log(keyCode, key);
     //Move
-    if(keyCode == this.rightKey.keyCode || this.rightArrowKey.keyCode == keyCode){
+    if(this.rightArrowKey.keyCode == keyCode){
         this.state.player.updateKeyUp('RIGHT');
-    } else if(keyCode == this.leftKey.keyCode || this.leftArrowKey.keyCode == keyCode){
+    } else if(this.leftArrowKey.keyCode == keyCode){
         this.state.player.updateKeyUp('LEFT');
     }
-    if(keyCode == this.upKey.keyCode || this.upArrowKey.keyCode == keyCode){
+    if(this.upArrowKey.keyCode == keyCode){
         this.state.player.updateKeyUp('UP');
-    } else if(keyCode == this.downKey.keyCode|| this.downArrowKey.keyCode == keyCode){
+    } else if(this.downArrowKey.keyCode == keyCode){
         this.state.player.updateKeyUp('DOWN');
     }  
   

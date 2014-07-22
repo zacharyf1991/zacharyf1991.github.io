@@ -162,7 +162,7 @@ Kiwi.Plugins.GamefrootAccount.GF.prototype.login = function( data, callback, con
         var obj = {
             "type": 'fb',
             "id": data.fullRes.id,
-            "fullRes": data.fullRes
+            "fullRes": JSON.stringify(data.fullRes)
         };
 
     } else {

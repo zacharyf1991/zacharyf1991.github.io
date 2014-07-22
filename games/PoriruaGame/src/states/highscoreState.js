@@ -100,9 +100,16 @@ PoriruaGame.HighscoreState.facebookButtonHit = function () {
 
 PoriruaGame.HighscoreState.twitterButtonHit = function () {
     console.log("twitterGameOver");
-    var myText = "Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua"
-    var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+encodeURIComponent(myText)
-    window.open(myURL);
+    // var myText = "Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua"
+    // var myURL = "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fkiwijs.org%2F2048%2F&text="+encodeURIComponent(myText)
+    // window.open(myURL,'toolbar=0, status=0, left=200, top=200, width=550, height=440');
+
+
+    var u="",
+        text="Fight off zombies & light up Porirua! Play the game, get a highscore, win FREE Whittaker's Chocolate bit.ly/1jDf43r #gigatownporirua";
+   
+        window.open('http://twitter.com/share?text='+ encodeURIComponent(text) +'&url='+ encodeURIComponent(u), '_blank', 'scrollbars=0, resizable=1, menubar=0, left=200, top=200, width=550, height=440');
+    
 }
 
 
@@ -157,26 +164,15 @@ PoriruaGame.HighscoreState.updateLeaderboard = function(transmissionError, data)
         console.warn('Leaderboard Errored', transmissionError, data);
         return;
     }
-    console.log(data);
     this.data = data;
 
     var scrollBarPos = Math.round(data.length * this.percent);
-    console.log(scrollBarPos);
     if(data.length < 4){
         var loopNum = data.length;
     } else {loopNum = 5;}
-    //Loop through the scores
     for(var i = 0; i < loopNum; i++) {
-    //for(var i = 0; i < 4; i++) {
 
         var leader = data[i];
-        console.log(leader);
-        //console.log(leader);
-
-        // date
-        // game
-        // score
-        // user
         this.scoreboard[this.scoreboard.length] = new HighScoreBlock(this, this.leaderBoardX, this.leaderBoardYStep * i + this.leaderBoardY, leader.score, leader.user, i + 1);
 
 

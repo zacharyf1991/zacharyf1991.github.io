@@ -57,17 +57,19 @@ Kiwi.Plugins.FacebookConnect.FB = function( game ) {
 
     this.game = game;
 
+    this._facebook = FB;
 }
 
 Kiwi.Plugins.FacebookConnect.FB.prototype.init = function(appId) {
 
-    this._facebook = FB;
 
-    this._facebook.init({
+    this._facebook.init( {
         appId: appId,
         status: true,
         version: 'v2.0'
-    });
+    } );
+
+    console.log('Facebook Initialised.');
 
 }
 

@@ -5,28 +5,28 @@ var LoginOverlay = function(state){
 	game.huds.defaultHUD.removeAllWidgets();
 
 	this.background = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures.overlay, 0, 0);
-	this.overlayLogin = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures.overlayLogin, 305, 112);
+	this.overlayLogin = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures.overlayLogin, 305 - 130, 112 - 80);
 
 	this.stopCalls = false;
 
 
 	////////////
 	//Create Four buttons to be pressed.
-	this.okButton = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.okLogin, 590, 442);
-	this.backLogin = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.backLogin, 315, 442);
-	this.createAccountLogin = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.createAccountLogin, 558, 268);
-	this.facebookLogin = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.facebookLogin, 671, 317);
+	this.okButton = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.okLogin, 590- 130, 442 - 80);
+	this.backLogin = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.backLogin, 315 - 130, 442 - 80);
+	this.createAccountLogin = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.createAccountLogin, 558 - 130, 268 - 80);
+	this.facebookLogin = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.facebookLogin, 671 - 130, 317 - 80);
 
 
 	//////////////////
 	//Create two HUDinput objects
-	this.usernameText = new HUDInput(game, "text", 420, 188);
+	this.usernameText = new HUDInput(game, "text", 420 - 130, 188  - 80);
     this.usernameText.input.style.backgroundColor = "#b0d9e6";
     this.usernameText.input.style.width = "280px";
     this.usernameText.input.style.height = "24px";
 
 
-	this.passwordText = new HUDInput(game, "password", 420, 221);
+	this.passwordText = new HUDInput(game, "password", 420 - 130, 221  - 80);
 	this.passwordText.input.style.backgroundColor = "#b0d9e6";
     this.passwordText.input.style.width = "280px";
     this.passwordText.input.style.height = "24px";
@@ -47,8 +47,9 @@ var LoginOverlay = function(state){
 	this.createAccountLogin.input.onUp.add(this.createAccount, this);
 	this.okButton.input.onUp.add(this.okButtonHit, this);
 	this.backLogin.input.onUp.add(this.backLoginHit, this);
-	this.facebookLogin.input.onUp.add(this.facebookLoginHit, this);
 
+
+	this.state.game.input.onUp.add(this.facebookLoginHit, this);
 
 
 }
@@ -81,7 +82,9 @@ LoginOverlay.prototype.remove = function() {
 	this.createAccountLogin.input.onUp.remove(this.createAccount, this);
 	this.okButton.input.onUp.remove(this.okButtonHit, this);
 	this.backLogin.input.onUp.remove(this.backLoginHit, this);
-	this.facebookLogin.input.onUp.remove(this.facebookLoginHit, this);
+
+	this.state.game.input.onUp.remove(this.facebookLoginHit, this);
+
 
 	this.state.addScoreUI();
 	this.state.addBoard();
@@ -138,14 +141,18 @@ LoginOverlay.prototype.backLoginHit = function(){
 }
 
 
-LoginOverlay.prototype.facebookLoginHit = function(){
+LoginOverlay.prototype.facebookLoginHit = function(x,y){
+
+
+	if( !this.facebookLogin.box.hitbox.contains(x,y) ) return;
+
 
 	if(this.stopCalls) return;
 
 	console.log("facebookLoginHit");
 	this.stopCalls = true;
 
-	this.game.user.facebookLogin( function(loggedIn) {
+	if(!this.game.user.facebookLogin( function(loggedIn) {
 
 		if(loggedIn) {
 			this.remove();
@@ -157,5 +164,8 @@ LoginOverlay.prototype.facebookLoginHit = function(){
 
 		this.stopCalls = false;
 
-	}, this);
+	}, this)) {
+		this.stopCalls = false;
+	}
+
 }
