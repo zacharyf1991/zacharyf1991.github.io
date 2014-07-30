@@ -1,0 +1,7 @@
+metres,903,27
+score eurostile,796,27
+pause button,1056,18
+jump button ,831,519
+cocoonjs ads blueprint logo,29,11
+bg,0,0
+
