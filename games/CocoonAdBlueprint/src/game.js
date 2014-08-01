@@ -12,7 +12,9 @@
 var gameOptions = {
 	renderer: Kiwi.RENDERER_WEBGL, 
 	width: 1136,
-	height: 640
+	height: 640//,
+	// deviceTarget: Kiwi.TARGET_COCOON,
+	// scaleType: Kiwi.Stage.SCALE_FIT
 }
 
 var game = new Kiwi.Game('content', 'CocoonAdBlueprint', null, gameOptions);

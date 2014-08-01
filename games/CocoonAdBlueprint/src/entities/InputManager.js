@@ -20,10 +20,15 @@ var InputManager = function (state, x, y){
     ////////////////////////
     //MOUSE
     this.state.game.input.onUp.add(this.mouseUp, this);
-    //this.state.game.input.onDown.add(this.mouseDown, this);
+    this.state.game.input.onDown.add(this.mouseDown, this);
+
+    this.state.game.input.touch.touchUp.add(this.mouseUp, this);
+    this.state.game.input.touch.touchDown.add(this.mouseDown, this);
 
     this.keyboard.onKeyDownOnce.add(this.keyDownOnce, this);
     this.keyboard.onKeyUp.add(this.keyUp, this);
+
+
 
 
 }
@@ -66,9 +71,17 @@ InputManager.prototype.keyUp = function(keyCode, key) {
 
 };
 
-InputManager.prototype.mouseUp = function(keyCode, key) {
+InputManager.prototype.mouseDown = function(x, y, timeDown, timeUp, duration, pointer) {
     //console.log(this.mouse.x, this.mouse.y);
+    this.state.player.updateKeyDown('UP');
+    //this.mouse.reset();
+    
 
+};
+
+InputManager.prototype.mouseUp = function(x, y, timeDown, timeUp, duration, pointer) {
+    //console.log(this.mouse.x, this.mouse.y);
+    this.state.player.updateKeyUp('UP');
     
 
 };
@@ -78,4 +91,7 @@ InputManager.prototype.endState = function(){
     this.state.game.input.onUp.remove(this.mouseUp, this);
     this.keyboard.onKeyDownOnce.remove(this.keyDownOnce, this);
     this.keyboard.onKeyUp.remove(this.keyUp, this);
+
+    this.state.game.input.onUp.remove(this.mouseUp, this);
+    this.state.game.input.onDown.remove(this.mouseDown, this);
 }

@@ -26,19 +26,19 @@ PlatformManager.prototype.update = function(){
 }
 
 PlatformManager.prototype.createPlatforms = function(){
-	var p = new Platform(this.state, this.state.textures.platformLarge);
+	var p = new Platform(this.state, this.state.textures.platformSmall);
 	this.platforms.addChild(p);
-	var p = new Platform(this.state, this.state.textures.platformLarge);
+	var p = new Platform(this.state, this.state.textures.platformSmall);
 	this.platforms.addChild(p);
-	var p = new Platform(this.state, this.state.textures.platformLarge);
+	var p = new Platform(this.state, this.state.textures.platformSmall);
 	this.platforms.addChild(p);
 
 
-	var p = new Platform(this.state, this.state.textures.platformLarge);
+	var p = new Platform(this.state, this.state.textures.platformMedium);
 	this.platforms.addChild(p);
-	var p = new Platform(this.state, this.state.textures.platformLarge);
+	var p = new Platform(this.state, this.state.textures.platformMedium);
 	this.platforms.addChild(p);
-	var p = new Platform(this.state, this.state.textures.platformLarge);
+	var p = new Platform(this.state, this.state.textures.platformMedium);
 	this.platforms.addChild(p);
 
 
@@ -72,6 +72,8 @@ PlatformManager.prototype.activatePlatform = function(plat){
 		return;
 	} else {
 		platMemebers[n].activate(plat);
+		
+
 
 	}
 	

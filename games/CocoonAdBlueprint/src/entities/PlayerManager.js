@@ -5,16 +5,18 @@ var PlayerManager = function (state, x, y){
     
 
     this.animation.add('idle', [0], 0.1, true);
-    this.animation.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 0.05, true);
+    this.animation.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 0.025, true);
 
-    this.animation.play('run');    
+    this.animation.play('run');   
+    this.scaleX = 0.75;
+    this.scaleY = 0.75; 
 
-    // this.box.hitbox = new Kiwi.Geom.Rectangle(28, 65, 1, 1); 
+    this.box.hitbox = new Kiwi.Geom.Rectangle(31, 21, 61, 97); 
     this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
     
 
     this.force = 3;
-    this.maxRunVelo = 160;
+    this.maxRunVelo = 200;
     this.beamStage = 0;
     this.jumpHeight = 40;
 
@@ -45,10 +47,14 @@ var PlayerManager = function (state, x, y){
     this.friction = 0.08;
 
     this.accellerationTime = 0;
+    this.accellSpeed = 0.0025
     this.playersVelocity = 0;
     this.playersVelocityAfter = 0;
-    this.yAccel = 35;
+    this.speedDropPercentage = 1.5;
+    this.yAccel = 100;
+    this.jumpVelo = 100;
     this.physics.acceleration.y = this.yAccel;
+    this.canJump = true;
 
     this.jumpKeyDownTimer = this.game.time.clock.createTimer('jumpKeyDownTimer', 0.25, 0, false);
 
@@ -70,7 +76,7 @@ PlayerManager.prototype.update = function(){
     this.playersVelocity = 1 - (1 / (this.accellerationTime + 1));
 
     //console.log(this.playersVelocity, this.playersVelocity * this.maxRunVelo);
-    this.accellerationTime += 0.01;
+    this.accellerationTime += this.accellSpeed; //0.001;
 
     //Control Accelleration time to control velocity. Changing the accellerationTime by 80% will reduce speed by 80%
     // this.accellerationTime = 1 / (1- this.velocity) - 1;
@@ -96,11 +102,20 @@ PlayerManager.prototype.update = function(){
     
     this.physics.update();
 
-    this.physics.overlapsGroup(this.state.platformManager.platforms, true);
+    ///////////////////
+    //PLATFORM COLLISION DETECTION
+    if(this.physics.overlapsGroup(this.state.platformManager.platforms, true)){
+        this.canJump = true;
+    }
 
     
     
 }
+
+PlayerManager.prototype.slowPlayer = function() {
+    this.accellerationTime = 1/(1- (this.playersVelocity / this.speedDropPercentage) ) - 1;
+
+};
 
 
 
@@ -160,17 +175,19 @@ PlayerManager.prototype.updateKeyDown = function(key) {
         this.leftKeyDown = true;
         this.friction = 0.8;
     } else if(key == 'UP'){
-        this.upKeyDown = true;
-        this.physics.velocity.y = -50;
-        this.physics.acceleration.y = 0;
+        if(this.canJump){
+            this.upKeyDown = true;
+            this.physics.velocity.y = -this.jumpVelo;
+            this.physics.acceleration.y = 0;
 
 
-        this.jumpKeyDownTimer.clear();
-        this.jumpKeyDownTimer.stop();
-        this.jumpKeyDownTimer.delay = 0.25;
-        this.jumpKeyDownTimer.repeatCount = 1;
-        this.jumpKeyDownTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.stopJumpUp, this);
-        this.jumpKeyDownTimer.start();
+            this.jumpKeyDownTimer.clear();
+            this.jumpKeyDownTimer.stop();
+            this.jumpKeyDownTimer.delay = 0.25;
+            this.jumpKeyDownTimer.repeatCount = 1;
+            this.jumpKeyDownTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.stopJumpUp, this);
+            this.jumpKeyDownTimer.start();
+        }
 
 
 
@@ -228,6 +245,7 @@ PlayerManager.prototype.hitByEnemy = function() {
 };
 PlayerManager.prototype.stopJumpUp = function(){
     this.physics.acceleration.y = this.yAccel;
+    this.canJump = false;
 }
 
 // PlayerManager.prototype.flash = function() {

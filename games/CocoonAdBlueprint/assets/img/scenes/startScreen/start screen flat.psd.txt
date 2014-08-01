@@ -1,0 +1,4 @@
+advertisement,251,0
+banner ad container,0,0title,373,158
+play hover/click,255,295play,378,295download,615,546description,313,454
+big cloud,-46,150small cloud 1,-61,324small cloud 2,868,207small cloud 3,1050,149big crane,865,317small gear,133,579big gear,-73,502bg,0,0

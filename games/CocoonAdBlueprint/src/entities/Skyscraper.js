@@ -1,6 +1,6 @@
 //PlayerManager / Player
-var Platform = function (state, texture){
-    Kiwi.GameObjects.Sprite.call(this, state, texture, -1500, 100, false);
+var Skyscraper = function (state){
+    Kiwi.GameObjects.Sprite.call(this, state, state.textures.buildingAni, state.player.x + Math.random() * 7000, 100, false);
     this.state = state;
     
 
@@ -20,33 +20,32 @@ var Platform = function (state, texture){
 
     this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
     this.physics.immovable = true;
-    this.physics.moves = false;
+    // this.physics.moves = false;
 
     
     this.platformActive = false;
     this.nextActivated = true;
     //this.reset();
 
+    this.physics.velocity.x = 35;
+
 }
-Kiwi.extend(Platform, Kiwi.GameObjects.Sprite);
+Kiwi.extend(Skyscraper, Kiwi.GameObjects.Sprite);
 
 
 
 
 
-Platform.prototype.update = function(){
+Skyscraper.prototype.update = function(){
 
     Kiwi.GameObjects.Sprite.prototype.update.call(this);
-    if(!this.nextActivated){
-        //console.log("Inside");
-        if(this.x + this.width <= this.state.player.x + 1000){
-            this.nextActivated = true;
-            this.state.platformManager.activatePlatform(this);
-        }
-
-    }
+    this.physics.velocity.x = this.state.player.physics.velocity.x * 0.5;
+   
   
     this.physics.update();
+    if(this.x < this.state.player.x - 1500){
+        this.reset();
+    }
     
 }
 
@@ -58,12 +57,12 @@ Platform.prototype.update = function(){
 
 
 
-Platform.prototype.updateMovement = function(){
+Skyscraper.prototype.updateMovement = function(){
     
     if(!this.platformActive){
-        this.physics.velocity.x = this.state.player.playersVelocityAfter;
+        //this.physics.velocity.x = this.state.player.playersVelocityAfter;
     } else {
-        this.physics.velocity.x = 0;
+        //this.physics.velocity.x = 0;
     }
     // if(this.x <= this.state.player.x - (this.width + 500))
     //     this.reset();
@@ -73,30 +72,23 @@ Platform.prototype.updateMovement = function(){
 
 
 
-Platform.prototype.reset = function(){
+Skyscraper.prototype.reset = function(){
     // this.platformActive = false;
-    this.x  = this.state.player.x + game.stage.width -400;
+    this.x  = this.state.player.x + Math.random() * 7000 + 1500;
     
 
 }
 
-Platform.prototype.activate = function(plat){
-    // console.log("ACTIVATED");
-    // this.platformActive = true;
+Skyscraper.prototype.activate = function(plat){
     this.nextActivated = false;
     this.x = this.state.player.x + 1300;
-    this.physics.velocity.x = 0;
+    //this.physics.velocity.x = 0;
 
     //////////////////
     // y > 80 y < 480 
 
-    var myY = plat.y+(Math.random() * 300) - 100;
-    if(myY <= 200){
-        myY = 200;
-    } else if(myY >= 480){
-        myY = 480;
-    }
-    this.y = myY;
+    
+    this.y = 100;
 
     this.state.objectManager.createObject(this);
 
