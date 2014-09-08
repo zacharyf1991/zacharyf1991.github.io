@@ -1,0 +1,1061 @@
+{
+    "project": {
+        "name": "ParticlePack2",
+        "description": "Gunflare particle pack.",
+        "version": "1.0.0",
+        "url": "http://kiwijs.org/"
+    },
+    "files": {
+        "src\\blue\\explosiveflashblue.js": {
+            "name": "src\\blue\\explosiveflashblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\blue\\flamethrowerblue.js": {
+            "name": "src\\blue\\flamethrowerblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\blue\\laserflashblue.js": {
+            "name": "src\\blue\\laserflashblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\blue\\machinegunflashblue.js": {
+            "name": "src\\blue\\machinegunflashblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\blue\\pistolflashblue.js": {
+            "name": "src\\blue\\pistolflashblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\blue\\rifleflashblue.js": {
+            "name": "src\\blue\\rifleflashblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\blue\\shotgunflashblue.js": {
+            "name": "src\\blue\\shotgunflashblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\blue\\sniperflashblue.js": {
+            "name": "src\\blue\\sniperflashblue.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\explosiveflashgreen.js": {
+            "name": "src\\green\\explosiveflashgreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\flamethrowergreen.js": {
+            "name": "src\\green\\flamethrowergreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\laserflashgreen.js": {
+            "name": "src\\green\\laserflashgreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\machinegunflashgreen.js": {
+            "name": "src\\green\\machinegunflashgreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\pistolflashgreen.js": {
+            "name": "src\\green\\pistolflashgreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\rifleflashgreen.js": {
+            "name": "src\\green\\rifleflashgreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\shotgunflashgreen.js": {
+            "name": "src\\green\\shotgunflashgreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\green\\sniperflashgreen.js": {
+            "name": "src\\green\\sniperflashgreen.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\explosiveflashorange.js": {
+            "name": "src\\orange\\explosiveflashorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\flamethrowerorange.js": {
+            "name": "src\\orange\\flamethrowerorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\laserflashorange.js": {
+            "name": "src\\orange\\laserflashorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\machinegunflashorange.js": {
+            "name": "src\\orange\\machinegunflashorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\pistolflashorange.js": {
+            "name": "src\\orange\\pistolflashorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\rifleflashorange.js": {
+            "name": "src\\orange\\rifleflashorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\shotgunflashorange.js": {
+            "name": "src\\orange\\shotgunflashorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\orange\\sniperflashorange.js": {
+            "name": "src\\orange\\sniperflashorange.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\explosiveflashpurple.js": {
+            "name": "src\\purple\\explosiveflashpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\flamethrowerpurple.js": {
+            "name": "src\\purple\\flamethrowerpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\laserflashpurple.js": {
+            "name": "src\\purple\\laserflashpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\machinegunflashpurple.js": {
+            "name": "src\\purple\\machinegunflashpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\pistolflashpurple.js": {
+            "name": "src\\purple\\pistolflashpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\rifleflashpurple.js": {
+            "name": "src\\purple\\rifleflashpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\shotgunflashpurple.js": {
+            "name": "src\\purple\\shotgunflashpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\purple\\sniperflashpurple.js": {
+            "name": "src\\purple\\sniperflashpurple.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\explosiveflashred.js": {
+            "name": "src\\red\\explosiveflashred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\flamethrowerred.js": {
+            "name": "src\\red\\flamethrowerred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\laserflashred.js": {
+            "name": "src\\red\\laserflashred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\machinegunflashred.js": {
+            "name": "src\\red\\machinegunflashred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\pistolflashred.js": {
+            "name": "src\\red\\pistolflashred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\rifleflashred.js": {
+            "name": "src\\red\\rifleflashred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\shotgunflashred.js": {
+            "name": "src\\red\\shotgunflashred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\red\\sniperflashred.js": {
+            "name": "src\\red\\sniperflashred.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\explosiveflashyellow.js": {
+            "name": "src\\yellow\\explosiveflashyellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\flamethroweryellow.js": {
+            "name": "src\\yellow\\flamethroweryellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\laserflashyellow.js": {
+            "name": "src\\yellow\\laserflashyellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\machinegunflashyellow.js": {
+            "name": "src\\yellow\\machinegunflashyellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\pistolflashyellow.js": {
+            "name": "src\\yellow\\pistolflashyellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\rifleflashyellow.js": {
+            "name": "src\\yellow\\rifleflashyellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\shotgunflashyellow.js": {
+            "name": "src\\yellow\\shotgunflashyellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\yellow\\sniperflashyellow.js": {
+            "name": "src\\yellow\\sniperflashyellow.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\_particlepack2.js": {
+            "name": "src\\_particlepack2.js",
+            "modules": {
+                "Kiwi.Plugins": 1
+            },
+            "classes": {
+                "Kiwi.Plugins.ParticlePack1": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "Kiwi.Plugins": 1
+            }
+        }
+    },
+    "modules": {
+        "Kiwi": {
+            "name": "Kiwi",
+            "submodules": {
+                "Kiwi.Plugins": 1
+            },
+            "classes": {
+                "Kiwi.Plugins.ParticlePack1": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "Kiwi.Plugins": 1
+            },
+            "file": "src\\_particlepack2.js",
+            "line": 1
+        },
+        "Kiwi.Plugins": {
+            "name": "Kiwi.Plugins",
+            "submodules": {},
+            "classes": {
+                "Kiwi.Plugins.ParticlePack1": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {
+                "Kiwi.Plugins": 1
+            },
+            "module": "Kiwi",
+            "namespace": "",
+            "file": "src\\_particlepack2.js",
+            "line": 1,
+            "description": "For a walkthrough on setting up the particle pack plugin check the <a href=\"https://github.com/gamelab/particle-pack-1-plugin/blob/master/README.md\"><README./a>",
+            "tag": "main",
+            "itemtype": "main"
+        }
+    },
+    "classes": {
+        "Kiwi.Plugins.ParticlePack1": {
+            "name": "Kiwi.Plugins.ParticlePack1",
+            "shortname": "Kiwi.Plugins.ParticlePack1",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Kiwi",
+            "submodule": "Kiwi.Plugins",
+            "namespace": "Kiwi.Plugins",
+            "file": "src\\_particlepack2.js",
+            "line": 1,
+            "description": "For a walkthrough on setting up the particle pack plugin check the <a href=\"https://github.com/gamelab/particle-pack-1-plugin/blob/master/README.md\"><README./a>"
+        }
+    },
+    "classitems": [
+        {
+            "file": "src\\blue\\explosiveflashblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Explosiveflash Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\blue\\flamethrowerblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Flamethrowerblue Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\blue\\laserflashblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Laserflashblue Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\blue\\machinegunflashblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Machinegunflashblue Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\blue\\pistolflashblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Pistolflashblue Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\blue\\rifleflashblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Rifleflashblue Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\blue\\shotgunflashblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Shotgunflashblue Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\blue\\sniperflashblue.js",
+            "line": 1,
+            "description": "ParticlePack2 Sniperflashblue Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\explosiveflashgreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Explosiveflashgreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\flamethrowergreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Flamethrowergreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\laserflashgreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Laserflashgreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\machinegunflashgreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Machinegunflashgreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\pistolflashgreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Pistolflashgreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\rifleflashgreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Rifleflashgreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\shotgunflashgreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Shotgunflashgreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\green\\sniperflashgreen.js",
+            "line": 1,
+            "description": "ParticlePack2 Sniperflashgreen Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\explosiveflashorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Explosiveflashorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\flamethrowerorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Flamethrowerorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\laserflashorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Laserflashorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\machinegunflashorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Machinegunflashorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\pistolflashorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Pistolflashorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\rifleflashorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Rifleflashorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\shotgunflashorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Shotgunflashorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\orange\\sniperflashorange.js",
+            "line": 1,
+            "description": "ParticlePack2 Sniperflashorange Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\explosiveflashpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Explosiveflashpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\flamethrowerpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Flamethrowerpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\laserflashpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Laserflashpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\machinegunflashpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Machinegunflashpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\pistolflashpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Pistolflashpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\rifleflashpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Rifleflashpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\shotgunflashpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Shotgunflashpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\purple\\sniperflashpurple.js",
+            "line": 1,
+            "description": "ParticlePack2 Sniperflashpurple Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\explosiveflashred.js",
+            "line": 1,
+            "description": "ParticlePack2 Explosiveflashred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\flamethrowerred.js",
+            "line": 1,
+            "description": "ParticlePack2 Flamethrowerred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\laserflashred.js",
+            "line": 1,
+            "description": "ParticlePack2 Laserflashred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\machinegunflashred.js",
+            "line": 1,
+            "description": "ParticlePack2 Machinegunflashred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\pistolflashred.js",
+            "line": 1,
+            "description": "ParticlePack2 Pistolflashred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\rifleflashred.js",
+            "line": 1,
+            "description": "ParticlePack2 Rifleflashred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\shotgunflashred.js",
+            "line": 1,
+            "description": "ParticlePack2 Shotgunflashred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\red\\sniperflashred.js",
+            "line": 1,
+            "description": "ParticlePack2 Sniperflashred Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\explosiveflashyellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Explosiveflashyellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\flamethroweryellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Flamethroweryellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\laserflashyellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Laserflashyellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\machinegunflashyellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Machinegunflashyellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\pistolflashyellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Pistolflashyellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\rifleflashyellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Rifleflashyellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\shotgunflashyellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Shotgunflashyellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\yellow\\sniperflashyellow.js",
+            "line": 1,
+            "description": "ParticlePack2 Sniperflashyellow Effect.",
+            "itemtype": "property",
+            "name": "Bam",
+            "type": "Kiwi.Group",
+            "access": "public",
+            "tagname": "",
+            "static": 1,
+            "class": "Kiwi.Plugins.ParticlePack1"
+        },
+        {
+            "file": "src\\_particlepack2.js",
+            "line": 11,
+            "description": "The name of this plugin.",
+            "itemtype": "property",
+            "name": "name",
+            "type": "String",
+            "access": "public",
+            "tagname": "",
+            "class": "Kiwi.Plugins.ParticlePack1",
+            "module": "Kiwi",
+            "submodule": "Kiwi.Plugins",
+            "namespace": "Kiwi.Plugins"
+        },
+        {
+            "file": "src\\_particlepack2.js",
+            "line": 19,
+            "description": "The version of this plugin in semver (semantic versioning) format",
+            "itemtype": "property",
+            "name": "version",
+            "type": "String",
+            "access": "public",
+            "tagname": "",
+            "class": "Kiwi.Plugins.ParticlePack1",
+            "module": "Kiwi",
+            "submodule": "Kiwi.Plugins",
+            "namespace": "Kiwi.Plugins"
+        },
+        {
+            "file": "src\\_particlepack2.js",
+            "line": 27,
+            "description": "The minimum version of Kiwi.js required to run this plugin in semver (semantic versioning) format",
+            "itemtype": "property",
+            "name": "minimumKiwiVersion",
+            "type": "String",
+            "access": "public",
+            "tagname": "",
+            "class": "Kiwi.Plugins.ParticlePack1",
+            "module": "Kiwi",
+            "submodule": "Kiwi.Plugins",
+            "namespace": "Kiwi.Plugins"
+        },
+        {
+            "file": "src\\_particlepack2.js",
+            "line": 35,
+            "description": "Other plugins required for this plugin to run.",
+            "itemtype": "property",
+            "name": "pluginDependencies",
+            "type": "Array",
+            "access": "public",
+            "tagname": "",
+            "class": "Kiwi.Plugins.ParticlePack1",
+            "module": "Kiwi",
+            "submodule": "Kiwi.Plugins",
+            "namespace": "Kiwi.Plugins"
+        },
+        {
+            "file": "src\\_particlepack2.js",
+            "line": 53,
+            "description": "Registers this plugin with the Global Kiwi Plugins Manager if it is avaiable.",
+            "class": "Kiwi.Plugins.ParticlePack1",
+            "module": "Kiwi",
+            "submodule": "Kiwi.Plugins",
+            "namespace": "Kiwi.Plugins"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nRegisters this plugin with the Global Kiwi Plugins Manager if it is avaiable.",
+            "line": " src\\_particlepack2.js:53"
+        }
+    ]
+}
