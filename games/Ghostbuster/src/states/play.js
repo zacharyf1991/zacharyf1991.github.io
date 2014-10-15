@@ -25,6 +25,8 @@ PlatformBlueprint.Play.create = function () {
     //game.stage.resize(800, 600);
     
 
+    //game.stage.createDebugCanvas();
+
     
     this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.background1, 0, -57);
     this.addChild(this.background);
@@ -65,12 +67,15 @@ PlatformBlueprint.Play.create = function () {
     this.player = new PlayerManager(this, 50, 400);
     this.addChild(this.player);
 
+    this.miniGameManager = new MiniGame( this );
+    this.addChild( this.miniGameManager );
+
 
 
     //////////////////////
     //Swap Children
-    this.swapChildren(this.weaponManager.sparkGroup, this.player);
-    this.swapChildren(this.enemyManager.deathGroup, this.weaponManager.myMiniGame.ring);
+    //this.swapChildren(this.weaponManager.sparkGroup, this.player);
+    //this.swapChildren(this.enemyManager.deathGroup, this.weaponManager.myMiniGame.ring);
 
     //individual tile dimensions
     this.tileWidth = 32;
@@ -94,7 +99,6 @@ PlatformBlueprint.Play.create = function () {
     this.py = this.player.y + this.player.height;
 
     this.levelManager.generateForegroundTileMap();
-    this.weaponManager.addMiniGame();
     console.log('CREATE GAME');
 
     /////////////////

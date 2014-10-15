@@ -1,149 +1,161 @@
-var Minigame = function(state, myParent, x, y){
+var MiniGame = function(state){
 	Kiwi.Group.call(this, state);
-	this.myParent = myParent;
 	this.state = state;
-	this.alpha = 0;
-	this.keyboard = this.game.input.keyboard;
 
-	this.stage = 0;
-	this.hit = false;
-	this.myActive = false;
 	this.hitRange = (Math.PI*2 / 360) * 15 ;
 
 	this.rotBlue = 0;
 	this.rotSkull = Math.PI*2;
-	this.rotBlueSpeed = 0.0376
+	this.rotBlueSpeed = -0.0376
 	this.rotSkullSpeed = 0.0427;
-	this.skullGroup = new Kiwi.Group(state);
-	this.blueCircleGroup = new Kiwi.Group(state);
-	//this.blueCircleGroup = new Kiwi.Group(state);
-	this.confirmGroup = new Kiwi.Group(state);
-	
 
-	
+	this.redCircle;
+	this.blueCircle;
+	this.skullGroup;
+	this.center;
 
-	this.ring = new Kiwi.GameObjects.Sprite(this.state, this.state.textures['redCircle'], -300, -300);
-	this.ring.x = this.x;
-	this.ring.y = this.y;
+	this.radius = 80;
 
-	this.addChild(this.skullGroup);
-	this.addChild(this.blueCircleGroup);
-	this.addChild(this.confirmGroup);
+	this.miniGameActive = false;
 
 
-	var mySkull = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.skull, 0, -87);
-	this.skullGroup.addChild(mySkull);
+	// Groups
+		// Skull Group
+			// Amount = health
+	// Blue Circle Sprite (adjust rot point to center)
+	// Red Circle Sprite
 
-	var blueCircle = new BlueCircle(this.state, this, 0, -87);
-	this.blueCircleGroup.addChild(blueCircle);
 
-	this.state.addChild(this.ring);
+	// METHODS:
+
+	// Update MiniGame
+	// CreateNewMiniGame
+	// MiniGameActive
+	// Check Overlapping
+
+
 
 
 }
-Kiwi.extend(Minigame , Kiwi.Group);
-
-Minigame.prototype.checkRange = function(){
-
-	if(this.state.weaponManager.enemyTargeted){
-		if(this.rotSkull < this.hitRange){
-			if((this.rotSkull + Math.PI*2) < (this.rotBlue + this.hitRange)){
-				this.skullGroup.members[0].alpha = 0;
-				this.blueCircleGroup.members[0].animation.play('fade');
-				this.hit = true;
-
-			} 
-
-		} else if(this.rotBlue < this.hitRange){
-			if((this.rotBlue + Math.PI*2) < (this.rotSkull + this.hitRange)){
-				this.skullGroup.members[0].alpha = 0;
-				this.blueCircleGroup.members[0].animation.play('fade');
-				this.hit = true;
-
-			}
-
-		} else if((this.rotSkull > this.rotBlue - this.hitRange)  && (this.rotSkull < this.rotBlue + this.hitRange)){
-			this.skullGroup.members[0].alpha = 0;
-			this.blueCircleGroup.members[0].animation.play('fade');
-			this.hit = true;
+Kiwi.extend(MiniGame , Kiwi.Group);
 
 
-		} else {
-			var tempNum = this.blueCircleGroup.members[0].timesMissed;
-			if( tempNum == 3){
-				this.state.weaponManager.stopShooting();
-			} else{
-				this.missedHit()
-				this.skullGroup.members[0].alpha = 0;
-				this.hit = true;
-			}
-		}
 
 
+MiniGame.prototype.createMiniGame = function ( target, health ) {
+	this.center = new Kiwi.Geom.Point( target.x, target.y ); // += target.centerPoint.x, target.y += target.centerPoint.y );
+	this.createRedCircle();
+	this.createSkulls( health );
+	//this.resetHealth();
+	this.createBlueCircle();
+
+	this.startMiniGame();
+};
+
+MiniGame.prototype.createRedCircle = function( ){
+	this.redCircle = new Kiwi.GameObjects.Sprite( this.state, this.state.textures.redCircle, this.center.x, this.center.y );
+	this.state.addChild(this.redCircle);
+};
+MiniGame.prototype.createSkulls = function ( amount ) {
+	var i, rot, tempSkull,tempSkullGroup;
+	this.skullGroup = new Kiwi.Group(this.state);
+	for( i = amount - 1 ;  i >= 0;  i-- ) {
+		tempSkull = new Skull( this.state, this.center.x, this.center.y, this.radius );
+
+		// Calculates the rotation of the skull 
+		rot = ((2 * Math.PI) / amount * i);
+		tempSkull.rotation = rot;
+		this.skullGroup.addChild(tempSkull);
 	}
-}
-Minigame.prototype.missedHit = function() {
+	this.addChild( this.skullGroup );
+};
+
+MiniGame.prototype.resetHealth = function(){
+
+	// Health should equal the current amount of skulls
+};
+
+MiniGame.prototype.getHealth = function() {
+	return this.skullGroup.members.length();
+};
+
+MiniGame.prototype.createBlueCircle = function() {
+	this.blueCircle = new Kiwi.GameObjects.Sprite( this.state, this.state.textures.blueCircle, this.center.x , this.center.y -this.radius);
+	this.blueCircle.anchorPointX += this.radius
+	this.state.addChild(this.blueCircle);
+};
+
+MiniGame.prototype.startMiniGame = function() {
+	this.miniGameActive = true;
+
+};
+
+
+MiniGame.prototype.missedHit = function() {
 	this.timesMissed = this.blueCircleGroup.members[0].missedHit();
 };
 
-Minigame.prototype.startNextStage = function(){
+MiniGame.prototype.startNextStage = function(){
 
 	this.stage += 1;
 	this.hit = false;
 	this.skullGroup.members[0].alpha = 1;
 	}
 
-Minigame.prototype.updateRotation = function(){
-	this.rotBlue += this.rotBlueSpeed;
-	this.rotSkull -= this.rotSkullSpeed;
-
-
-	//console.log(this.rotSkull);
-
-	if(this.rotSkull <= 0){
-		this.rotSkull = Math.PI*2;
-	}
-	if(this.rotBlue >= Math.PI*2){
-		this.rotBlue = 0;
-	}
-
-	this.skullGroup.rotation = this.rotSkull;
-	this.skullGroup.members[0].rotation = -this.rotSkull;
-
-	this.blueCircleGroup.rotation = this.rotBlue;
-	this.blueCircleGroup.members[0].rotation = -this.rotBlue;
+MiniGame.prototype.updateRotation = function(){
+	this.updateSkullRotation();
+	this.updateBlueCircleRotation();
 
 
 	//this.animation.play('dash');
 }
+MiniGame.prototype.updateSkullRotation = function () {
+	for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+		this.skullGroup.members[i].rotation += this.rotSkullSpeed;
+	};
+}
+MiniGame.prototype.updateBlueCircleRotation = function () {
+	this.blueCircle.rotation += this.rotBlueSpeed;
+}
 
+MiniGame.prototype.catchSkull = function (skull){
+	var circRot, skullRot;
 
-Minigame.prototype.capture = function(){
+	circRot = this.getAngle(this.blueCircle.rotation);
+	skullRot = this.getAngle(this.skull.rotation);
+
+	return this.calculateDifference( circRot, skullRot ) < this.hitRange;
+}
+
+MiniGame.prototype.getAngle = function(angle){
+	while (angle < 0 ){
+		angle += ( Math.PI * 2 );
+	}
+	return angle % (Math.PI * 2);
+}
+
+MiniGame.prototype.calculateDifference = function(a, b){
+	return Math.abs(a - b);
+}
+MiniGame.prototype.capture = function(){
 	this.animation.play('shoot');
 }
-Minigame.prototype.update = function(){
+
+
+MiniGame.prototype.update = function(){
     Kiwi.Group.prototype.update.call(this);
-    if(!this.hit){
-    	this.updateRotation();
+    if( !this.miniGameActive ) {
+    	return;
     }
 
-    this.skullGroup.x = 64;
-    this.skullGroup.y = 64;
-    this.blueCircleGroup.x = 64;
-    this.blueCircleGroup.y = 64;
-    this.ring.x = this.x;
-	this.ring.y = this.y;
+    // If !player.shooting set minigame to inactive.
+
+    this.updateRotation();
+
 
 }
 
-
-
-Minigame.prototype.moveTo = function(x, y) {
-	this.x = x;
-	this.y = y;
-};
-
-Minigame.prototype.stageUp = function() {
+MiniGame.prototype.stageUp = function() {
 	this.myParent.beamStage += 1;
 	this.myParent.beamNeedsUpdating = true;
 	this.myParent.updateBeamStage();

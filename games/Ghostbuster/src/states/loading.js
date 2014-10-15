@@ -39,7 +39,7 @@ PlatformBlueprint.Loading.preload = function () {
 
     ///////////////////////////
     //PROTON BEAM
-    this.addSpriteSheet('beam', 'assets/img/beam/beam.png', 48, 48);
+    this.addSpriteSheet('beam', 'assets/img/beam/beam.png', 24 , 24);
     this.addSpriteSheet('beamSpark', 'assets/img/beam/beamSpark.png', 48, 48);
     this.addSpriteSheet('impact', 'assets/img/beam/impact.png', 68, 68);
 
@@ -50,7 +50,7 @@ PlatformBlueprint.Loading.preload = function () {
 
     /////////////////////
     //MINIGAME 
-    this.addSpriteSheet('blueCircleSprite', 'assets/img/minigame/blue3.png', 70, 70);
+    this.addSpriteSheet('blueCircle', 'assets/img/minigame/blue3.png', 70, 70);
     this.addImage('redCircle', 'assets/img/minigame/redCircle.png');
     this.addImage('skull', 'assets/img/minigame/skull70.png');
     this.addSpriteSheet('confirm', 'assets/img/minigame/confirm.png', 66, 14);

@@ -3,6 +3,7 @@ var Ghost = function(state, x, y){
 	this.state = state;
 	this.box.hitbox = new Kiwi.Geom.Rectangle(60, 65, 60, 55); 
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
+	this.objType = 'Ghost';
 
 	var animationSpeed = 0.1;
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
@@ -15,6 +16,11 @@ var Ghost = function(state, x, y){
 	this.animation.add('damage2',[23], 0.1, false);
 	this.animation.add('damage3',[29], 0.1, false);
 	this.animation.play('invis');
+
+	//console.log(this.width, this.height, "Zach the width and Height");
+	var centerX = this.width * 0.5;
+	var centerY = this.height * 0.5;
+	this.centerPoint = new Kiwi.Geom.Point(centerX, centerY);
 
 
 	//this.animation.getAnimation('appear').onStop.add(this.dash, this);
@@ -52,6 +58,9 @@ Kiwi.extend(Ghost, Kiwi.GameObjects.Sprite);
 Ghost.prototype.update = function(){
     Kiwi.GameObjects.Sprite.prototype.update.call(this);
 
+    this.centerPoint.x = this.worldX + this.width * 0.5;
+    this.centerPoint.y = this.worldY + this.height * 0.5;
+
 
     if(this.state.player.x >this.x){
     	this.scaleX = -1;
@@ -63,21 +72,41 @@ Ghost.prototype.update = function(){
     this.ai.update();
     if(this.hit){
     	//console.log("I am hit!!!!");
+    	//this.state.weaponManager.beamManager.beams[0]
+    	// console.log(this.state.weaponManager.beamManager.beams[0], "Zach");
+    	if( this.state.weaponManager.beamManager.beams[0] != undefined){
+    		var alignSpeed = 0.5,
+    			enemyCenter = new Kiwi.Geom.Point(this.x, this.y),
+    			impactCenter = new Kiwi.Geom.Point(0, 0),
+    			impactSprite = this.state.weaponManager.beamManager.beams[0].members[0];
+
+    			enemyCenter.x = this.x + this.width * 0.5;
+    			enemyCenter.y = this.y + this.height * 0.5;
+
+    			impactCenter.x = impactSprite.worldX + impactSprite.width * 0.5;
+    			impactCenter.y = impactSprite.worldY + impactSprite.height * 0.5;
+
+    			// console.log(this.state.weaponManager.beamManager.beams[0].members[0].transform.worldX ,  this.x, "Zach");
+	    	if(enemyCenter.x > impactCenter.x ){
+	    		this.x -= alignSpeed;
+	    		// this.x -=10;
+	    	}
+	    	if(enemyCenter.x < impactCenter.x ){
+	    		this.x += alignSpeed;
+
+	    		// this.x += 10;
+	    		
+	   	 	}
+	   	 	if(enemyCenter.y > impactCenter.y ){
+	    		this.y -= alignSpeed;
+	    	}
+	    	if(enemyCenter.y < impactCenter.y){
+	    		this.y += alignSpeed;
+	    		
+	   	 	}
+
+    	}
     	
-    	if(this.x > this.state.weaponManager.myMiniGame.x -15){
-    		this.x -= 0.3;
-    	}
-    	if(this.x < this.state.weaponManager.myMiniGame.x - 15){
-    		this.x += 0.3;
-    		
-   	 	}
-   	 	if(this.y > this.state.weaponManager.myMiniGame.y - 15){
-    		this.y -= 0.3;
-    	}
-    	if(this.y < this.state.weaponManager.myMiniGame.y - 15){
-    		this.y += 0.3;
-    		
-   	 	}
 
     	switch(this.health) {
 		case 1:

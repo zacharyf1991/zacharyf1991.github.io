@@ -51,6 +51,17 @@ EnemyManager.prototype.resetHit = function() {
 	};
 };
 
+EnemyManager.prototype.resetEnemies = function() {
+	this.resetHit();
+};
+
+
+
+
+EnemyManager.prototype.trap = function ( ghost ) {
+	ghost.hit = true;
+	//console.log("Ghost hit is:", ghost.hit)
+}
 
 EnemyManager.prototype.checkGroupCollision = function(targetGroup) {
 
@@ -80,6 +91,30 @@ EnemyManager.prototype.addEnemies = function(num){
     }
 }
 
+EnemyManager.prototype.getTrappedEnemies = function () {
+	var trappedEnemies = []
+	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
+		if( this.enemies[i].hit ){
+			trappedEnemies.push( this.enemies[i] );
+		}
+	};
+	return trappedEnemies;
+}
+
+
+EnemyManager.prototype.updateTrappedEnemies = function() {
+	var playerVelX = this.state.player.physics.velocity.x,
+		playerVelY = this.state.player.physics.velocity.y;
+
+	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
+		if( this.enemies.members[i].hit ){
+			console.log(playerVelX, playerVelY, "Updating Hit Ghost");
+			this.enemies.members[i].x += playerVelX;
+			this.enemies.members[i].y += playerVelY;
+		}
+	};
+}
+
 EnemyManager.prototype.addEnemy = function(type, x, y){
 	//add 'num' enemies to group
 	if(type == 'ghost'){
@@ -101,6 +136,8 @@ EnemyManager.prototype.update = function(){
 	var enemiesMem = this.enemies.members;
 	this.enemiesLength = enemiesMem.length;
 	this.checkPlayerCollision();
+
+	//this.updateTrappedEnemies();
 
 	for (var i = this.enemiesLength - 1; i >= 0; i--) {
 

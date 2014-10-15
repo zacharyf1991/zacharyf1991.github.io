@@ -13,8 +13,8 @@ var InputManager = function (state, x, y){
     //KEYBOARD
     this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
     this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.A);
-    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.UP);
-    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN);
+    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W);
+    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S);
 
     this.spawnKey = this.keyboard.addKey(Kiwi.Input.Keycodes.Q);
     this.restartKey = this.keyboard.addKey(Kiwi.Input.Keycodes.R);
@@ -63,7 +63,7 @@ InputManager.prototype.keyDownOnce = function(keyCode, key) {
     ////////////////////
     //Shooting
     if(keyCode == this.shootKey.keyCode){
-        this.state.weaponManager.mouseDown();
+        this.state.weaponManager.shootKeyDown();
     }
     /////////////////////
     //Capture
@@ -95,7 +95,7 @@ InputManager.prototype.keyUp = function(keyCode, key) {
     }
     //Shoot
     if(keyCode == this.shootKey.keyCode){
-        this.state.weaponManager.mouseUp();
+        this.state.weaponManager.shootKeyUp();
     }
 
     if(keyCode == this.restartKey.keyCode){
@@ -108,7 +108,17 @@ InputManager.prototype.keyUp = function(keyCode, key) {
 
 };
 
-LevelManager.prototype.switchStates = function(){
+InputManager.prototype.switchStates = function(){
     this.keyboard.onKeyDownOnce.remove(this.keyDownOnce, this);
     this.keyboard.onKeyUp.remove(this.keyUp, this);
+}
+
+InputManager.prototype.getKeysDown = function(){
+    var keys = {
+        rightKey: this.rightKey.isDown,
+        leftKey: this.leftKey.isDown,
+        upKey: this.upKey.isDown,
+        downKey: this.downKey.isDown
+    }
+    return keys;
 }
