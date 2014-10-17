@@ -1,7 +1,9 @@
 //PlayerManager / Player
 var PlayerManager = function (state, x, y){
+	//Kiwi.Group.call(this, state);
 	Kiwi.GameObjects.Sprite.call(this, state, state.textures['egonSprite'], x, y);
 	this.state = state;
+
 
 
 	//DIRECTIONS
@@ -19,13 +21,22 @@ var PlayerManager = function (state, x, y){
 	this.keyboard = this.state.game.input.keyboard;
 	this.mouse = this.state.game.input.mouse;
 
-	this.animation.add('idle', [24], 0.1, true);
-	this.animation.add('walk', [5, 11, 17, 23, 29, 30,  31, 32], 0.05, true);
-	this.animation.add('jump', [0, 1], 0.1, true);
-	this.animation.add('roll', [2, 2, 3, 3, 4, 4, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 12, 13, 14, 15, 16, 18, 19, 20], 0.005, false);
-	this.animation.add('shoot', [21, 22, ], 0.05, true);
-	this.animation.add('readyShoot', [25, 26, 27, 28], 0.1, false);
-	this.animation.play('idle');    
+	// Top half animations
+	this.animation.add('idle', [15], 0.1, true);
+	this.animation.add('walk', [ 8, 9, 10, 11, 12, 13, 14, 15 ], 0.05, true);
+	this.animation.add('shootHorz', [ 8, 9, 10, 11, 12, 13, 14, 15 ], 0.05, true);
+	this.animation.add('shootVert', [ 16, 17, 18, 19, 20, 21, 22, 23 ], 0.05, true);
+	this.animation.add('shootDiagonal', [ 0, 1, 2, 3, 4, 5, 6, 7 ], 0.05, true);
+	this.animation.add('jump', [ 24, 25], 0.1, false);
+	this.animation.add('roll', [ 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33 ], 0.005, false);
+	this.animation.play('idle'); 
+
+	// Bottom half animations
+	
+	// this.members[1].animation.add('walk', [ 34, 35, 36, 37, 38, 39, 40, 41 ], 0.05, true);
+	// this.members[1].animation.add('idle', [42], 0.1, false);
+	// this.members[1].animation.play('idle'); 
+
 
 	this.box.hitbox = new Kiwi.Geom.Rectangle(25, 20, 35, 80); 
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
@@ -62,10 +73,7 @@ var PlayerManager = function (state, x, y){
 
 
 
-
 	this.animation.getAnimation('roll').onStop.add(this.finishedRoll, this);
-	//this.animation.getAnimation('readyShoot').onStop.add(this.state.weaponManager.createBeam, this);
-
 
 
 
@@ -132,14 +140,46 @@ PlayerManager.prototype.update = function(){
 	this.x = Math.round(this.x);
 	this.y = Math.round(this.y);
 
+	this.state.playersLegs.updateLegs();
+
+	if( this.state.weaponManager.shooting ) {
+		var dir = this.state.weaponManager.beamManager.getDirection();
+
+		switch ( dir ) {
+
+			// Left up
+			case -( Math.PI / 4 ):
+			this.animation.play( 'shootDiagonal', false );
+				break;
+
+			// Right Up
+			case Math.PI / 4:
+				this.animation.play( 'shootDiagonal', false );
+				break;
+
+			// Up
+			case 0:
+				this.animation.play( 'shootVert', false );
+				break;
+
+			// Left
+			case -( Math.PI / 2 ):
+				this.animation.play( 'shootHorz', false );
+				break;
+
+			// Right
+			case Math.PI / 2:
+				this.animation.play( 'shootHorz', false );
+				break;
+			default:
+				break;
+		}
+
+
+	}
+
 	
 }
-
-
-
-
-
-
 
 
 PlayerManager.prototype.jump = function(){
@@ -185,10 +225,12 @@ PlayerManager.prototype.updateMovement = function(direction){
 	//EITHER MOVE KEYS DOWN
 	if(this.leftKeyDown || this.rightKeyDown){
 		if (this.animation.currentAnimation.name != 'walk' && !this.jumping )
-			   this.animation.play('walk');
+				this.animation.play('walk');
+				this.state.playersLegs.animation.play('walk', false);
 	} else {
 		if (this.animation.currentAnimation.name != 'idle' && !this.jumping ){
 			   this.animation.play('idle');
+			   this.state.playersLegs.animation.play('idle', false);
 			
 		};
 			   
@@ -248,9 +290,7 @@ PlayerManager.prototype.updateKeyDown = function(key) {
 
 };
 
-PlayerManager.prototype.readyShoot = function() {
-	this.animation.play('readyShoot');
-};
+
 
 
 PlayerManager.prototype.updateKeyUp = function(key) {

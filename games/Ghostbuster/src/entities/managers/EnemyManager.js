@@ -154,6 +154,15 @@ EnemyManager.prototype.kill = function(enemy) {
 	this.state.egon.stopShooting();
 };
 
+EnemyManager.prototype.killTrapped = function(enemy) {
+	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
+		if( this.enemies.members[i].hit ) {
+			this.enemies.members[i].exists = false;
+		}
+	};
+
+};
+
 EnemyManager.prototype.killEnemy = function(enemy, x, y) {
 	var temp = this.enemies.members;
 	this.enemies.removeChild(enemy, true); 

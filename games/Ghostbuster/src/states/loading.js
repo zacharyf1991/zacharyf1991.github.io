@@ -33,7 +33,7 @@ PlatformBlueprint.Loading.preload = function () {
     this.addImage('background1', 'assets/img/environment/background.jpg');
     ////////////////////////
     //PLAYER
-    this.addSpriteSheet('egonSprite', 'assets/img/sprites/egonSprite2.png', 100, 100);
+    this.addSpriteSheet('egonSprite', 'assets/img/sprites/egon-sprite-3.png', 100, 100);
     this.addImage('UI', 'assets/img/UI/UI.png');
     this.addImage('cashUI', 'assets/img/UI/cashUI.png');
 

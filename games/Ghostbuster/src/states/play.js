@@ -64,6 +64,8 @@ PlatformBlueprint.Play.create = function () {
 
 
     this.weaponManager = new WeaponManager(this);
+    this.playersLegs = new PlayersLegs( this, 0, 0 );
+    this.addChild( this.playersLegs );
     this.player = new PlayerManager(this, 50, 400);
     this.addChild(this.player);
 

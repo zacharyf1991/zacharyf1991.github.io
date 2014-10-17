@@ -32,7 +32,7 @@ BeamManager.prototype.updateActiveBeamPosition = function(){
 	if( this.beams[0] != undefined ){
 		//if( this.state.weaponManager.shootKeyIsDown ){
 			this.beams[0].x = this.state.player.x + this.state.player.width / 2;
-			this.beams[0].y = (this.state.player.y + this.state.player.height / 2) - 12;
+			this.beams[0].y = (this.state.player.y + this.state.player.height / 2)  + 10;
 
 
 		//}
@@ -68,11 +68,16 @@ BeamManager.prototype.removeOldBeams = function () {
 }
 
 BeamManager.prototype.removeBeamGroup = function (beamGroup) {
+
+	console.log( "Remove Group" );
 	for (var i = beamGroup.members.length - 1; i >= 0; i--) {
 		// console.log("REMOVE GROUP");
 		beamGroup.members[i].exists = false;
-		beamGroup.exists = false;
 	};
+	if( beamGroup === this.beams[0] ) {
+		this.state.miniGameManager.stopMiniGame();
+	}
+	beamGroup.exists = false;
 }
 //
 BeamManager.prototype.updateBeams = function () {
@@ -169,7 +174,8 @@ BeamManager.prototype.getDirection = function() {
 		//Right
 		return Math.PI / 2;
 	} else {
-		console.log("No direction was selected when shooting")
+
+		// console.log("No direction was selected when shooting")
 		if(this.state.player.scaleX < 0){
 			return Math.PI / 2;
 		} else {
@@ -305,7 +311,7 @@ BeamManager.prototype.startColliding = function (beam, beamGroup) {
 		pushDistance = 60,
 		pushSegments = 8;
 
-		this.state.miniGameManager.createMiniGame( this.state.player, 3 );
+		this.state.miniGameManager.createMiniGame( beam , 3 );
 
 
 	pointX = collider.x + ( collider.width / 2 ) - ( impact.width / 2 );
@@ -327,7 +333,10 @@ BeamManager.prototype.startColliding = function (beam, beamGroup) {
 BeamManager.prototype.finishedColliding = function(beamGroup) {
 	//console.log(beamGroup, " Beam Group");
 	if(beamGroup.members[0].objType == 'impact' && beamGroup.length === 1){
+		
+		console.log( "Remove Beam" );
 		beamGroup.exists = false;
+		this.state.miniGameManager.stopMiniGame();
 	}
 }
 BeamManager.prototype.destroyBeam = function ( beam, beamGroup ) {
@@ -360,6 +369,8 @@ BeamManager.prototype.shoot = function () {
 
 BeamManager.prototype.createBeam = function () {
 	var beamSegment = new Beam( this.state, 0, 0, 0, 0 );
+	beamSegment.y -= beamSegment.height * 0.5;
+	beamSegment.x += 30;
 
 	this.beams[0].addChild(beamSegment);
 	
@@ -388,6 +399,7 @@ BeamManager.prototype.activeGroupExists = function () {
 BeamManager.prototype.checkCollision = function (beam) {
 	var beamTemp = beam;
 	var hit = this.state.collisionManager.beamCollision(beam);
+
 
 	if( hit === false ) {
 		return false;

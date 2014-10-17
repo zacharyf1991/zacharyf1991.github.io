@@ -14,7 +14,7 @@ var MiniGame = function(state){
 	this.skullGroup;
 	this.center;
 
-	this.radius = 80;
+	this.radius = 84;
 
 	this.miniGameActive = false;
 
@@ -43,7 +43,12 @@ Kiwi.extend(MiniGame , Kiwi.Group);
 
 
 MiniGame.prototype.createMiniGame = function ( target, health ) {
-	this.center = new Kiwi.Geom.Point( target.x, target.y ); // += target.centerPoint.x, target.y += target.centerPoint.y );
+	this.beamTarget = this.state.weaponManager.beamManager.targetEnemy;
+
+	this.removeOldGame();
+	this.center = new Kiwi.Geom.Point( target.worldX, target.worldY ); // += target.centerPoint.x, target.y += target.centerPoint.y );
+	this.center.x += target.width * 0.5;
+	this.center.y += target.height * 0.5;
 	this.createRedCircle();
 	this.createSkulls( health );
 	//this.resetHealth();
@@ -52,21 +57,40 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 	this.startMiniGame();
 };
 
+MiniGame.prototype.removeOldGame = function () {
+	this.miniGameActive = false;
+	if ( this.redCircle ) {
+		this.redCircle.exists = false;
+	}
+	if( this.blueCircle ) {
+		this.blueCircle.exists = false;
+	}
+	if( this.skullGroup ) {
+		this.skullGroup.exists = false;
+	}
+}
+
 MiniGame.prototype.createRedCircle = function( ){
 	this.redCircle = new Kiwi.GameObjects.Sprite( this.state, this.state.textures.redCircle, this.center.x, this.center.y );
-	this.state.addChild(this.redCircle);
+
+	this.redCircle.x -= this.redCircle.width * 0.5;
+	this.redCircle.y -= this.redCircle.height * 0.5;
+	this.addChild(this.redCircle);
 };
 MiniGame.prototype.createSkulls = function ( amount ) {
 	var i, rot, tempSkull,tempSkullGroup;
 	this.skullGroup = new Kiwi.Group(this.state);
 	for( i = amount - 1 ;  i >= 0;  i-- ) {
-		tempSkull = new Skull( this.state, this.center.x, this.center.y, this.radius );
+		// tempSkull = new Skull( this.state, this.center.x, this.center.y, this.radius );
+		tempSkull = new Skull( this.state, 0, 0, this.radius );
 
 		// Calculates the rotation of the skull 
 		rot = ((2 * Math.PI) / amount * i);
 		tempSkull.rotation = rot;
 		this.skullGroup.addChild(tempSkull);
 	}
+	this.skullGroup.x = this.center.x;
+	this.skullGroup.y = this.center.y;
 	this.addChild( this.skullGroup );
 };
 
@@ -76,12 +100,13 @@ MiniGame.prototype.resetHealth = function(){
 };
 
 MiniGame.prototype.getHealth = function() {
-	return this.skullGroup.members.length();
+	return this.skullGroup.members.length;
 };
 
 MiniGame.prototype.createBlueCircle = function() {
 	this.blueCircle = new Kiwi.GameObjects.Sprite( this.state, this.state.textures.blueCircle, this.center.x , this.center.y -this.radius);
-	this.blueCircle.anchorPointX += this.radius
+	this.blueCircle.anchorPointY += this.radius - this.blueCircle.height * 0.5;
+	this.blueCircle.anchorPointX -= this.blueCircle.width * 0.5;
 	this.state.addChild(this.blueCircle);
 };
 
@@ -119,12 +144,14 @@ MiniGame.prototype.updateBlueCircleRotation = function () {
 }
 
 MiniGame.prototype.catchSkull = function (skull){
-	var circRot, skullRot;
+	var circRot, diffAngel, skullRot;
 
 	circRot = this.getAngle(this.blueCircle.rotation);
-	skullRot = this.getAngle(this.skull.rotation);
+	skullRot = this.getAngle(skull.rotation);
 
+	
 	return this.calculateDifference( circRot, skullRot ) < this.hitRange;
+
 }
 
 MiniGame.prototype.getAngle = function(angle){
@@ -135,7 +162,15 @@ MiniGame.prototype.getAngle = function(angle){
 }
 
 MiniGame.prototype.calculateDifference = function(a, b){
-	return Math.abs(a - b);
+
+	var diffAngle = Math.abs(a - b);
+
+	if( diffAngle > Math.PI ){
+		return  Math.PI * 2 - diffAngle; 
+	} else {
+	return diffAngle; 
+
+	}
 }
 MiniGame.prototype.capture = function(){
 	this.animation.play('shoot');
@@ -151,9 +186,30 @@ MiniGame.prototype.update = function(){
     // If !player.shooting set minigame to inactive.
 
     this.updateRotation();
+    // this.updatePosition();
 
 
 }
+
+MiniGame.prototype.updatePosition = function() {
+
+	console.log("Update Circle Pos");
+	var temp = this.state.weaponManager.beamManager.beams[0];
+	this.center.x = temp.worldX + temp.width * 0.5;
+	this.center.y = temp.worldY + temp.height * 0.5;
+	this.updateObjectPos( this.redCircle );
+	this.updateObjectPos( this.blueCircle );
+	this.updateObjectPos( this.skullGroup );
+};
+
+MiniGame.prototype.updateObjectPos = function( obj ) {
+	obj.x = this.center.x;
+	obj.y = this.center.y;
+	console.log(this.center.x, this.center.y, "Update Circle Pos");
+};
+
+
+
 
 MiniGame.prototype.stageUp = function() {
 	this.myParent.beamStage += 1;
@@ -161,3 +217,31 @@ MiniGame.prototype.stageUp = function() {
 	this.myParent.updateBeamStage();
 	this.myParent.damageEnemy();
 };
+
+MiniGame.prototype.stopMiniGame = function () {
+	this.removeOldGame();
+}
+
+
+MiniGame.prototype.attemptMatch = function () {
+	if(this.miniGameActive){
+		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+			if( this.catchSkull( this.skullGroup.members[i] ) ) {
+				this.skullCaptured( this.skullGroup.members[i] );
+			}
+		};
+	}
+}
+
+MiniGame.prototype.skullCaptured = function ( skull ) {
+	skull.exists = false;
+	if( this.getHealth() > 1 ){
+		return true;
+	} else {
+		this.killTarget();
+	}
+}
+MiniGame.prototype.killTarget = function () {
+	this.state.enemyManager.killTrapped();
+	this.state.weaponManager.stopShooting();
+}
