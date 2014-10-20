@@ -55,6 +55,7 @@ WeaponManager.prototype.startShooting = function(){
 		//IF ADD MULTIPLE WEAPONS CHECK TYPE OF WEAPON THEN CALL THE START SHOOTING METHOD ON IT
 
 		this.beamManager.shoot();
+		this.state.player.setAnimation();
 	}
 
 }
@@ -70,6 +71,7 @@ WeaponManager.prototype.shootKeyUp = function(){
 
 	this.shootKeyIsDown = false;
 	this.shooting = false;
+	this.beamManager.stoppedShooting();
 	this.state.enemyManager.resetEnemies();
 	this.stopShooting();
 	this.state.enemyManager.resetHit();

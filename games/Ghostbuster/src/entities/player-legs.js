@@ -23,7 +23,6 @@ var PlayersLegs = function (state, x, y){
 Kiwi.extend(PlayersLegs, Kiwi.GameObjects.Sprite);
 
 PlayersLegs.prototype.updateLegs = function(){
-	//console.log(this.physics.velocity.x, this.x, this.physics.last.x);
 
 	this.x = this.state.player.x;
 	this.y = this.state.player.y;

@@ -5,7 +5,8 @@ var Spark = function(state, x, y){
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
 	this.animation.add('initiate', [00, 01, 02, 03, 04, 05, 06, 07, 08, 09], 0.06, false, true);
 	this.animation.add('shoot', [11, 12, 13], animationSpeed, true);
-	this.animation.getAnimation('initiate').onStop.add(this.startLoop, this);
+	//this.animation.getAnimation('shoot').onStop.add(this.startLoop, this);
+	this.animation.play('shoot');
 
 
 
@@ -16,5 +17,5 @@ var Spark = function(state, x, y){
 Kiwi.extend(Spark, Kiwi.GameObjects.Sprite);
 
 Spark.prototype.startLoop = function(){
-	this.animation.play('shoot');
+	//this.animation.play('shoot');
 }

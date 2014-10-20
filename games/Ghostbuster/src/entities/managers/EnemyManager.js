@@ -157,17 +157,16 @@ EnemyManager.prototype.kill = function(enemy) {
 EnemyManager.prototype.killTrapped = function(enemy) {
 	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
 		if( this.enemies.members[i].hit ) {
-			this.enemies.members[i].exists = false;
+			this.killEnemy( this.enemies.members[i]);
 		}
 	};
 
 };
 
-EnemyManager.prototype.killEnemy = function(enemy, x, y) {
-	var temp = this.enemies.members;
-	this.enemies.removeChild(enemy, true); 
+EnemyManager.prototype.killEnemy = function(enemy) {
+	enemy.exists = false;
 
-	var tempDeath = new Death(this.state, x, y);
+	var tempDeath = new Death(this.state, enemy.x, enemy.y);
 	this.deathGroup.addChild(tempDeath);
 	
 };

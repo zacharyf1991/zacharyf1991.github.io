@@ -3,6 +3,7 @@ CameraManager = function(state){
     this.shakeSize = 3;
     this.damageState = false;
     this.shakeDamage = this.state.game.time.clock.createTimer('shakeDamage', 0.005, 0, false);
+    this.lockCamera = false;
 
 
 
@@ -19,6 +20,10 @@ CameraManager.prototype.update = function () {
     if(this.damageState){
         this.shakeCameraDamage();
     }
+
+    // if(this.state.weaponManager.beamManager.enemyTarget){
+    //     this.shakeCameraDamage();
+    // }
 
 
     
@@ -59,19 +64,40 @@ CameraManager.prototype.shakeCamera = function() {
 };
 
 CameraManager.prototype.updatePosition = function() {
-    if (this.state.player.x < this.state.game.stage.width / 2) {
-        this.state.camera.transform.x = 0;
-    } else if (this.state.player.x > (this.state.levelManager.groundLayer.widthInPixels - (this.state.game.stage.width / 2))) {
+
+    // Lock Position
+    if( this.lockCamera ) {
         this.state.camera.transform.x = -(this.state.levelManager.groundLayer.widthInPixels - this.state.game.stage.width);
-    } else {
-        this.state.camera.transform.x = -this.state.player.x + this.state.game.stage.width / 2;
-    }
-    
-    if (this.state.player.y < this.state.game.stage.height / 2) {
+
+        if (this.state.player.y < this.state.game.stage.height / 2) {
         this.state.camera.transform.y = 0;
     } else if (this.state.player.y > (this.state.levelManager.groundLayer.heightInPixels - (this.state.game.stage.height / 2))) {
         this.state.camera.transform.y = -(this.state.levelManager.groundLayer.heightInPixels - this.state.game.stage.height);
     } else {
         this.state.camera.transform.y = -this.state.player.y + this.state.game.stage.height / 2; // was 2
+    }
+
+    // Free position
+
+    } else {
+
+    if (this.state.player.x < this.state.game.stage.width / 2) {
+            this.state.camera.transform.x = 0;
+        } else if (this.state.player.x > (this.state.levelManager.groundLayer.widthInPixels - (this.state.game.stage.width / 2))) {
+
+            // Lock Camera
+            this.lockCamera = true;
+            this.state.camera.transform.x = -(this.state.levelManager.groundLayer.widthInPixels - this.state.game.stage.width);
+        } else {
+            this.state.camera.transform.x = -this.state.player.x + this.state.game.stage.width / 2;
+        }
+        
+        if (this.state.player.y < this.state.game.stage.height / 2) {
+            this.state.camera.transform.y = 0;
+        } else if (this.state.player.y > (this.state.levelManager.groundLayer.heightInPixels - (this.state.game.stage.height / 2))) {
+            this.state.camera.transform.y = -(this.state.levelManager.groundLayer.heightInPixels - this.state.game.stage.height);
+        } else {
+            this.state.camera.transform.y = -this.state.player.y + this.state.game.stage.height / 2; // was 2
+        }
     }
 };

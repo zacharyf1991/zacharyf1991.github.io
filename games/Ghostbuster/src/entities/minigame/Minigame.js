@@ -43,12 +43,16 @@ Kiwi.extend(MiniGame , Kiwi.Group);
 
 
 MiniGame.prototype.createMiniGame = function ( target, health ) {
-	this.beamTarget = this.state.weaponManager.beamManager.targetEnemy;
+	this.beamTarget = this.state.weaponManager.beamManager.targetEnemy.collision;
+	//console.log( this.beamTarget, "Beam Target" );
 
 	this.removeOldGame();
-	this.center = new Kiwi.Geom.Point( target.worldX, target.worldY ); // += target.centerPoint.x, target.y += target.centerPoint.y );
-	this.center.x += target.width * 0.5;
-	this.center.y += target.height * 0.5;
+	// this.center = new Kiwi.Geom.Point( target.worldX, target.worldY ); // += target.centerPoint.x, target.y += target.centerPoint.y );
+	// this.center.x += target.width * 0.5;
+	// this.center.y += target.height * 0.5;
+	// console.log( "Center x and y 1 ", this.center.x, this.center.y);
+	this.updateMiniGamePos();
+	this.moveMiniGame;
 	this.createRedCircle();
 	this.createSkulls( health );
 	//this.resetHealth();
@@ -56,6 +60,26 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 
 	this.startMiniGame();
 };
+
+MiniGame.prototype.updateMiniGamePos = function(){
+	if(this.beamTarget != undefined && this.beamTarget.exists ){
+		this.center = new Kiwi.Geom.Point( this.beamTarget.worldX, this.beamTarget.worldY ); 
+		this.center.x += this.beamTarget.width * 0.5;
+		this.center.y += this.beamTarget.height * 0.5;
+		// console.log( "Center x and y 2 ", this.center.x, this.center.y);
+	}
+
+}
+MiniGame.prototype.moveMiniGame = function(){
+	this.redCircle.x = this.center.x - this.redCircle.width * 0.5;
+	this.redCircle.y = this.center.y - this.redCircle.width * 0.5;
+
+	this.blueCircle.x = this.center.x; // - this.blueCircle.width * 0.5;
+	this.blueCircle.y = this.center.y - this.radius; // - this.blueCircle.width * 0.5;
+
+	this.skullGroup.x = this.center.x;
+	this.skullGroup.y = this.center.y;
+}
 
 MiniGame.prototype.removeOldGame = function () {
 	this.miniGameActive = false;
@@ -186,7 +210,8 @@ MiniGame.prototype.update = function(){
     // If !player.shooting set minigame to inactive.
 
     this.updateRotation();
-    // this.updatePosition();
+    this.updateMiniGamePos();
+    this.moveMiniGame();
 
 
 }
@@ -235,7 +260,9 @@ MiniGame.prototype.attemptMatch = function () {
 
 MiniGame.prototype.skullCaptured = function ( skull ) {
 	skull.exists = false;
+	
 	if( this.getHealth() > 1 ){
+		this.state.weaponManager.beamManager.beamUpgrade();
 		return true;
 	} else {
 		this.killTarget();
@@ -244,4 +271,7 @@ MiniGame.prototype.skullCaptured = function ( skull ) {
 MiniGame.prototype.killTarget = function () {
 	this.state.enemyManager.killTrapped();
 	this.state.weaponManager.stopShooting();
+
+	this.state.weaponManager.beamManager.enemyKilled();
+
 }

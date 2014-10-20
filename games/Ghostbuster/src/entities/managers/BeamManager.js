@@ -3,6 +3,11 @@ var BeamManager = function (state) {
 	this.state = state;
 	this.beams = [];
 	this.targetEnemy;
+	this.beamStage = 0;
+	//this.updateBeamAnimationsBoolean = false;
+	this.spark = new Spark( this.state, -100, -100 );
+	this.spark.anchorPointX = -24;
+	this.state.addChild(this.spark);
 };
 
 
@@ -14,9 +19,11 @@ BeamManager.prototype.update = function () {
 		this.shoot();
 		
 	}
+	//this.updateBeamAnimations();
 	this.updateActiveBeamPosition();
 	this.updateBeams();
 	this.removeOldBeams();
+	this.updateSpark();
 	// console.log( this.beams.length, "Beam Length" );
 
 	// if(this.beams[0] != undefined){
@@ -26,16 +33,31 @@ BeamManager.prototype.update = function () {
 
 };
 
+BeamManager.prototype.updateSpark = function () {
+	if(!this.beams[0]){
+		return;
+	}
+	this.spark.rotation = this.beams[0].rotation;
+
+	this.spark.x = this.beams[0].x + this.spark.width * 0.5;
+	this.spark.y = this.beams[0].y - this.spark.height * 0.5;
+	if(this.state.weaponManager.currentlyShooting()){
+		this.spark.alpha = 1;
+	} else {
+		this.spark.alpha = 0;
+	}
+}
+
 
 
 BeamManager.prototype.updateActiveBeamPosition = function(){
 	if( this.beams[0] != undefined ){
-		//if( this.state.weaponManager.shootKeyIsDown ){
+		if( this.state.weaponManager.currentlyShooting() ){
 			this.beams[0].x = this.state.player.x + this.state.player.width / 2;
 			this.beams[0].y = (this.state.player.y + this.state.player.height / 2)  + 10;
 
 
-		//}
+		}
 	}
 }
 
@@ -69,12 +91,16 @@ BeamManager.prototype.removeOldBeams = function () {
 
 BeamManager.prototype.removeBeamGroup = function (beamGroup) {
 
-	console.log( "Remove Group" );
+	// console.log( "Remove Group" );
+	//this.finishedColliding( beamGroup );
 	for (var i = beamGroup.members.length - 1; i >= 0; i--) {
 		// console.log("REMOVE GROUP");
 		beamGroup.members[i].exists = false;
 	};
 	if( beamGroup === this.beams[0] ) {
+		if(this.isActiveGroup(beamGroup)){
+			this.finishedColliding(beamGroup);
+		}
 		this.state.miniGameManager.stopMiniGame();
 	}
 	beamGroup.exists = false;
@@ -88,7 +114,7 @@ BeamManager.prototype.updateBeams = function () {
 		for (j = 0; j <= this.beams[i].members.length - 1; j += 1) {
 			//should the beams update themselves making it so I don't have to worry about non active array collisions 
 			this.updateBeamSegment(this.beams[i].members[j], this.beams[i]);
-			this.finishedColliding(this.beams[i]);
+			//this.finishedColliding(this.beams[i]);
 
 		}
 	}
@@ -232,8 +258,8 @@ BeamManager.prototype.activeBeamCollision = function (leader, beam) {
 	}
 	if(leader){
 		//get target
+		this.setTargetEnemy(beam);
 		this.startColliding(beam, beamGroup);
-		this.setTargetEnemy(beam)
 
 	} else if (beam.objType === 'beam') {
 		//If leader beam is not impacting break beam, otherwise nothing should happen
@@ -265,7 +291,7 @@ BeamManager.prototype.setTargetEnemy = function( beam ){
 BeamManager.prototype.breakActiveBeam = function (beam) {
 	var index = this.beams[0].getChildIndex(beam);
 	var tempGroup = new Kiwi.Group(this.state);
-	console.log ( "Break Active Beam");
+	//console.log ( "Break Active Beam");
 	for (var i = this.beams[0].members.length - 1; i >= 0; i--) {
 		if(i >= index){
 			tempGroup.addChild(this.beams[0].members[i]);
@@ -273,7 +299,7 @@ BeamManager.prototype.breakActiveBeam = function (beam) {
 		}
 	}
 	//console.log("a lot");
-	console.log( index, "Index", this.beams.length, "Length", tempGroup );
+	// console.log( index, "Index", this.beams.length, "Length", tempGroup );
 	this.beams.unshift(tempGroup);
 	this.state.addChild( this.beams[0] );
 	var myObj = [tempGroup.members[0], tempGroup];
@@ -311,8 +337,8 @@ BeamManager.prototype.startColliding = function (beam, beamGroup) {
 		pushDistance = 60,
 		pushSegments = 8;
 
-		this.state.miniGameManager.createMiniGame( beam , 3 );
-
+	this.state.miniGameManager.createMiniGame( beam , 3 );
+	this.state.cameraManager.damageState = true;
 
 	pointX = collider.x + ( collider.width / 2 ) - ( impact.width / 2 );
 	pointY = collider.y + ( collider.width / 2 ) - ( impact.width / 2 );
@@ -329,19 +355,48 @@ BeamManager.prototype.startColliding = function (beam, beamGroup) {
 	impact.x = this.impact.x;
 	impact.y = this.impact.y;
 	beamGroup.addChildAt(impact, 0);
+
 };
 BeamManager.prototype.finishedColliding = function(beamGroup) {
 	//console.log(beamGroup, " Beam Group");
-	if(beamGroup.members[0].objType == 'impact' && beamGroup.length === 1){
+	//if( (beamGroup.members[0].objType == 'impact'  && beamGroup.length === 1  ) ){
 		
-		console.log( "Remove Beam" );
+		// console.log( "Remove Beam" );
 		beamGroup.exists = false;
+		this.state.cameraManager.damageState = false;
 		this.state.miniGameManager.stopMiniGame();
-	}
+	//}
 }
+
+BeamManager.prototype.stoppedShooting = function() {
+		
+		// console.log( "Remove Beam" );
+		this.state.cameraManager.damageState = false;
+		this.state.miniGameManager.stopMiniGame();
+}
+
+BeamManager.prototype.enemyKilled = function() {
+		this.stoppedShooting();
+		this.removeImpact();
+		// this.state.cameraManager.damageState = false;
+		// this.state.miniGameManager.stopMiniGame();
+}
+
 BeamManager.prototype.destroyBeam = function ( beam, beamGroup ) {
 	beam.exists = false;
 	beamGroup.removeChild(beam);
+
+}
+
+BeamManager.prototype.removeImpact = function () {
+	//console.log("Removing", this.beams[0].members[0]);
+	for (var i = this.beams[0].members.length - 1; i >= 0; i--) {
+		if ( this.beams[0].members[i].objType == 'impact' ){
+			this.beams[0].members[i].alpha = 0;
+			this.beams[0].members[i].exists = false;
+		}
+	};
+	
 
 }
 
@@ -349,6 +404,7 @@ BeamManager.prototype.shoot = function () {
 	"use strict";
 	if ( !this.state.weaponManager.currentlyShooting() ) {
 		this.state.weaponManager.shooting = true;
+		this.beamStage = 0;
 		this.createNewActiveBeam();
 
 		// Set the rotation
@@ -368,7 +424,7 @@ BeamManager.prototype.shoot = function () {
 };
 
 BeamManager.prototype.createBeam = function () {
-	var beamSegment = new Beam( this.state, 0, 0, 0, 0 );
+	var beamSegment = new Beam( this.state, 0, 0, this.beamStage, 0 );
 	beamSegment.y -= beamSegment.height * 0.5;
 	beamSegment.x += 30;
 
@@ -411,8 +467,6 @@ BeamManager.prototype.checkCollision = function (beam) {
 			default:
 				break;
 		}
-
-		// console.log('Collision with',  hit.collision);
 		return true;
 	}
 	
@@ -420,5 +474,29 @@ BeamManager.prototype.checkCollision = function (beam) {
 
 BeamManager.prototype.canTrap = function (){
 	return this.state.weaponManager.shootKeyIsDown;
-}
+};
 
+BeamManager.prototype.beamUpgrade = function (){
+	//console.log( "Upgrade Started" );
+	this.beamStage += 1;
+	this.updateBeamAnimations();
+	//console.log( this.beamStage );
+};
+
+BeamManager.prototype.updateBeamAnimations = function (){
+	if(!this.beams[0] ){
+
+		// This will happen when beam has not been shot yet.
+		return;
+	}
+	if(this.beamStage < 3){
+		//console.log(this.beams[0].members, "members")
+		for (var i = this.beams[0].members.length - 1; i >= 0; i--) {
+			//console.log(this.beams[0].members[i], "Beam to update");
+			if(this.beams[0].members[i].updateAnimation){
+				this.beams[0].members[i].updateAnimation( this.beamStage );
+			}
+			
+		};
+	}
+};

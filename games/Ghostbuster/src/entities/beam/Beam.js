@@ -42,13 +42,15 @@ var Beam = function(state, x, y, beamStage, direction){
 
 		} 
 
-	} else if(this.beamStage = 1){
+	} else if( this.beamStage = 1 ){
 		if(this.animation.currentAnimation.name != 'stage2'){
-			this.animation.play('stage2');
+			// this.animation.play('stage2', false);
+			this.animation.playAt(this.playFrom, 'stage2');
 		} 
-	} else if(this.beamStage >=2){
+	} else if( this.beamStage >= 2 ){
 		 if(this.animation.currentAnimation.name != 'stage3'){
-			this.animation.play('stage3');
+			// this.animation.play('stage3');
+			this.animation.playAt(this.playFrom, 'stage3');
 		}
 	}
 
@@ -66,26 +68,42 @@ Beam.prototype.update = function(){
 
 }
 
-Beam.prototype.updateAnimation = function() {
-	if(this.beamStage <= 0){
-		if(this.animation.currentAnimation.name != 'stage1'){
-			this.animation.play('stage1');
-			
-		} 
+Beam.prototype.updateAnimation = function( stage ) {
 
-	} 
-	 if(this.beamStage == 1){
-		if(this.animation.currentAnimation.name != 'stage2'){
-			this.animation.play('stage2');
-		} 
-	} 
-	 if(this.beamStage >= 2){
-		 if(this.animation.currentAnimation.name != 'stage3'){
-			this.animation.play('stage3');
-		}
-	}
-	
+	//console.log( "Inside update Animation");
+	switch ( stage ) {
+		case 0:
+			if(this.animation.currentAnimation.name != 'stage1'){
+				this.beamStage = 0;
+				this.animation.play( 'stage1', false );
+				
+			} 
+			break;
+		case 1:
+			if(this.animation.currentAnimation.name != 'stage2'){
+				// this.animation.play( 'stage2', false );
+				this.beamStage = 1;
+				this.animation.playAt(this.playFrom, 'stage2');
+			} 
+			break;
+		case 2:
+			if(this.animation.currentAnimation.name != 'stage3'){
+				// this.animation.play( 'stage3', false );
+				this.beamStage = 2;
+				this.animation.playAt(this.playFrom, 'stage3');
+			}
+			break;
+		default:
+			console.error( stage, ": Stage was undefined")
+			if(this.animation.currentAnimation.name != 'stage1'){
+				this.animation.play( 'stage1', false );
+			}
+	};
+
+	// console.log( this.animation.currentAnimation.name, "Animation current Animation :", stage, "Stage upgrade passed");
 };
+
+
 
 Beam.prototype.removeBeam = function () {
 	//console.log("Destroy");

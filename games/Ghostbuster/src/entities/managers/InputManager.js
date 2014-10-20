@@ -49,8 +49,14 @@ InputManager.prototype.keyDownOnce = function(keyCode, key) {
 
     if(keyCode == this.rightKey.keyCode){
         this.state.player.updateKeyDown('RIGHT');
-    } else if(keyCode == this.leftKey.keyCode){
+    } 
+
+    if(keyCode == this.leftKey.keyCode){
         this.state.player.updateKeyDown('LEFT');
+    } 
+
+    if(keyCode == this.upKey.keyCode){
+        this.state.player.updateKeyDown('UP');
     } 
     if(keyCode == this.jumpKey.keyCode){
         this.state.player.updateKeyDown('JUMP');
@@ -86,8 +92,14 @@ InputManager.prototype.keyUp = function(keyCode, key) {
     //Move
     if(keyCode == this.rightKey.keyCode){
         this.state.player.updateKeyUp('RIGHT');
-    } else if(keyCode == this.leftKey.keyCode){
+    } 
+
+    if(keyCode == this.leftKey.keyCode){
         this.state.player.updateKeyUp('LEFT');
+    } 
+
+    if(keyCode == this.upKey.keyCode){
+        this.state.player.updateKeyUp('UP');
     } 
     //Jump
     if(keyCode == this.jumpKey.keyCode){

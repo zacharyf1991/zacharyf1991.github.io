@@ -91,6 +91,6 @@ PlatformBlueprint.Loading.preload = function () {
 
     //Test
     //this.addJSON('tilemap', 'assets/map/map.json');
-    this.addJSON('tilemap', 'assets/map/environment3.json');
+    this.addJSON('tilemap', 'assets/map/BossLevel.json');
 
 };

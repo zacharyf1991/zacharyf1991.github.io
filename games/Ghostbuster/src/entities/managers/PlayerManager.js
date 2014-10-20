@@ -53,6 +53,7 @@ var PlayerManager = function (state, x, y){
 	//KEYBOARD
 	this.rightKeyDown = false;
 	this.leftKeyDown = false;
+	this.upKeyDown = false;
 	this.jumpKeyDown = false;
 
 
@@ -143,44 +144,107 @@ PlayerManager.prototype.update = function(){
 	this.state.playersLegs.updateLegs();
 
 	if( this.state.weaponManager.shooting ) {
-		var dir = this.state.weaponManager.beamManager.getDirection();
+		this.animation.play( this.shootAnimation, false );
+		if(this.scaleX != this.shootScaleX){
+			this.state.playersLegs.animation.currentAnimation.reverse = true;
+		} else {
+			this.state.playersLegs.animation.currentAnimation.reverse = false;
+		}
+
+		this.scaleX = this.shootScaleX;
+		this.state.playersLegs.scaleX = this.shootScaleX;
+	}
+		
+	
+}
+PlayerManager.prototype.setAnimation = function () {
+	var dir = this.state.weaponManager.beamManager.getDirection();
+
 
 		switch ( dir ) {
 
 			// Left up
 			case -( Math.PI / 4 ):
-			this.animation.play( 'shootDiagonal', false );
+				this.shootAnimation = 'shootDiagonal';
+			// this.animation.play( 'shootDiagonal', false );
 				break;
 
 			// Right Up
 			case Math.PI / 4:
-				this.animation.play( 'shootDiagonal', false );
+				this.shootAnimation = 'shootDiagonal';
+				// this.animation.play( 'shootDiagonal', false );
 				break;
 
 			// Up
 			case 0:
-				this.animation.play( 'shootVert', false );
+				this.shootAnimation = 'shootVert';
+				// this.animation.play( 'shootVert', false );
 				break;
 
 			// Left
 			case -( Math.PI / 2 ):
-				this.animation.play( 'shootHorz', false );
+				this.shootAnimation = 'shootHorz';
+				// this.animation.play( 'shootHorz', false );
 				break;
 
 			// Right
 			case Math.PI / 2:
-				this.animation.play( 'shootHorz', false );
+				this.shootAnimation = 'shootHorz';
+				// this.animation.play( 'shootHorz', false );
 				break;
 			default:
 				break;
 		}
 
+		this.shootScaleX = this.scaleX;
 
-	}
 
-	
 }
 
+// This get the animation if the player is not shooting
+PlayerManager.prototype.setNormalAnimation = function () {
+	var dir = this.state.weaponManager.beamManager.getDirection();
+
+
+		switch ( dir ) {
+
+			// Left up
+			case -( Math.PI / 4 ):
+				this.normalAnimation = 'shootDiagonal';
+			// this.animation.play( 'shootDiagonal', false );
+				break;
+
+			// Right Up
+			case Math.PI / 4:
+				this.normalAnimation = 'shootDiagonal';
+				// this.animation.play( 'shootDiagonal', false );
+				break;
+
+			// Up
+			case 0:
+				this.normalAnimation = 'shootVert';
+				// this.animation.play( 'shootVert', false );
+				break;
+
+			// Left
+			case -( Math.PI / 2 ):
+				this.normalAnimation = 'shootHorz';
+				// this.animation.play( 'shootHorz', false );
+				break;
+
+			// Right
+			case Math.PI / 2:
+				this.normalAnimation = 'shootHorz';
+				// this.animation.play( 'shootHorz', false );
+				break;
+			default:
+				break;
+		}
+
+		//this.shootScaleX = this.scaleX;
+
+
+}
 
 PlayerManager.prototype.jump = function(){
 
@@ -213,20 +277,23 @@ PlayerManager.prototype.finishedRoll = function(){
    
 }
 
-PlayerManager.prototype.updateMovement = function(direction){
-
-	//BOTH MOVE KEYS UP
-	if((!this.rightKeyDown && !this.leftKeyDown) && !this.jumping ){
-		if(this.physics.velocity.x > 6 || this.physics.velocity.x < -6){
-			this.physics.velocity.x *= 0.92;
-		} else {this.physics.velocity.x = 0;}
-	}
-
+PlayerManager.prototype.updateAnimations = function () {
 	//EITHER MOVE KEYS DOWN
+	this.setNormalAnimation();
 	if(this.leftKeyDown || this.rightKeyDown){
-		if (this.animation.currentAnimation.name != 'walk' && !this.jumping )
-				this.animation.play('walk');
+		//console.log("Animation", this.shootAnimation );
+		if (this.animation.currentAnimation.name != this.normalAnimation && !this.jumping ){
+				// this.animation.play('walk');
+
+				this.animation.play(this.normalAnimation);
 				this.state.playersLegs.animation.play('walk', false);
+			}
+	} else if(this.upKeyDown) {
+		
+		//console.log( "INSIDE UP KEY DOWN");
+		if (this.animation.currentAnimation.name != this.normalAnimation && !this.jumping ){
+				this.animation.play( this.normalAnimation );
+			}
 	} else {
 		if (this.animation.currentAnimation.name != 'idle' && !this.jumping ){
 			   this.animation.play('idle');
@@ -235,17 +302,41 @@ PlayerManager.prototype.updateMovement = function(direction){
 		};
 			   
 	}
-	// var trappedEnemies = this.enemyManager.getTrappedEnemies();
-	var veloMod;
+}
+
+
+// If no movement keys are down it eases the players velocity by 92%
+PlayerManager.prototype.negativeAccel = function () {
+
+	//BOTH MOVE KEYS UP
+	if((!this.rightKeyDown && !this.leftKeyDown) && !this.jumping ){
+		if(this.physics.velocity.x > 6 || this.physics.velocity.x < -6){
+			this.physics.velocity.x *= 0.92;
+		} else {this.physics.velocity.x = 0;}
+	}
+
+}
+
+// This is used to slowdown / speed up player if jumping or shooting
+PlayerManager.prototype.modifyVelocity = function () {
+
 	if (this.jumping){
-		veloMod =2;// this.maxRunVelo * 2;
+		return 2;// this.maxRunVelo * 2;
 	} else if (this.state.weaponManager.shooting){
 		//
 		//console.log("Shooting Mod")
-		veloMod = 0.5;//this.maxRunVelo * 0.5;
+		return 0.5;//this.maxRunVelo * 0.5;
 	} else {
-		veloMod = 1//this.maxRunVelo;
+		return  1//this.maxRunVelo;
 	}
+
+}
+
+PlayerManager.prototype.updateMovement = function(direction){
+	this.negativeAccel();
+	this.updateAnimations();
+
+	var veloMod = this.modifyVelocity();
 
 	if(this.rightKeyDown){
 		this.scaleX = -1;
@@ -278,8 +369,13 @@ PlayerManager.prototype.updateMovement = function(direction){
 PlayerManager.prototype.updateKeyDown = function(key) {
 	if(key == 'RIGHT'){
 		this.rightKeyDown = true;
-	}else if(key == 'LEFT'){
+	}
+	if(key == 'LEFT'){
 		this.leftKeyDown = true;
+	}
+
+	if( key == 'UP'){
+		this.upKeyDown = true;
 	}
 
 	if(key == 'JUMP'){
@@ -296,9 +392,14 @@ PlayerManager.prototype.updateKeyDown = function(key) {
 PlayerManager.prototype.updateKeyUp = function(key) {
 	if(key == 'RIGHT'){
 		this.rightKeyDown = false;
-	}else if(key == 'LEFT'){
+	}
+	if(key == 'LEFT'){
 		this.leftKeyDown = false;
 	}
+	if( key == 'UP'){
+		this.upKeyDown = false;
+	}
+
 
 	if(key == 'JUMP'){
 		this.jumpKeyDown = false;
