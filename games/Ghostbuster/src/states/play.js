@@ -65,9 +65,12 @@ PlatformBlueprint.Play.create = function () {
 
     this.playersLegs = new PlayersLegs( this, 0, 0 );
     this.addChild( this.playersLegs );
-    this.player = new PlayerManager(this, 50, 400);
+    this.player = new PlayerManager(this, 325, 200);
     this.addChild(this.player);
     this.weaponManager = new WeaponManager(this);
+
+    this.boss = new Boss( this, this.player.x, this.player.y );
+    this.addChild(this.boss);
 
     this.miniGameManager = new MiniGame( this );
     this.addChild( this.miniGameManager );

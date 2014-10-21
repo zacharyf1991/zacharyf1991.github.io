@@ -6,21 +6,6 @@ var PlayerManager = function (state, x, y){
 
 
 
-	//DIRECTIONS
-	//based of numpad
-	this.RIGHT = 6;
-	this.RIGHTDOWN = 3;
-	this.DOWN = 2;
-	this.LEFTDOWN = 1;
-	this.LEFT = 4;
-	this.LEFTUP = 7;
-	this.UP = 8;
-	this.RIGHTUP = 9;
-
-	
-	this.keyboard = this.state.game.input.keyboard;
-	this.mouse = this.state.game.input.mouse;
-
 	// Top half animations
 	this.animation.add('idle', [15], 0.1, true);
 	this.animation.add('walk', [ 8, 9, 10, 11, 12, 13, 14, 15 ], 0.05, true);

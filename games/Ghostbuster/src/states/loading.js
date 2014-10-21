@@ -47,6 +47,8 @@ PlatformBlueprint.Loading.preload = function () {
     //ENEMIES
 
     this.addSpriteSheet('ghost', 'assets/img/enemies/ghost2.png', 160, 160);
+    this.addSpriteSheet('boss', 'assets/img/enemies/boss.png', 300, 200);
+    this.addSpriteSheet('books', 'assets/img/enemies/books.png', 200, 200);
 
     /////////////////////
     //MINIGAME 

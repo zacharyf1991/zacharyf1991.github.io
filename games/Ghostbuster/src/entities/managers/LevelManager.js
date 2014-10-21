@@ -66,16 +66,16 @@ LevelManager.prototype.generateForegroundTileMap = function () {
 }
 
 LevelManager.prototype.gemsLevelOne = function() {
-    this.state.itemManager.addItem('gem', 409, 569);
-    this.state.itemManager.addItem('gem', 672, 571);
-    this.state.itemManager.addItem('gem', 1160, 478);
-    this.state.itemManager.addItem('gem', 1529, 330);
-    this.state.itemManager.addItem('gem', 1708, 332);
-    this.state.itemManager.addItem('gem', 1727, 157);
-    this.state.itemManager.addItem('gem', 1507, 168);
-    this.state.itemManager.addItem('gem', 1325, 208);
-    this.state.itemManager.addItem('gem', 1259, 273);
-    this.state.itemManager.addItem('gem', 1230, 347);
+    // this.state.itemManager.addItem('gem', 409, 569);
+    // this.state.itemManager.addItem('gem', 672, 571);
+    // this.state.itemManager.addItem('gem', 1160, 478);
+    // this.state.itemManager.addItem('gem', 1529, 330);
+    // this.state.itemManager.addItem('gem', 1708, 332);
+    // this.state.itemManager.addItem('gem', 1727, 157);
+    // this.state.itemManager.addItem('gem', 1507, 168);
+    // this.state.itemManager.addItem('gem', 1325, 208);
+    // this.state.itemManager.addItem('gem', 1259, 273);
+    // this.state.itemManager.addItem('gem', 1230, 347);
 };
 
 LevelManager.prototype.ghostsLevelOne = function() {
@@ -87,6 +87,7 @@ LevelManager.prototype.gameOver = function() {
     this.state.hudManager.endState();
 
     var params = this.state.gameManager.gameOver();
+    this.boss.endState();
     game.states.switchState("GameOver", null, null, params);
 };
 
