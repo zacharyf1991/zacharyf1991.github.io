@@ -4,6 +4,11 @@ CollisionManager = function(state){
 
 	this.ghostCollideDistance = 40;
 
+	this.bookCollideDistance = 30;
+	this.shieldHitDistance = 200;
+	this.bossHitDistance = 70;
+	this.bookHitDistance = 30;
+
 
 }
 
@@ -195,15 +200,47 @@ CollisionManager.prototype.beamCollision = function(beam) {
 				target = this.state.enemyManager.enemies.members[i];
 			 	var temp = { collision: this.state.enemyManager.enemies.members[i] };
 			 	return temp;
-			return true;
+				// return true;
 		}
 		
-		// if( beam.box.worldBounds.intersects( this.state.enemyManager.enemies.members[i].box.bounds ) ) {
-		// 	target = this.state.enemyManager.enemies.members[i];
-		// 	var temp = { collision: this.state.enemyManager.enemies.members[i] };
-		// 	return temp;
-		// }
 	};
+
+	// Check to see if beam hits a book (After Ghost)
+
+	//Checks to see if boss exists
+	if (this.state.boss != undefined) {
+		// console.log("Boss does exist");
+		for (var i = this.state.boss.books.members.length - 1; i >= 0; i--) {
+
+			if( this.state.boss.books.members[i].moving ) {
+				continue;
+			}
+
+			if( beam.centerPoint.distanceTo( this.state.boss.books.members[i].centerPoint ) < this.bookCollideDistance ) {
+				//console.log( "Hitting Impact Point Zach");
+					target = this.state.boss.books.members[i];
+				 	var temp = { collision: this.state.boss.books.members[i] };
+				 	return temp;
+					// return true;
+			}
+			
+		};
+		for (var i = this.state.boss.trappedBooks.members.length - 1; i >= 0; i--) {
+
+			if( this.state.boss.trappedBooks.members[i].moving ) {
+				continue;
+			}
+
+			if( beam.centerPoint.distanceTo( this.state.boss.trappedBooks.members[i].centerPoint ) < this.bookCollideDistance ) {
+				//console.log( "Hitting Impact Point Zach");
+					target = this.state.boss.trappedBooks.members[i];
+				 	var temp = { collision: this.state.boss.trappedBooks.members[i] };
+				 	return temp;
+					// return true;
+			}
+			
+		};
+	}
 	return false;
 	// this.beamCollideWithBook(beam);
 	// this.beamCollideWithEnemy(beam);
@@ -214,11 +251,13 @@ CollisionManager.prototype.beamCollision = function(beam) {
 
 CollisionManager.prototype.collidesWithImpact = function(beam, beamGroup) {
 	if(beam == undefined){
+		console.log( "No beam" );
 		return false;
 	}
-
+	// console.log ( "Distance between beam and impact:", beam.centerPoint.distanceTo( beamGroup.members[0].centerPoint ));
 	if( beam.centerPoint.distanceTo( beamGroup.members[0].centerPoint ) < this.beamCollideDistance ) {
-		//console.log( "Hitting Impact Point Zach");
+		// console.log( "Hitting Impact Point Zach");
+		beam.exists = false;
 		return true;
 	}
 	
@@ -228,5 +267,70 @@ CollisionManager.prototype.collidesWithImpact = function(beam, beamGroup) {
 	// 	return true;
 	// }
 	return false;
+
+}
+
+
+CollisionManager.prototype.checkShieldBossHit = function ( shield, book) {
+	if( shield.centerPoint.distanceTo( book.centerPoint ) < this.shieldHitDistance ) {
+		// console.log( "Hitting Impact Point Zach");
+		//beam.exists = false;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+CollisionManager.prototype.checkBossHit = function(beam) {
+	if(beam == undefined){
+		return false;
+	}
+	
+	// Checks to see if beam exists
+	if ( beam.box.bounds == undefined){
+			//return false;
+	}
+
+	// Checks to see if beam has collided with enemy
+	if (this.state.boss == undefined) {
+		// console.log("Boss does not exist");
+		return;
+	}
+
+	if( beam.centerPoint.distanceTo( this.state.boss.centerPoint ) < this.bossHitDistance ) {
+		//console.log( "Hitting Impact Point Zach");
+			target = this.state.boss;
+		 	var temp = { collision: this.state.boss };
+		 	return temp;
+			// return true;
+	}
+	
+
+	return false;
+	// this.beamCollideWithBook(beam);
+	// this.beamCollideWithEnemy(beam);
+	// this.beamCollideWithEnvironment(beam);
+
+}
+
+CollisionManager.prototype.bookHitPlayer = function() {
+
+	var books = this.state.boss.books.members;
+
+
+	// Checks to see if beam has collided with enemy
+	for (var i = books.length - 1; i >= 0; i--) {
+
+		if( this.state.player.centerPoint.distanceTo( books[i].centerPoint ) < this.bookHitDistance ) {
+			//console.log( "Hitting Impact Point Zach");
+			return true;
+		}
+		
+	};
+
+	return false;
+	// this.beamCollideWithBook(beam);
+	// this.beamCollideWithEnemy(beam);
+	// this.beamCollideWithEnvironment(beam);
 
 }

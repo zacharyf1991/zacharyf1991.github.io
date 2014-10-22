@@ -6,9 +6,15 @@ var Book = function ( state, type, x, y, toX, toY ){
 
 	this.health = 3;
 	this.phase = 1;
+	this.objType = "Book";
+	this.targetImpact = null;
+	this.type = type;
 
 	// This is duration the throw tween plays in milliseconds. 
 	this.throwSpeed = 1500;
+	this.maxHoldTime = 5;
+
+	this.moving = true;
 
 	this.moveTo(toX, toY);
 
@@ -19,25 +25,25 @@ var Book = function ( state, type, x, y, toX, toY ){
 
 	switch (type) {
 		case 'bible':
-			this.animation.add('disappear', [ 0, 1, 2, 3, 4, 5, 6, 7 ], 0.05, true);
-			this.animation.add('hold', [ 8, 9 ], 0.05, false);
-			this.animation.add('idle', [ 10, 11, 12 ], 0.05, false);
+			this.animation.add('disappear', [ 0, 1, 2, 3, 4, 5, 6, 7 ], 0.05, false);
+			this.animation.add('hold', [ 8, 9 ], 0.05, true);
+			this.animation.add('idle', [ 10, 11, 12 ], 0.7, true);
 			// console.log(type, "Type of book");
 			break;
 		case 'book1':
-			this.animation.add('disappear', [ 16, 17, 18, 19, 20 /*, 21, 22 */ ], 0.05, true);
-			this.animation.add('hold', [ 13, 14 ], 0.05, false);
-			this.animation.add('idle', [ 24, 25, 26 ], 0.05, false);
+			this.animation.add('disappear', [ 16, 17, 18, 19, 20 /*, 21, 22 */ ], 0.05, false);
+			this.animation.add('hold', [ 13, 14 ], 0.05, true);
+			this.animation.add('idle', [ 24, 25, 26 ], 0.7, true);
 			break;
 		case 'book2':
-			this.animation.add('disappear', [ 27, 28, 29, 30, 31 ], 0.05, true);
-			this.animation.add('hold', [ 32, 33 ], 0.05, false);
-			this.animation.add('idle', [ 34, 35, 36 ], 0.05, false);
+			this.animation.add('disappear', [ 27, 28, 29, 30, 31 ], 0.05, false);
+			this.animation.add('hold', [ 32, 33 ], 0.05, true);
+			this.animation.add('idle', [ 34, 35, 36 ], 0.7, true);
 			break;
 		case 'book3':
-			this.animation.add('disappear', [ 40, 41, 42, 43, 44 ], 0.05, true);
-			this.animation.add('hold', [ 37, 38 ], 0.05, false);
-			this.animation.add('idle', [ 45, 46, 47 ], 0.05, false);
+			this.animation.add('disappear', [ 40, 41, 42, 43, 44 ], 0.05, false);
+			this.animation.add('hold', [ 37, 38 ], 0.05, true);
+			this.animation.add('idle', [ 45, 46, 47 ], 0.7, true);
 			break;
 		default:
 			console.error("Book type did not match any given case");
@@ -82,7 +88,11 @@ Book.prototype.update = function () {
 	Kiwi.GameObjects.Sprite.prototype.update.call(this);
 	this.updateCenterPoint();
 	this.checkCollisions();
+
+
+
 }
+
 
 Book.prototype.switchToIdle = function() {
 	if( this.animation.currentAnimation != 'idle' ) {
@@ -110,7 +120,10 @@ Book.prototype.moveTo = function (x, y) {
 	tweenObj.x = x;
 	tweenObj.y = y;
 
+	this.moving = true;
+
 	this.tween.to(tweenObj, 1000, Kiwi.Animations.Tweens.Easing.Linear.None); 
+	this.tween.onComplete(this.finishedMoving, this);
 	//this.tween.delay(2000); //delays the tween after starting. In milliseconds.
 	this.tween.start();     //start the tween
 }
@@ -129,6 +142,7 @@ Book.prototype.updateCenterPoint = function () {
 }
 
 Book.prototype.throwAt = function ( target ) {
+	this.moving = true;
 
 	var diffY, diffX,
 		currX = this.x,
@@ -146,7 +160,7 @@ Book.prototype.throwAt = function ( target ) {
 	tweenObj.x = target.x + diffX * 2;
 	tweenObj.y = target.y + diffY * 2;
 
-	console.log(tweenObj);
+	// console.log(tweenObj);
 
 	throwTween.to(tweenObj, this.throwSpeed, Kiwi.Animations.Tweens.Easing.Linear.None); 
 	throwTween.onComplete(this.finishedThrow, this);
@@ -158,4 +172,26 @@ Book.prototype.throwAt = function ( target ) {
 
 Book.prototype.finishedThrow = function () {
 	this.exists = false;
+}
+
+Book.prototype.trapped = function () {
+	/*this.exists = false;*/
+	this.deathTimer = this.game.time.clock.createTimer('spawn', this.maxHoldTime, 0, false);  
+    this.deathTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.disappear, this);
+
+    this.deathTimer.start();
+
+
+}
+Book.prototype.disappear = function () {
+	if(this.exists){
+		this.animation.play('disappear'); 
+	}
+
+}
+
+Book.prototype.finishedMoving = function () {
+	//this.animation.play('disappear'); 
+	this.moving = false;
+
 }

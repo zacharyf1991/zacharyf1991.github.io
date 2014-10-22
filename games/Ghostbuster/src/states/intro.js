@@ -19,6 +19,8 @@ PlatformBlueprint.Intro.create = function () {
 	this.keyboard = this.game.input.keyboard;
     this.mouse = this.game.input.mouse;
 
+    //game.timers.stopAllTimers()
+
 
     this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
 

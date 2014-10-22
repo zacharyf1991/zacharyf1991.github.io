@@ -127,12 +127,13 @@ BeamManager.prototype.updateBeams = function () {
 	//then if not active beam collide into anything
 BeamManager.prototype.updateBeamSegment = function (beam, beamGroup) {
 	"use strict";
+	// console.log("INSIDE UPDATE BEAM SEG");
 	if ( beam.objType != 'beam' ) {
 		return;
 	}
 	if (this.checkCollision(beam)) {
 
-		// console.log("Is active group ", this.isActiveGroup(beamGroup))
+		//console.log("Is active group ", this.isActiveGroup(beamGroup))
 		if (this.isActiveGroup(beamGroup) && !this.activeGroupColliding()) {
 
 			//Should I check if the leader is colliding here before 'splitting' the group
@@ -143,8 +144,8 @@ BeamManager.prototype.updateBeamSegment = function (beam, beamGroup) {
 			return;
 		} else { 
 
-			// Non active beam collides (Still undeterminded what it hit)
 			// Check if hit 'impact' if not return
+			//console.log ( "Hit impact point?"  )
 			if( this.hittingImpactPoint( beam, beamGroup ) ){
 				this.collideBeam(beam, beamGroup);
 				return;
@@ -154,6 +155,10 @@ BeamManager.prototype.updateBeamSegment = function (beam, beamGroup) {
 			}
 			
 		}
+	} else if ( this.state.collisionManager.checkBossHit( beam ) ){
+		// kconsole.log("BOSS HIT");
+		this.targetEnemy = this.state.boss;
+		this.state.boss.bossHitWithBeam();
 	} else {
 		//update Movement
 		//console.log( "Update Beam Movement" );
@@ -162,8 +167,10 @@ BeamManager.prototype.updateBeamSegment = function (beam, beamGroup) {
 };
 
 BeamManager.prototype.hittingImpactPoint = function ( beam, beamGroup){
+	//console.log (beam, beamGroup, "BEAM INFORMATION");
 	var value =  this.state.collisionManager.collidesWithImpact( beam, beamGroup );
 	// console.log( value, "This is the 'collides with impact value" );
+	//beam.exists = false;
 	return value;
 }
 BeamManager.prototype.beamVelocity = function (beam) {
@@ -281,7 +288,21 @@ BeamManager.prototype.setTargetEnemy = function( beam ){
 	if( hit === false ) {
 		return false;
 	} else {
-		this.targetEnemy = hit;
+		//console.log( "HIT TYPE:", hit.collision.objType );
+		switch ( hit.collision.objType ) {
+			case 'Book':
+				this.targetEnemy = null;
+				break;
+			case 'Ghost':
+				this.targetEnemy = hit.collision;
+				break;
+			case 'Boss':
+				this.targetEnemy = this.state.boss;
+			default:
+				console.error( "Enemy was not confirmed" );
+				this.targetEnemy = undefined;
+		}
+		//this.targetEnemy = hit;
 	}
 };
 
@@ -337,7 +358,9 @@ BeamManager.prototype.startColliding = function (beam, beamGroup) {
 		pushDistance = 60,
 		pushSegments = 8;
 
-	this.state.miniGameManager.createMiniGame( beam , 3 );
+	if(this.targetEnemy){
+		this.state.miniGameManager.createMiniGame( beam , 3 );
+	}
 	this.state.cameraManager.damageState = true;
 
 	pointX = collider.x + ( collider.width / 2 ) - ( impact.width / 2 );
@@ -460,9 +483,17 @@ BeamManager.prototype.checkCollision = function (beam) {
 	if( hit === false ) {
 		return false;
 	} else {
+		
 		switch ( hit.collision.objType ) {
 			case "Ghost":
 				this.state.enemyManager.trap( hit.collision );
+				this.hittingImpactPoint(beam, this.getBeamGroup(beam) );
+				break;
+			case "Book":
+				// console.log( "Hit Book", hit.collision.objType );
+				this.setTargetEnemy( beam );
+				this.state.boss.trapBook( hit.collision, this.getBeamGroup( beam ) );
+				this.hittingImpactPoint(beam, this.getBeamGroup(beam) );
 				break;
 			default:
 				break;
@@ -471,6 +502,14 @@ BeamManager.prototype.checkCollision = function (beam) {
 	}
 	
 }
+
+BeamManager.prototype.getBeamGroup = function ( beam ){
+	for (var i = this.beams.length - 1; i >= 0; i--) {
+		if( this.beams[i].contains(beam) ){
+			return this.beams[i];
+		}
+	};
+};
 
 BeamManager.prototype.canTrap = function (){
 	return this.state.weaponManager.shootKeyIsDown;

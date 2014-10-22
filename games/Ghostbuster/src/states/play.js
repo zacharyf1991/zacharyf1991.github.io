@@ -69,8 +69,10 @@ PlatformBlueprint.Play.create = function () {
     this.addChild(this.player);
     this.weaponManager = new WeaponManager(this);
 
-    this.boss = new Boss( this, this.player.x, this.player.y );
-    this.addChild(this.boss);
+    // this.boss = new Boss( this, 1625, 200 );
+    // this.addChild(this.boss);
+
+    // this.swapChildren( this.boss, this.boss.shield );
 
     this.miniGameManager = new MiniGame( this );
     this.addChild( this.miniGameManager );
@@ -159,5 +161,12 @@ PlatformBlueprint.Play.updateCash = function(){
         //console.log("test");
         this.cashGroup.members[i].physics.update();
     };
+}
+
+PlatformBlueprint.Play.createBoss = function(){
+    this.boss = new Boss( this, 1625, 200 );
+    this.addChild(this.boss);
+
+    this.swapChildren( this.boss, this.boss.shield );
 }
 

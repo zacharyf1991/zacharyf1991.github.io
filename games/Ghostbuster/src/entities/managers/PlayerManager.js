@@ -34,6 +34,8 @@ var PlayerManager = function (state, x, y){
 	this.beamStage = 0;
 	this.jumpHeight = 40;
 
+	this.centerPoint = new Kiwi.Geom.Point( 0, 0 );
+
 	///////////////////
 	//KEYBOARD
 	this.rightKeyDown = false;
@@ -113,6 +115,13 @@ PlayerManager.prototype.update = function(){
 	//this.physics.update();
 	this.updateMovement();
 
+	// Checks if boss exists
+	if(this.state.boss){
+		this.updateBookCollisions();
+		
+	}
+
+
 
 	
 	
@@ -141,6 +150,12 @@ PlayerManager.prototype.update = function(){
 	}
 		
 	
+}
+
+PlayerManager.prototype.updateBookCollisions = function() {
+	if ( this.state.collisionManager.bookHitPlayer() ){
+		this.hitByEnemy();
+	}
 }
 PlayerManager.prototype.setAnimation = function () {
 	var dir = this.state.weaponManager.beamManager.getDirection();
@@ -343,6 +358,8 @@ PlayerManager.prototype.updateMovement = function(direction){
 		}
 
 	}
+	this.centerPoint.x = this.worldX + this.width * 0.5;
+	this.centerPoint.y = this.worldY + this.height * 0.5;
 }
 
 
@@ -402,67 +419,3 @@ PlayerManager.prototype.hitByEnemy = function() {
 
 
 
-
-
-
-
-
-
-
-
-
-	// //on stage movement controls
-	// this.controllerActive = true;
-	// if (this.controllerActive) this.generateController();
-	// console.log('CREATE GAME')
-
-
-
-
-// /**
-// * The generateController method displays control buttons onto the stage, and uses the TouchButton plugin
-// * @method generateController
-// * @public
-// */
-// PlatformBlueprint.Play.generateController = function () {
-//     this.upButton = new Kiwi.Plugins.GameObjects.TouchButton(this, this.textures['upButton'], 81, 300);
-//     this.upButton.posX = this.upButton.x;
-//     this.upButton.posY = this.upButton.y;
-//     //this.addChild(this.upButton);
-
-//     this.downButton = new Kiwi.Plugins.GameObjects.TouchButton(this, this.textures['downButton'], 81, 441);
-//     this.downButton.posX = this.downButton.x;
-//     this.downButton.posY = this.downButton.y;
-//     //this.addChild(this.downButton);
-
-//     this.leftButton = new Kiwi.Plugins.GameObjects.TouchButton(this, this.textures['leftButton'], 26, 360);
-//     this.leftButton.posX = this.leftButton.x;
-//     this.leftButton.posY = this.leftButton.y;
-//     //this.addChild(this.leftButton);
-
-//     this.rightButton = new Kiwi.Plugins.GameObjects.TouchButton(this, this.textures['rightButton'], 162, 360);
-//     this.rightButton.posX = this.rightButton.x;
-//     this.rightButton.posY = this.rightButton.y;
-//     //this.addChild(this.rightButton);
-// }
-
-
-
-// /**
-// * The updateController method moves the controller graphics to stay in position.
-// * @method updateController
-// * @public
-// */
-// PlatformBlueprint.Play.updateController = function () {
-//     this.upButton.x = this.upButton.posX - this.camera.transform.x;
-//     this.upButton.y = this.upButton.posY - this.camera.transform.y;
-
-//     this.downButton.x = this.downButton.posX - this.camera.transform.x;
-//     this.downButton.y = this.downButton.posY - this.camera.transform.y;
-
-//     this.leftButton.x = this.leftButton.posX - this.camera.transform.x;
-//     this.leftButton.y = this.leftButton.posY - this.camera.transform.y;
-
-//     this.rightButton.x = this.rightButton.posX - this.camera.transform.x;
-//     this.rightButton.y = this.rightButton.posY - this.camera.transform.y;
-// }

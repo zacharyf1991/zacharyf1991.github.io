@@ -87,6 +87,8 @@ CameraManager.prototype.updatePosition = function() {
 
             // Lock Camera
             this.lockCamera = true;
+            this.state.createBoss();
+            // this.state.boss.appear();
             this.state.camera.transform.x = -(this.state.levelManager.groundLayer.widthInPixels - this.state.game.stage.width);
         } else {
             this.state.camera.transform.x = -this.state.player.x + this.state.game.stage.width / 2;

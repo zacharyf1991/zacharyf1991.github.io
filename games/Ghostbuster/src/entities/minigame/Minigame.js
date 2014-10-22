@@ -12,7 +12,7 @@ var MiniGame = function(state){
 	this.redCircle;
 	this.blueCircle;
 	this.skullGroup;
-	this.center;
+	this.center = new Kiwi.Geom.Point( 0, 0 ); 
 
 	this.radius = 84;
 
@@ -43,7 +43,7 @@ Kiwi.extend(MiniGame , Kiwi.Group);
 
 
 MiniGame.prototype.createMiniGame = function ( target, health ) {
-	this.beamTarget = this.state.weaponManager.beamManager.targetEnemy.collision;
+	this.beamTarget = this.state.weaponManager.beamManager.targetEnemy;
 	//console.log( this.beamTarget, "Beam Target" );
 
 	this.removeOldGame();
@@ -62,10 +62,11 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 };
 
 MiniGame.prototype.updateMiniGamePos = function(){
+	// console.log(this.beamTarget);
 	if(this.beamTarget != undefined && this.beamTarget.exists ){
-		this.center = new Kiwi.Geom.Point( this.beamTarget.worldX, this.beamTarget.worldY ); 
-		this.center.x += this.beamTarget.width * 0.5;
-		this.center.y += this.beamTarget.height * 0.5;
+		
+		this.center.x = this.beamTarget.worldX + this.beamTarget.width * 0.5;
+		this.center.y = this.beamTarget.worldY +  this.beamTarget.height * 0.5;
 		// console.log( "Center x and y 2 ", this.center.x, this.center.y);
 	}
 
@@ -253,6 +254,9 @@ MiniGame.prototype.attemptMatch = function () {
 		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
 			if( this.catchSkull( this.skullGroup.members[i] ) ) {
 				this.skullCaptured( this.skullGroup.members[i] );
+				if(this.beamTarget.objType == 'Boss'){
+					this.state.boss.hurtByBeam();
+				}
 			}
 		};
 	}
