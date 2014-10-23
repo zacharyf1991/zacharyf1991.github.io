@@ -87,7 +87,10 @@ LevelManager.prototype.gameOver = function() {
     this.state.hudManager.endState();
 
     var params = this.state.gameManager.gameOver();
-    this.state.boss.endState();
+    if( this.boss != undefined ) {
+        this.state.boss.endState();
+        
+    }
     game.states.switchState("GameOver", null, null, params);
 };
 

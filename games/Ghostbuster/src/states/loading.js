@@ -33,7 +33,7 @@ PlatformBlueprint.Loading.preload = function () {
     this.addImage('background1', 'assets/img/environment/background.jpg');
     ////////////////////////
     //PLAYER
-    this.addSpriteSheet('egonSprite', 'assets/img/sprites/egon-sprite-3.png', 100, 100);
+    this.addSpriteSheet('egonSprite', 'assets/img/sprites/egon-sprite.png', 100, 100);
     this.addImage('UI', 'assets/img/UI/UI.png');
     this.addImage('cashUI', 'assets/img/UI/cashUI.png');
 
@@ -62,6 +62,7 @@ PlatformBlueprint.Loading.preload = function () {
     //ITEMS
     this.addSpriteSheet('cash', 'assets/img/items/cash.png', 160, 160);
     this.addSpriteSheet('gem', 'assets/img/items/diamond.png', 32, 32);
+    this.addSpriteSheet('bookPile', 'assets/img/items/bookPiles.png', 248, 72);
 
 
 

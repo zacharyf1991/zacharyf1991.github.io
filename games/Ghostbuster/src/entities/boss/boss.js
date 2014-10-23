@@ -81,6 +81,7 @@ Boss.prototype.update = function () {
 	this.checkIfHit();
 
 	if( this.health <= 0 ) {
+		this.shield.alpha = 0;
 		this.animation.play('death');
 		this.game.tweens.removeAll();
 		//this.updateDamage();
@@ -232,18 +233,45 @@ Boss.prototype.pickUpBooks = function() {
 Boss.prototype.createBooks = function ( num ) {
 
 	if( num == 2 ){
-		var tempBook1, tempBook2, pos, startPos;
-		pos = this.bookPos( 1 );
+
+
+
+
+		var tempBook1, tempBook2, pos, startPos, hand;
+
+		hand = this.spawnOrder( 2 );
+
+		pos = this.bookPos( hand[0] );
 		startPos = this.bookStartPos();
 		tempBook1 = new Book( this.state, this.getBookType(), startPos.x, startPos.y, pos.x, pos.y );
 		this.books.addChild( tempBook1 );
 
-		pos = this.bookPos( 2 );
+		startPos = this.bookStartPos();
+		pos = this.bookPos( hand[1] );
 		tempBook2 = new Book( this.state, this.getBookType(), startPos.x, startPos.y, pos.x, pos.y );
 		this.books.addChild( tempBook2 );
 	}
 
 }
+
+
+//Returns array of length num in random order from 1 - num
+// E.g spawnOrder( 2 ) can return either [ 1, 2 ] or [ 2, 1 ]
+Boss.prototype.spawnOrder = function( num ) {
+	var myArray = [],
+		tempArray = [];
+	for ( var i = 0 ; i < num; i++ ) {
+		tempArray[i] = i + 1;
+	};
+
+
+	while ( tempArray.length > 0 ){
+		var j = Math.floor( Math.random() * tempArray.length );
+		myArray[myArray.length] = tempArray[j];
+		tempArray.splice( j , 1 );
+	}
+	return myArray;
+};
 
 Boss.prototype.throwBook = function() {
 	this.throwAni();
@@ -312,7 +340,12 @@ Boss.prototype.bookPos = function ( num ) {
 Boss.prototype.bookStartPos = function () {
 	var num, pos;
 	num = Math.floor(Math.random() * 2);
-	pos = new Kiwi.Geom.Point( this.state.boss.x, this.state.boss.y );
+	if ( num == 1 ){
+		pos = new Kiwi.Geom.Point( this.state.bookPileL.x, this.state.bookPileL.y );
+	} else {
+		pos = new Kiwi.Geom.Point( this.state.bookPileR.x, this.state.bookPileR.y );
+	}
+	
 	return pos;
 }
 

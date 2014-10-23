@@ -14,6 +14,7 @@ var PlayerManager = function (state, x, y){
 	this.animation.add('shootDiagonal', [ 0, 1, 2, 3, 4, 5, 6, 7 ], 0.05, true);
 	this.animation.add('jump', [ 24, 25], 0.1, false);
 	this.animation.add('roll', [ 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33 ], 0.005, false);
+	this.animation.add( 'death', [43], 1, true );
 	this.animation.play('idle'); 
 
 	// Bottom half animations
@@ -33,6 +34,8 @@ var PlayerManager = function (state, x, y){
 	this.maxRunVelo = 26;
 	this.beamStage = 0;
 	this.jumpHeight = 40;
+
+	this.playedDeath = false;
 
 	this.centerPoint = new Kiwi.Geom.Point( 0, 0 );
 
@@ -99,9 +102,11 @@ PlayerManager.prototype.stopFlash = function() {
 
 
 PlayerManager.prototype.update = function(){
+	Kiwi.GameObjects.Sprite.prototype.update.call(this);
 	//console.log(this.physics.velocity.x, this.x, this.physics.last.x);
 
-	Kiwi.GameObjects.Sprite.prototype.update.call(this);
+	// console.log( this.y, "Player Y" );
+
 	if(this.x > 2200){
 		this.x = -50;
 	} else if(this.x < -50){
@@ -414,6 +419,43 @@ PlayerManager.prototype.hitByEnemy = function() {
 	}
 };
 
+PlayerManager.prototype.die = function() {
+		this.alpha = 0;
+	if( !this.playedDeath ){
+		this.playedDeath = true;
+		this.deathAni = new DeathAnimation(this.state, this.x, this.y);
+		this.state.addChild( this.deathAni );	
+	}
+
+	// if( this.animation.currentAnimation != 'death' ){
+	// 	this.animation.play( 'death' );
+	// }
+
+
+	// //create the tweens
+ //  this.tweenA = this.game.tweens.create(this);  
+ //  this.tweenB = this.game.tweens.create(this); 
+
+ //  this.physics.velocity.y = 0;
+ //  // this.physics;
+  
+ //  //set the tweens up
+ //  this.tweenA.to({ y: this.y - 100 }, 300, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
+ //  this.tweenB.to({ y: this.y + 100  }, 600, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
+ //  this.tweenB.onComplete( this.gameOver, this );
+
+ //  this.tweenA.chain(this.tweenB);
+ //  this.tweenA.start();
+
+
+};
+
+// PlayerManager.prototype.gameOver = function() {
+
+// 	// Start Death Animation
+// 	// On complete play gameOver Method
+// 	this.state.levelManager.gameOver();
+// };
 
 
 

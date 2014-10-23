@@ -18,6 +18,11 @@ var Book = function ( state, type, x, y, toX, toY ){
 
 	this.moveTo(toX, toY);
 
+	// this.rotPointX = Math.floor( Math.random() * this.width );
+	// this.rotPointY = Math.floor( Math.random() * this.height );
+
+	// this.rotationSpeed = (Math.random() - 0.5) * 0.03;
+
 
 	// Top half animations
 
@@ -88,6 +93,8 @@ Book.prototype.update = function () {
 	Kiwi.GameObjects.Sprite.prototype.update.call(this);
 	this.updateCenterPoint();
 	this.checkCollisions();
+
+	// this.rotation += this.rotationSpeed;
 
 
 

@@ -44,6 +44,7 @@ WeaponManager.prototype.stopShooting = function() {
 	this.beamShooting = false;
 	this.enemyTargeted = false
 	this.beamStage = 0;
+	//this.beamManager.clearBeam()
 	
    
 };

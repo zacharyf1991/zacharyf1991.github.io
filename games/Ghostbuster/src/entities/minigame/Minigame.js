@@ -125,7 +125,9 @@ MiniGame.prototype.resetHealth = function(){
 };
 
 MiniGame.prototype.getHealth = function() {
-	return this.skullGroup.members.length;
+	if(this.skullGroup != undefined){
+		return this.skullGroup.members.length;
+	}
 };
 
 MiniGame.prototype.createBlueCircle = function() {

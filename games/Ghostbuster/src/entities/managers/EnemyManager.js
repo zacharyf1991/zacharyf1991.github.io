@@ -59,6 +59,17 @@ EnemyManager.prototype.resetEnemies = function() {
 
 
 EnemyManager.prototype.trap = function ( ghost ) {
+	var tempHealth;
+
+	if(!ghost.hit && this.state.miniGameManager.miniGameActive){
+		ghost.hit = true;
+		tempHealth = this.state.miniGameManager.getHealth();
+		this.state.miniGameManager.skullGroup.clear();
+
+		this.state.miniGameManager.createSkulls (tempHealth + 3);
+
+		
+	}
 	ghost.hit = true;
 	//console.log("Ghost hit is:", ghost.hit)
 }

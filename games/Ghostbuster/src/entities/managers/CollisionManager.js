@@ -242,9 +242,6 @@ CollisionManager.prototype.beamCollision = function(beam) {
 		};
 	}
 	return false;
-	// this.beamCollideWithBook(beam);
-	// this.beamCollideWithEnemy(beam);
-	// this.beamCollideWithEnvironment(beam);
 
 }
 

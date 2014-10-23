@@ -62,12 +62,23 @@ PlatformBlueprint.Play.create = function () {
     this.collisionManager = new CollisionManager(this);
     this.cameraManager = new CameraManager(this);
 
+    this.bookPileL = new Kiwi.GameObjects.Sprite( this, this.textures.bookPile, 1100, 475 );
+    this.bookPileL.animation.add( 'left', [0], 1, false, true );
+
+    this.bookPileR = new Kiwi.GameObjects.Sprite( this, this.textures.bookPile, 2150, 480 );
+    this.bookPileR.animation.add( 'right', [1], 1, false, true );
+
+    this.addChild( this.bookPileR );
+    this.addChild( this.bookPileL );
+
 
     this.playersLegs = new PlayersLegs( this, 0, 0 );
     this.addChild( this.playersLegs );
-    this.player = new PlayerManager(this, 325, 200);
+    this.player = new PlayerManager(this, 100, 444);
     this.addChild(this.player);
     this.weaponManager = new WeaponManager(this);
+
+    
 
     // this.boss = new Boss( this, 1625, 200 );
     // this.addChild(this.boss);

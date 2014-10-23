@@ -133,12 +133,10 @@ BeamManager.prototype.updateBeamSegment = function (beam, beamGroup) {
 	}
 	if (this.checkCollision(beam)) {
 
-		//console.log("Is active group ", this.isActiveGroup(beamGroup))
 		if (this.isActiveGroup(beamGroup) && !this.activeGroupColliding()) {
 
 			//Should I check if the leader is colliding here before 'splitting' the group
 			this.activeBeamCollision(this.isLeader(beam, beamGroup), beam);
-			//console.log("Hello beam is leader");
 
 			//this.startColliding(beam, beamGroup);
 			return;
@@ -158,7 +156,9 @@ BeamManager.prototype.updateBeamSegment = function (beam, beamGroup) {
 	} else if ( this.state.collisionManager.checkBossHit( beam ) ){
 		// kconsole.log("BOSS HIT");
 		this.targetEnemy = this.state.boss;
+		// this.activeBeamCollision(this.isLeader(beam, beamGroup), beam);
 		this.state.boss.bossHitWithBeam();
+		this.updateBeamMovement(beam);
 	} else {
 		//update Movement
 		//console.log( "Update Beam Movement" );
@@ -276,7 +276,11 @@ BeamManager.prototype.activeBeamCollision = function (leader, beam) {
 
 		//BREAK BEAM HERE
 		var newBeamGroup = this.breakActiveBeam(beam);
-		this.activeBeamCollision(this.isLeader(newBeamGroup[0], newBeamGroup[1]), newBeamGroup[0])
+		var frontBeam = newBeamGroup.members[newBeamGroup.members.length-1]
+		this.setTargetEnemy( frontBeam );
+		this.startColliding( frontBeam, this.beams[0]);
+
+		this.collideBeam(frontBeam, newBeamGroup);
 	}
 
 };
@@ -310,6 +314,8 @@ BeamManager.prototype.setTargetEnemy = function( beam ){
 // Then takes all of the members after it (The new beams) and add it to a group
 // returns group
 BeamManager.prototype.breakActiveBeam = function (beam) {
+
+	//console.log( "BEAKING ACTIVE BEAM")
 	var index = this.beams[0].getChildIndex(beam);
 	var tempGroup = new Kiwi.Group(this.state);
 	//console.log ( "Break Active Beam");
@@ -319,12 +325,27 @@ BeamManager.prototype.breakActiveBeam = function (beam) {
 
 		}
 	}
+	tempGroup = this.copyGroupProperties( tempGroup, this.beams[0])
+	// tempGroup.rotation = this.beams[0].rotation;
 	//console.log("a lot");
 	// console.log( index, "Index", this.beams.length, "Length", tempGroup );
 	this.beams.unshift(tempGroup);
 	this.state.addChild( this.beams[0] );
-	var myObj = [tempGroup.members[0], tempGroup];
-	return myObj;
+	var myObj = [tempGroup.members[ 0 ], tempGroup];
+
+
+
+
+	// return myObj;
+	return tempGroup;
+}
+
+BeamManager.prototype.copyGroupProperties = function ( newGroup, oldGroup ) {
+
+	newGroup.rotation = oldGroup.rotation;
+
+	return newGroup
+
 }
 
 BeamManager.prototype.collideBeam = function ( beam, beamGroup ) {
@@ -426,6 +447,7 @@ BeamManager.prototype.removeImpact = function () {
 BeamManager.prototype.shoot = function () {
 	"use strict";
 	if ( !this.state.weaponManager.currentlyShooting() ) {
+		this.clearBeam();
 		this.state.weaponManager.shooting = true;
 		this.beamStage = 0;
 		this.createNewActiveBeam();
@@ -445,6 +467,14 @@ BeamManager.prototype.shoot = function () {
 		return true;
 	}
 };
+
+BeamManager.prototype.clearBeam = function () {
+	this.targetEnemy = null;
+	this.state.miniGameManager.removeOldGame();
+	
+	
+
+}
 
 BeamManager.prototype.createBeam = function () {
 	var beamSegment = new Beam( this.state, 0, 0, this.beamStage, 0 );
@@ -486,6 +516,7 @@ BeamManager.prototype.checkCollision = function (beam) {
 		
 		switch ( hit.collision.objType ) {
 			case "Ghost":
+				//console.log("Hello?")
 				this.state.enemyManager.trap( hit.collision );
 				this.hittingImpactPoint(beam, this.getBeamGroup(beam) );
 				break;

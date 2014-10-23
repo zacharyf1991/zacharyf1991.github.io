@@ -16,7 +16,8 @@ GameManager.prototype.update = function(){
     //this.damageTimer --;
     // console.log(this.damageTimer);
     if(this.playersHealth <= 0){
-        this.state.levelManager.gameOver();
+        this.state.player.die();
+        // this.state.levelManager.gameOver();
     }
 
 
