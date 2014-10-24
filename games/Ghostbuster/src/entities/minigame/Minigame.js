@@ -259,8 +259,10 @@ MiniGame.prototype.attemptMatch = function () {
 				if(this.beamTarget.objType == 'Boss'){
 					this.state.boss.hurtByBeam();
 				}
-			}
+				return true;
+			} 
 		};
+		return false;
 	}
 }
 

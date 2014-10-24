@@ -126,6 +126,27 @@ Kiwi.Plugins.GhostAI.Actions.Pause = function( params )
 	return( this );
 }
 
+Kiwi.Plugins.GhostAI.Actions.Teleport = function( params )
+{
+
+	Kiwi.Plugins.AITree.AITreeOuterNode.call( this, params );
+
+	this.sprite = params.sprite;
+	this.length = params.length;
+		
+	this.run = function()
+	{
+		this.status = this.STATUS_SUCCESS;
+		this.sprite.isVisible = false;
+
+		this.sprite.teleport();
+
+		// Reset Everything
+
+	}
+	return( this );
+}
+
 Kiwi.Plugins.GhostAI.Conditions.DetectVisible = function( params ){
 
 	Kiwi.Plugins.AITree.AITreeOuterNode.call( this, params );
@@ -201,11 +222,12 @@ Kiwi.Plugins.GhostAI.Actions.Appear = function( params )
 		this.status = this.STATUS_RUNNING;
 		if(this.sprite.animation.currentAnimation.name!='appear'){
 			//console.log('appear node');
+			//this.sprite.isVisible = true;
 	        this.sprite.animation.switchTo('appear', true);
 	    }
 	    else if(this.sprite.animation.currentCell==15){
-	    	this.sprite.animation.switchTo('dash', true);
 	    	this.sprite.isVisible = true;
+	    	this.sprite.animation.switchTo('dash', true);
 	    	this.status = this.STATUS_SUCCESS;
 	    }
 	}
@@ -230,7 +252,8 @@ Kiwi.Plugins.GhostAI.Actions.Dash = function( params )
 		var dist = Math.sqrt( distX * distX + distY * distY );
 
 		if( dist < this.proximityThreshold )
-		{
+		{	
+			this.sprite.animation.play('disappear');
 			this.status = this.STATUS_SUCCESS;
 		}
 		else if( dist != 0 )
@@ -307,8 +330,15 @@ Kiwi.Plugins.GhostAI.Actions.SelectDashTarget = function( params )
 
 	this.run = function()
 	{
-		this.sprite.targetLocation[0] = this.target.x;
-		this.sprite.targetLocation[1] = this.target.y;
+		//console.log(this.target);
+		if(this.sprite.x > this.target.x){
+			this.sprite.targetLocation[0] = this.target.x - 150;
+			this.sprite.targetLocation[1] = this.target.y;
+		} else {
+			this.sprite.targetLocation[0] = this.target.x + 150;
+			this.sprite.targetLocation[1] = this.target.y;
+		}
+		
 
 		this.status = this.STATUS_SUCCESS;
 	}

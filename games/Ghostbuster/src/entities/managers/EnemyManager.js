@@ -44,6 +44,14 @@ EnemyManager.prototype.checkCollision = function(entity) {
 	return myEnemy;
 }
 
+EnemyManager.prototype.releaseGhost = function(entity) {
+
+	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
+		this.state.collisionManager.releaseGhost ( this.enemies.members[i] );
+	};
+}
+
+
 EnemyManager.prototype.resetHit = function() {
 	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
 		this.enemies.members[i].hit = false;
@@ -147,6 +155,8 @@ EnemyManager.prototype.update = function(){
 	var enemiesMem = this.enemies.members;
 	this.enemiesLength = enemiesMem.length;
 	this.checkPlayerCollision();
+
+	this.releaseGhost();
 
 	//this.updateTrappedEnemies();
 

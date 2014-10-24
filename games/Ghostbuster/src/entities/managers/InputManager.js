@@ -74,7 +74,14 @@ InputManager.prototype.keyDownOnce = function(keyCode, key) {
     /////////////////////
     //Capture
     if(keyCode == this.captureKey.keyCode){
-        this.state.miniGameManager.attemptMatch();
+        var matched = this.state.miniGameManager.attemptMatch();
+        console.log("CAPTURE KEY", matched);
+        if (!matched){
+            if(this.state.miniGameManager.miniGameActive){
+                this.state.gameManager.playersEnergy -= 10;
+                
+            }
+        }
     }
     if(keyCode == this.gemKey.keyCode){
         var tempPoint = new Kiwi.Geom.Point(this.mouse.x, this.mouse.y);

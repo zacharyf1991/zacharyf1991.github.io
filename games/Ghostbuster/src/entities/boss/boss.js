@@ -24,7 +24,7 @@ var Boss = function (state, x, y){
 	this.animation.add('appear', [ 12, 13, 14, 13, 15, 13 ], 0.5, false);
 	this.animation.add('disappear', [ 18, 19, 20, 21, 22 ], 0.05, false);
 	this.animation.add('damage', [ 0, 1, 2 ], 0.1, false);
-	this.animation.add('death', [ 3, 4, 5 ], 1, false);
+	this.animation.add('death', [ 3, 4, 5 ], 0.7, false);
 	//this.animation.play('idle'); 
 
 
@@ -82,7 +82,11 @@ Boss.prototype.update = function () {
 
 	if( this.health <= 0 ) {
 		this.shield.alpha = 0;
-		this.animation.play('death');
+		this.nextPhase = null;
+		this.currentPhase = null;
+		if(this.animation.currentAnimation.name != 'death'){
+			this.animation.play('death');
+		}
 		this.game.tweens.removeAll();
 		//this.updateDamage();
 	}
@@ -223,10 +227,10 @@ Boss.prototype.bookAmount = function () {
 }
 
 Boss.prototype.pickUpBooks = function() {
-	if( this.phase < 3 ) {
+	if( this.health > 1 ) {
 		this.createBooks( 2 );
-	} else if ( this.phase === 3 ){
-		this.createBooks( 3 );
+	} else if ( this.health === 1 ){
+		this.createBooks( 4 );
 	}
 };
 
@@ -250,6 +254,36 @@ Boss.prototype.createBooks = function ( num ) {
 		pos = this.bookPos( hand[1] );
 		tempBook2 = new Book( this.state, this.getBookType(), startPos.x, startPos.y, pos.x, pos.y );
 		this.books.addChild( tempBook2 );
+	}
+
+	if( num == 4 ){
+
+
+
+
+		var tempBook1, tempBook2, tempBook3, tempBook4, pos, startPos, hand;
+
+		hand = this.spawnOrder( 4 );
+
+		pos = this.bookPos( hand[0] );
+		startPos = this.bookStartPos();
+		tempBook1 = new Book( this.state, this.getBookType(), startPos.x, startPos.y, pos.x, pos.y );
+		this.books.addChild( tempBook1 );
+
+		startPos = this.bookStartPos();
+		pos = this.bookPos( hand[1] );
+		tempBook2 = new Book( this.state, this.getBookType(), startPos.x, startPos.y, pos.x, pos.y );
+		this.books.addChild( tempBook2 );
+
+		startPos = this.bookStartPos();
+		pos = this.bookPos( hand[2] );
+		tempBook3 = new Book( this.state, this.getBookType(), startPos.x, startPos.y, pos.x, pos.y );
+		this.books.addChild( tempBook3 );
+
+		startPos = this.bookStartPos();
+		pos = this.bookPos( hand[3] );
+		tempBook4 = new Book( this.state, this.getBookType(), startPos.x, startPos.y, pos.x, pos.y );
+		this.books.addChild( tempBook4 );
 	}
 
 }
@@ -292,6 +326,7 @@ Boss.prototype.switchToIdle = function() {
 };
 
 Boss.prototype.bossDead = function() {
+	console.log("Boss Dead");
 	this.game.tweens.removeAll();
 	this.state.miniGameManager.beamTarget = this.state.player;
 	this.state.weaponManager.beamManager.targetEnemy = this.state.player;
@@ -302,6 +337,7 @@ Boss.prototype.bossDead = function() {
 	// this.trappedBooks.removeChildren();
 	//this.exists = false;
 	this.alpha = 0;
+	this.state.levelManager.gameOver();
 };
 
 Boss.prototype.getBookType = function() {
@@ -333,6 +369,10 @@ Boss.prototype.bookPos = function ( num ) {
 		pos = new Kiwi.Geom.Point( this.x - 300, this.y );
 	} else if (num == 2){
 		pos = new Kiwi.Geom.Point( this.x + this.width + 100, this.y );
+	} else if (num == 3){
+		pos = new Kiwi.Geom.Point( this.x + this.width + 200, this.y  + 100);
+	} else if (num == 4){
+		pos = new Kiwi.Geom.Point( this.x - 400, this.y  + 100);
 	}
 	return pos;
 }
@@ -350,6 +390,7 @@ Boss.prototype.bookStartPos = function () {
 }
 
 Boss.prototype.endState = function () {
+	this.shield.destroy();
 	this.stopAllTweens();
 	this.currentPhase = null;
 	this.nextPhase = null;

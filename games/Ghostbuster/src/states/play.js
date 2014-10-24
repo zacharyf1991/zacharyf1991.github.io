@@ -179,5 +179,6 @@ PlatformBlueprint.Play.createBoss = function(){
     this.addChild(this.boss);
 
     this.swapChildren( this.boss, this.boss.shield );
+    this.swapChildren( this.boss, this.miniGameManager )
 }
 

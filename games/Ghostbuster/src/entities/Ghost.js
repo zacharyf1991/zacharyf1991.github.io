@@ -9,6 +9,7 @@ var Ghost = function(state, x, y){
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
 	this.animation.add('invis', [0], 0.1, false);
 	this.animation.add('appear', [00, 01, 02, 03, 04, 06, 07, 08, 09, 10, 12, 13, 14, 15], 0.06, false);
+	this.animation.add('disappear', [15, 14, 13, 12, 10, 9, 8, 7, 6, 4, 3, 2, 1, 0], 0.06, false);
 	this.animation.add('capture', [16, 18, 19, 20, 21, 23, 24, 25, 26, 27], animationSpeed, false);
 	this.animation.add('idle',[05, 11], 0.1, true);
 	this.animation.add('dash',[05, 11], 0.1, true);
@@ -57,6 +58,12 @@ Kiwi.extend(Ghost, Kiwi.GameObjects.Sprite);
 
 Ghost.prototype.update = function(){
     Kiwi.GameObjects.Sprite.prototype.update.call(this);
+
+    if(this.isVisible || this.animation.currentAnimation.name == 'appear' ){
+    	this.alpha = 1;
+    } else {
+    	this.alpha = 0;
+    }
 
     this.centerPoint.x = this.worldX + this.width * 0.5;
     this.centerPoint.y = this.worldY + this.height * 0.5;
@@ -206,6 +213,11 @@ Ghost.prototype.checkDash = function() {
 	this.distanceToEgon = ghostPoint.distanceToXY(this.state.player.x, this.state.player.y);
 };
 
+Ghost.prototype.teleport = function() {
+	this.x =  Math.random() * this.state.width
+	this.y = Math.random() * 200 - 100 + this.state.player.y;
+};
+
 Ghost.prototype.finishedAppear = function() {
 	
 };
@@ -214,6 +226,30 @@ Ghost.prototype.setupAI = function() {
 	
 	//////////////////////////////////
 	//SETUP AI
+
+	/*
+	AI root
+		detectHitSelector
+			detectHitSequencer
+				detectHit
+				hit
+			dashSelector
+				dashSequence
+					detectVisible
+					dashTargetSelect
+					dashPause
+					dash
+					*afterDashPause
+					*teleport
+				detectEgonSelector
+					detectEgonSequencer
+						detectEgon
+						appear
+					randomMoveSequencer
+						selectLocation
+						moveTo
+						pause
+	*/
 
 	
 	var aiTree = new Kiwi.Plugins.AITree.AI();
@@ -241,6 +277,14 @@ Ghost.prototype.setupAI = function() {
     var dashPause = new Kiwi.Plugins.GhostAI.Actions.Pause({
         sprite:this,
         length:80
+    });
+    var postDashPause = new Kiwi.Plugins.GhostAI.Actions.Pause({
+        sprite:this,
+        length:120
+    });
+    var teleport = new Kiwi.Plugins.GhostAI.Actions.Teleport({
+        sprite:this,
+        length:120
     });
     var dashTargetSelect = new Kiwi.Plugins.GhostAI.Actions.SelectDashTarget({
     	sprite:this,
@@ -285,6 +329,8 @@ Ghost.prototype.setupAI = function() {
 	dashSequence.addChild(dashTargetSelect);
 	dashSequence.addChild(dashPause);
 	dashSequence.addChild(dash);
+	dashSequence.addChild(postDashPause);
+	dashSequence.addChild(teleport);
 
 	var dashSelector = new Kiwi.Plugins.AITree.Selector({name:'dashSelector'});
 	dashSelector.addChild(dashSequence);

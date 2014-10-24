@@ -331,3 +331,30 @@ CollisionManager.prototype.bookHitPlayer = function() {
 	// this.beamCollideWithEnvironment(beam);
 
 }
+
+
+
+CollisionManager.prototype.releaseGhost = function( ghost ) {
+	if(ghost  == undefined){
+		return false;
+	}
+	
+
+	// Checks to see if beam has collided with enemy
+	for (var i = this.state.weaponManager.beamManager.beams.length - 1; i >= 0; i--) {
+		for (var j = this.state.weaponManager.beamManager.beams[i].members.length - 1; j >= 0; j--) {
+
+			if( ghost.centerPoint.distanceTo( this.state.weaponManager.beamManager.beams[i].members[j].centerPoint ) < this.ghostCollideDistance ) {
+				//console.log( "Hitting Impact Point Zach");
+					ghost.hit = true;
+				 	return true;
+					// return true;
+			}
+		}
+		
+	};
+
+	ghost.hit = false;
+	return false;
+
+}
