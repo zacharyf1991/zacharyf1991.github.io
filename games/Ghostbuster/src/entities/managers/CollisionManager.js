@@ -186,7 +186,9 @@ CollisionManager.prototype.beamCollision = function(beam) {
 	if(beam == undefined){
 		return false;
 	}
-	
+	// if(Date.now() % 10 != 0){
+	// 	return false;
+	// }
 	// Checks to see if beam exists
 	if ( beam.box.bounds == undefined){
 			//return false;
@@ -251,6 +253,9 @@ CollisionManager.prototype.collidesWithImpact = function(beam, beamGroup) {
 		console.log( "No beam" );
 		return false;
 	}
+	// if(Date.now() % 10 != 0){
+	// 	return;
+	// }
 	// console.log ( "Distance between beam and impact:", beam.centerPoint.distanceTo( beamGroup.members[0].centerPoint ));
 	if( beam.centerPoint.distanceTo( beamGroup.members[0].centerPoint ) < this.beamCollideDistance ) {
 		// console.log( "Hitting Impact Point Zach");

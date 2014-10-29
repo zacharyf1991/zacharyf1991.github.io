@@ -83,6 +83,9 @@ Shield.prototype.takeDamage = function () {
 };
 
 Shield.prototype.recharge = function () {
+	if( !this.exists ){
+		return;
+	}
 	if ( this.animation.currentAnimation != 'recharge'  ){
 		this.animation.play('recharge');
 	}

@@ -42,9 +42,11 @@ BlueCircle.prototype.startNextStage = function(){
 	this.myParent.stageUp();
 }
 BlueCircle.prototype.resume = function(){
-	this.myParent.hit = false;
-	this.myParent.skullGroup.members[0].alpha = 1;
+	// this.myParent.hit = false;
+	// this.myParent.skullGroup.members[0].alpha = 1;
 	this.animation.play('loop');
+
+	this.state.miniGameManager.continueMiniGame();
 
 }
 

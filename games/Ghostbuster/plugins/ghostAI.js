@@ -204,7 +204,7 @@ Kiwi.Plugins.GhostAI.Conditions.DetectEgon = function( params ){
 
 			if(ghostPoint.distanceToXY(this.target.x, this.target.y) < this.sprite.detectionDistance){
 				this.status = this.STATUS_SUCCESS;
-				console.log('detected egon');
+				// console.log('detected egon');
 			}
 		}
 }

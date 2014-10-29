@@ -22,7 +22,7 @@
 
 var PlatformBlueprint = PlatformBlueprint || {};
 
-PlatformBlueprint.Loading = new KiwiLoadingScreen('Loading', 'Intro', 'assets/img/loading/');
+PlatformBlueprint.Loading = new KiwiLoadingScreen('Loading', 'SplashState', 'assets/img/loading/');
 
 PlatformBlueprint.Loading.preload = function () {
     
@@ -31,6 +31,7 @@ PlatformBlueprint.Loading.preload = function () {
     KiwiLoadingScreen.prototype.preload.call(this);
 
     this.addImage('background1', 'assets/img/environment/background.jpg');
+    this.addImage('secretBaseLogo', 'assets/img/loading/LogoSecretBase0150.png');
     ////////////////////////
     //PLAYER
     this.addSpriteSheet('egonSprite', 'assets/img/sprites/egon-sprite.png', 100, 100);
@@ -48,8 +49,18 @@ PlatformBlueprint.Loading.preload = function () {
 
     this.addSpriteSheet('ghost', 'assets/img/enemies/ghost2.png', 160, 160);
     this.addSpriteSheet('boss', 'assets/img/enemies/boss.png', 300, 200);
+
     this.addSpriteSheet('books', 'assets/img/enemies/books.png', 200, 200);
     this.addSpriteSheet('shield', 'assets/img/enemies/shield.png', 300, 220);
+
+
+    //////////////////////
+    //Game Over
+
+    this.addSpriteSheet('GOContinueQuit', 'assets/img/gameOver/continue-quit.png', 380, 18);
+    this.addSpriteSheet('GOEgon', 'assets/img/gameOver/egonGameOver.png', 120, 120);
+    this.addImage('GOText', 'assets/img/gameOver/Gameover_text_gameover.png');
+    this.addSpriteSheet('GOBeam', 'assets/img/gameOver/gameOverBeam.png', 294, 451);
 
     /////////////////////
     //MINIGAME 

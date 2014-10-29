@@ -75,7 +75,11 @@ Kiwi.extend(PlayerManager, Kiwi.GameObjects.Sprite);
 
 PlayerManager.prototype.takeDamage = function() {
 	//console.log("I'M HERE")
+	//this.cat.y.s.f;
 	this.state.cameraManager.takeDamage();
+
+	this.physics.velocity.x = this.scaleX * 70;
+	this.physics.velocity.y = -20;
 
 	this.takeDamageTimer.clear();
 	this.takeDamageTimer.stop();
@@ -291,8 +295,10 @@ PlayerManager.prototype.updateAnimations = function () {
 				// this.animation.play('walk');
 
 				this.animation.play(this.normalAnimation);
-				this.state.playersLegs.animation.play('walk', false);
+				// this.state.playersLegs.animation.play('walk', false);
+				// this.state.playersLegs.animation.play(this.normalAnimation, false);
 			}
+		this.state.playersLegs.animation.play('walk', false);
 	} else if(this.upKeyDown) {
 		
 		//console.log( "INSIDE UP KEY DOWN");
@@ -365,6 +371,15 @@ PlayerManager.prototype.updateMovement = function(direction){
 	}
 	this.centerPoint.x = this.worldX + this.width * 0.5;
 	this.centerPoint.y = this.worldY + this.height * 0.5;
+
+	//If camera is lock lock position to boss fight area
+	if( this.state.cameraManager.lockCamera ){
+		if(this.x < 1255){
+			this.x = 1255;
+		} else if (this.x > 2164){
+			this.x = 2164;
+		}
+	}
 }
 
 

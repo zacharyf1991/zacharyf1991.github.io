@@ -24,7 +24,7 @@ PlatformBlueprint.Intro.create = function () {
 
     this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
 
-	this.keyboard.onKeyUp.add(this.startGame, this);
+	this.keyboard.onKeyDownOnce.add(this.startGame, this);
 	this.menuBackground = new Kiwi.GameObjects.Sprite(this, this.textures.menu, 0, 0);
 	this.menuBackground.animation.add('play', [0, 1, 2, 2, 1], 0.075, true);
 	this.menuBackground.animation.play('play'); 
@@ -46,7 +46,7 @@ PlatformBlueprint.Intro.startGame = function(keyCode, key){
 
 	if(keyCode == this.rightKey.keyCode){
 	}
-	this.keyboard.onKeyUp.remove(this.startGame, this);
+	this.keyboard.onKeyDownOnce.remove(this.startGame, this);
 	this.timer.stop();
 	game.states.switchState("Play");
 

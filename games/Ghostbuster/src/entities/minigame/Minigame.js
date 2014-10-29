@@ -18,6 +18,8 @@ var MiniGame = function(state){
 
 	this.miniGameActive = false;
 
+	this.missCount = 0;
+
 
 	// Groups
 		// Skull Group
@@ -47,6 +49,7 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 	//console.log( this.beamTarget, "Beam Target" );
 
 	this.removeOldGame();
+	this.missCount = 0;
 	// this.center = new Kiwi.Geom.Point( target.worldX, target.worldY ); // += target.centerPoint.x, target.y += target.centerPoint.y );
 	// this.center.x += target.width * 0.5;
 	// this.center.y += target.height * 0.5;
@@ -84,6 +87,7 @@ MiniGame.prototype.moveMiniGame = function(){
 
 MiniGame.prototype.removeOldGame = function () {
 	this.miniGameActive = false;
+	this.miniGamePaused = false;
 	if ( this.redCircle ) {
 		this.redCircle.exists = false;
 	}
@@ -135,8 +139,22 @@ MiniGame.prototype.createBlueCircle = function() {
 	this.blueCircle.anchorPointY += this.radius - this.blueCircle.height * 0.5;
 	this.blueCircle.anchorPointX -= this.blueCircle.width * 0.5;
 	this.state.addChild(this.blueCircle);
-};
 
+	this.blueCircle.animation.add('loop', [00, 01], 0.06, true);
+	this.blueCircle.animation.add('fade', [02, 03, 04, 05], 0.1, false);
+	this.blueCircle.animation.add('missedOne', [06, 06, 01, 06, 01, 06, 06], 0.1, false);
+	this.blueCircle.animation.add('missedTwo', [07, 07, 01, 07, 07, 01, 07, 07], 0.1, false);
+	this.blueCircle.animation.add('missedThree', [08, 08, 01, 08, 08, 01, 08, 08], 0.1, false);
+
+
+	this.blueCircle.animation.play('loop');
+
+
+	this.blueCircle.animation.getAnimation('fade').onStop.add(this.continueMiniGame, this);
+	this.blueCircle.animation.getAnimation('missedTwo').onStop.add(this.continueMiniGame, this);
+	this.blueCircle.animation.getAnimation('missedThree').onStop.add(this.continueMiniGame, this);
+	this.blueCircle.animation.getAnimation('missedOne').onStop.add(this.continueMiniGame, this);
+};
 MiniGame.prototype.startMiniGame = function() {
 	this.miniGameActive = true;
 
@@ -155,8 +173,11 @@ MiniGame.prototype.startNextStage = function(){
 	}
 
 MiniGame.prototype.updateRotation = function(){
-	this.updateSkullRotation();
-	this.updateBlueCircleRotation();
+	if( !this.miniGamePaused ) {
+		this.updateSkullRotation();
+		this.updateBlueCircleRotation();
+		
+	}
 
 
 	//this.animation.play('dash');
@@ -200,9 +221,38 @@ MiniGame.prototype.calculateDifference = function(a, b){
 	}
 }
 MiniGame.prototype.capture = function(){
-	this.animation.play('shoot');
+	// this.animation.play('shoot');
 }
 
+MiniGame.prototype.failCapture = function(){
+	// this.animation.play('shoot');
+	this.miniGamePaused = true;
+	switch ( this.missCount ){
+		case 0:
+			// this.blueCircle.animation.play('missedOne');
+			this.blueCircle.animation.play('fade');
+			break;
+		case 1:
+			// this.blueCircle.animation.play('missedTwo');
+			this.blueCircle.animation.play('fade');
+			break;
+		case 2:
+			// this.blueCircle.animation.play('missedThree');
+			this.blueCircle.animation.play('fade');
+			break;
+		default:
+			this.state.weaponManager.stopShooting();
+			this.removeOldGame();
+	}
+
+	this.missCount += 1 ;
+}
+
+MiniGame.prototype.continueMiniGame = function () {
+	this.blueCircle.animation.play('loop');
+	this.miniGamePaused = false;
+
+}
 
 MiniGame.prototype.update = function(){
     Kiwi.Group.prototype.update.call(this);
@@ -262,6 +312,7 @@ MiniGame.prototype.attemptMatch = function () {
 				return true;
 			} 
 		};
+		this.failCapture();
 		return false;
 	}
 }
@@ -271,6 +322,7 @@ MiniGame.prototype.skullCaptured = function ( skull ) {
 	
 	if( this.getHealth() > 1 ){
 		this.state.weaponManager.beamManager.beamUpgrade();
+		this.capture();
 		return true;
 	} else {
 		this.killTarget();

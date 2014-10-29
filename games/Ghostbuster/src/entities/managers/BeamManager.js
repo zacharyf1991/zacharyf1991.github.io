@@ -2,6 +2,8 @@ var BeamManager = function (state) {
 	"use strict";
 	this.state = state;
 	this.beams = [];
+	this.activeBeamImpact;
+	this.activeBeamImpacts;
 	this.targetEnemy;
 	this.beamStage = 0;
 	//this.updateBeamAnimationsBoolean = false;
@@ -19,6 +21,8 @@ BeamManager.prototype.update = function () {
 		this.shoot();
 		
 	}
+
+	this.updateTopImpact();
 	//this.updateBeamAnimations();
 	this.updateActiveBeamPosition();
 	this.updateBeams();
@@ -32,6 +36,28 @@ BeamManager.prototype.update = function () {
 	
 
 };
+
+
+// This manages an impact which does noting but make sure it is on top of the beam (for appearance)
+BeamManager.prototype.updateTopImpact = function (){
+	if(this.beams[0]){
+		if(this.beams[0].members[0].objType == 'impact' ){
+
+			this.activeBeamImpact.alpha = 1;
+			this.activeBeamImpact.x = this.beams[0].members[0].worldX;
+			this.activeBeamImpact.y = this.beams[0].members[0].worldY;
+		} else {
+			this.activeBeamImpact.alhpa = 0;
+		}
+
+		
+	} else {
+		if(this.activeBeamImpact){
+			this.activeBeamImpact.exists = false;
+			
+		}
+	}
+}
 
 BeamManager.prototype.updateSpark = function () {
 	if(!this.beams[0]){
@@ -244,6 +270,18 @@ BeamManager.prototype.createNewActiveBeam = function () {
 	return this.beams.unshift(activeBeam);
 
 };
+BeamManager.prototype.createNewActiveImpact = function () {
+	"use strict";
+	//console.log("Creating New Active Beam")
+	//this.activeBeamImpact
+	if(this.activeBeamImpact){
+		this.activeBeamImpact.exists = false;
+	}
+	this.activeBeamImpact = new Impact(this.state, 0, 0);
+	this.activeBeamImpact.alpha = 0;
+	this.state.addChild(this.activeBeamImpact);
+
+};
 
 BeamManager.prototype.activeBeamExists = function(){
 	if(this.beams[0].members[0]){
@@ -451,6 +489,7 @@ BeamManager.prototype.shoot = function () {
 		this.state.weaponManager.shooting = true;
 		this.beamStage = 0;
 		this.createNewActiveBeam();
+		this.createNewActiveImpact();
 
 		// Set the rotation
 		// Added half pi because beam velocity is to the right ( x += 12 )
@@ -480,8 +519,8 @@ BeamManager.prototype.createBeam = function () {
 	var beamSegment = new Beam( this.state, 0, 0, this.beamStage, 0 );
 	beamSegment.y -= beamSegment.height * 0.5;
 	beamSegment.x += 30;
-
 	this.beams[0].addChild(beamSegment);
+	// this.beams
 	
 	
 

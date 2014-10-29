@@ -4,7 +4,7 @@ var Boss = function (state, x, y){
 	Kiwi.GameObjects.Sprite.call(this, state, state.textures['boss'], x, y);
 	this.state = state;
 
-	this.health = 3;
+	this.health = 1;
 	this.phase = 1;
 	this.timerDelay = 2;
 	this.books = new Kiwi.Group(this.state);
@@ -18,13 +18,13 @@ var Boss = function (state, x, y){
 	this.vulnerable = false;
 
 	// Top half animations
-	this.animation.add('idle', [ 6, 7, 8, 9, 10, 11 ], 0.25, true);
-	this.animation.add('leftThrow', [ 24, 25, 26, 26, 26, 27, 28 ], 0.05, false);
-	this.animation.add('rightThrow', [ 30, 31, 32, 32, 32, 33, 34 ], 0.05, false);
-	this.animation.add('appear', [ 12, 13, 14, 13, 15, 13 ], 0.5, false);
-	this.animation.add('disappear', [ 18, 19, 20, 21, 22 ], 0.05, false);
-	this.animation.add('damage', [ 0, 1, 2 ], 0.1, false);
-	this.animation.add('death', [ 3, 4, 5 ], 0.7, false);
+	this.animation.add('idle', [ 6, 7, 8, 9, 10, 11 ], 0.0625, true);
+	this.animation.add('leftThrow', [ 24, 25, 26, 26, 26, 27, 28 ], 0.0625, false);
+	this.animation.add('rightThrow', [ 30, 31, 32, 32, 32, 33, 34 ], 0.0625, false);
+	this.animation.add('appear', [ 12, 13, 14, 13, 15, 13 ], 0.0625, false);
+	this.animation.add('disappear', [ 18, 19, 20, 21, 22 ], 0.0625, false);
+	this.animation.add('damage', [ 0, 1, 2 ], 0.0625, false);
+	this.animation.add('death', [ 3, 4, 5 ], 0.0625, false);
 	//this.animation.play('idle'); 
 
 
@@ -210,11 +210,10 @@ Boss.prototype.nextTimer = function() {
 
 	}
 
-	// start timer
-	this.timer = this.game.time.clock.createTimer('spawn', this.timerDelay, 0, false);  
-    this.timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.nextTimer, this);
 
     if(this.nextPhase){
+		this.timer = this.game.time.clock.createTimer('spawn', this.timerDelay, 0, false);  
+	    this.timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.nextTimer, this);
     	this.timer.start();
     }
 
@@ -227,6 +226,9 @@ Boss.prototype.bookAmount = function () {
 }
 
 Boss.prototype.pickUpBooks = function() {
+	if(this  == undefined){
+		return;
+	}
 	if( this.health > 1 ) {
 		this.createBooks( 2 );
 	} else if ( this.health === 1 ){
