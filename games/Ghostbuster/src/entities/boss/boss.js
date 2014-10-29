@@ -4,7 +4,7 @@ var Boss = function (state, x, y){
 	Kiwi.GameObjects.Sprite.call(this, state, state.textures['boss'], x, y);
 	this.state = state;
 
-	this.health = 1;
+	this.health = 3;
 	this.phase = 1;
 	this.timerDelay = 2;
 	this.books = new Kiwi.Group(this.state);

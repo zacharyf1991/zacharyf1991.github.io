@@ -47,6 +47,17 @@ PlatformBlueprint.Play.create = function () {
     this.inputManager = new InputManager(this);
 
     
+    this.bookPileL = new Kiwi.GameObjects.Sprite( this, this.textures.bookPile, 1100, 475 );
+    this.bookPileL.animation.add( 'left', [0], 1, false, true );
+    this.bookPileL.scaleX = -1;
+
+    this.bookPileR = new Kiwi.GameObjects.Sprite( this, this.textures.bookPile, 2150, 480 );
+    this.bookPileR.animation.add( 'right', [1], 1, false, true );
+    this.bookPileR.scaleX = -1;
+
+    
+    this.addChild( this.bookPileR );
+    this.addChild( this.bookPileL );
     //////////////////////////
     //enemy manager
 
@@ -66,16 +77,7 @@ PlatformBlueprint.Play.create = function () {
     this.collisionManager = new CollisionManager(this);
     this.cameraManager = new CameraManager(this);
 
-    this.bookPileL = new Kiwi.GameObjects.Sprite( this, this.textures.bookPile, 1100, 475 );
-    this.bookPileL.animation.add( 'left', [0], 1, false, true );
-    this.bookPileL.scaleX = -1;
 
-    this.bookPileR = new Kiwi.GameObjects.Sprite( this, this.textures.bookPile, 2150, 480 );
-    this.bookPileR.animation.add( 'right', [1], 1, false, true );
-    this.bookPileR.scaleX = -1;
-
-    this.addChild( this.bookPileR );
-    this.addChild( this.bookPileL );
 
 
     this.playersLegs = new PlayersLegs( this, 0, 0 );
