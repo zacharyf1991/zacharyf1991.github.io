@@ -33,6 +33,7 @@ PlatformBlueprint.Credits.changeFrame = function(){
 
 PlatformBlueprint.Credits.exitState = function(){
 	this.mouse.onDown.remove(this.openURL, this);
+	this.keyboard.onKeyDownOnce.remove(this.changeFrame, this);
 
 	game.states.switchState("Intro");
 

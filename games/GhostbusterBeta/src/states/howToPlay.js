@@ -31,7 +31,7 @@ PlatformBlueprint.HowToPlay.changeFrame = function(){
 
 
 PlatformBlueprint.HowToPlay.exitState = function(){
-
+	this.keyboard.onKeyDownOnce.remove(this.changeFrame, this);
 	game.states.switchState("Play");
 
 }
