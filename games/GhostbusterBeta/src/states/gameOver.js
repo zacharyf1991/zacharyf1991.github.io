@@ -129,6 +129,7 @@ PlatformBlueprint.GameOver.continueGame = function(){
 
 
 PlatformBlueprint.GameOver.exitState = function(){
+    this.gameOverKeyboard.onKeyDownOnce.remove(this.keyDownOnce, this);
     this.gameOverKeyboard.onKeyUp.remove(this.keyDownOnce, this);
     // this.keyboard.onKeyUp.remove(this.restartGame, this);
     game.huds.defaultHUD.removeAllWidgets();
