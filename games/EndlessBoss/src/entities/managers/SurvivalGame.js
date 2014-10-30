@@ -6,6 +6,7 @@ var SurvivalGame = function(state){
 	this.waveLimit = 1;
 	this.waveCounter = 0;
 	this.attempt = 0;
+	this.maxWave = 2;
 
 	this.spawnTimer  = this.game.time.clock.createTimer('shoot', 2, -1, false);
     this.spawnEvent = this.spawnTimer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.attemptSpawn, this);  //create a new timer event on that timer
@@ -30,7 +31,9 @@ var SurvivalGame = function(state){
 Kiwi.extend(SurvivalGame , Kiwi.Group);
 
 SurvivalGame.prototype.attemptSpawn = function() {
-	console.log( "Attepmt Spawn", this.wave, this.waveLimit, this.waveCounter );
+	// console.log( "Attepmt Spawn", this.wave, this.waveLimit, this.waveCounter );
+	
+	
 	var enemiesAlive = this.state.enemyManager.enemiesAlive();
 
 	if ( this.waveCounter < this.waveLimit && enemiesAlive < this.waveLimit) {
@@ -56,12 +59,12 @@ SurvivalGame.prototype.spawnEnemy = function() {
 SurvivalGame.prototype.newWave = function() {
 	this.wave += 1;
 	this.attempt = 0;
-	if( this.wave < 2 ){
+	if( this.wave < this.maxWave ){
 		this.waveLimit += 1;
 		this.waveCounter = 0;
 		
 	} else {
-		this.waveLimit = Math.floor( Math.random() * 2 ) + 1;
+		this.waveLimit = Math.floor( Math.random() * (this.maxWave + 1) ) + 1;
 		this.waveCounter = 0;
 	}
 }

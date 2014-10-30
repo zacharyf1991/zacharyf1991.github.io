@@ -9,6 +9,7 @@ var EnemyManager = function(state){
 	this.state.addChild(this.deathGroup);
 	this.addChild(this.itemGroup);
 	this.enemiesLength = 0;
+	this.rotChanged = false;
 
 	
 
@@ -71,7 +72,10 @@ EnemyManager.prototype.resetEnemies = function() {
 EnemyManager.prototype.trap = function ( ghost ) {
 	var tempHealth;
 
+	// console.log("TRAPPED", ghost.hit , this.state.miniGameManager.miniGameActive);
+
 	if(!ghost.hit && this.state.miniGameManager.miniGameActive){
+		console.log ( "INSIDE" );
 		ghost.hit = true;
 		tempHealth = this.state.miniGameManager.getHealth();
 		this.state.miniGameManager.skullGroup.clear();
@@ -199,6 +203,13 @@ EnemyManager.prototype.update = function(){
 
 	this.releaseGhost();
 
+	// if(this.getTrappedEnemies().length > 1 && !this.rotChanged){
+	// 	this.rotChanged = true;
+	// 	this.changeRotPoint(); 
+	// } else {
+	// 	this.restoreRotPoint();
+	// }
+
 	//this.updateTrappedEnemies();
 
 	for (var i = this.enemiesLength - 1; i >= 0; i--) {
@@ -215,6 +226,32 @@ EnemyManager.prototype.kill = function(enemy) {
 	this.enemies.removeChild(enemy, true); 
 	this.state.egon.stopShooting();
 };
+
+EnemyManager.prototype.changeRotPoint = function() {
+	var en = this.getTrappedEnemies();
+	
+	for (var i = en.length - 1; i >= 0; i--) {
+		if(en[i].rotPointX == 0 ){
+			en[i].rotPointX = Math.random() * 30 -15;
+			en[i].rotPointY = Math.random() * 30 -15;
+
+		}
+	};
+};
+
+
+EnemyManager.prototype.restoreRotPoint = function(){
+	var en = this.getTrappedEnemies();
+	this.rotChanged = false;
+	
+	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
+		if ( this.enemies.members[i].rotPointX != 0 ){
+			this.enemies.members[i].rotPointX = 0;
+			this.enemies.members[i].rotPointY = 0;
+		}
+	};
+};
+
 
 EnemyManager.prototype.killTrapped = function(enemy) {
 	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
@@ -237,7 +274,7 @@ EnemyManager.prototype.killAll = function(enemy) {
 	for (var i = this.enemies.members.length - 1; i >= 0; i--) {
 		this.enemies.members[i].exists = false;
 	};
-	console.log( "All enemies removed", this.enemies );
+	// console.log( "All enemies removed", this.enemies );
 };
 
 

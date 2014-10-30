@@ -133,6 +133,6 @@ PlatformBlueprint.GameOver.exitState = function(){
     // this.keyboard.onKeyUp.remove(this.restartGame, this);
     game.huds.defaultHUD.removeAllWidgets();
 
-    game.states.switchState("Intro");
+    game.states.switchState("Credits");
 
 }

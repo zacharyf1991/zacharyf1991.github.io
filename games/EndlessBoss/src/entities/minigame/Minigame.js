@@ -6,7 +6,7 @@ var MiniGame = function(state){
 
 	this.rotBlue = 0;
 	this.rotSkull = Math.PI*2;
-	this.rotBlueSpeed = -0.0376
+	this.rotBlueSpeed = -0.0276
 	this.rotSkullSpeed = 0.0427;
 
 	this.redCircle;
@@ -19,6 +19,7 @@ var MiniGame = function(state){
 	this.miniGameActive = false;
 
 	this.missCount = 0;
+	this.trappedGhosts = 0;
 
 
 	// Groups
@@ -47,6 +48,7 @@ Kiwi.extend(MiniGame , Kiwi.Group);
 MiniGame.prototype.createMiniGame = function ( target, health ) {
 	this.beamTarget = this.state.weaponManager.beamManager.targetEnemy;
 	//console.log( this.beamTarget, "Beam Target" );
+	// this.x.t.y.s.a;
 
 	this.removeOldGame();
 	this.missCount = 0;
@@ -62,6 +64,8 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 	this.createBlueCircle();
 
 	this.startMiniGame();
+
+
 };
 
 MiniGame.prototype.updateMiniGamePos = function(){
@@ -88,6 +92,8 @@ MiniGame.prototype.moveMiniGame = function(){
 MiniGame.prototype.removeOldGame = function () {
 	this.miniGameActive = false;
 	this.miniGamePaused = false;
+	this.trappedGhosts = 0;
+	this.capturedGhosts = 0;
 	if ( this.redCircle ) {
 		this.redCircle.exists = false;
 	}
@@ -266,6 +272,25 @@ MiniGame.prototype.update = function(){
     this.updateRotation();
     this.updateMiniGamePos();
     this.moveMiniGame();
+
+    if( this.state.enemyManager.getTrappedEnemies().length > this.trappedGhosts ) {
+
+    	var amount =  this.state.enemyManager.getTrappedEnemies().length;
+    	var health = 3;
+    	switch (amount) {
+    		case 1:
+    			health = 3;
+    			break;
+    		case 2:
+    			health = 5;
+    			break;
+
+    		default:
+    			health = 6;
+    	}
+		this.createMiniGame(this.state.weaponManager.beamManager.targetEnemy, health);
+		this.trappedGhosts = amount;
+	}
 
 
 }

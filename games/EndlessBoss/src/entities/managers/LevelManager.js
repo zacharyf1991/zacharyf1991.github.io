@@ -86,6 +86,9 @@ LevelManager.prototype.ghostsLevelOne = function() {
 LevelManager.prototype.gameOver = function() {
     this.state.hudManager.endState();
 
+    if(this.state.survivalGame){
+        this.state.survivalGame.spawnTimer.stop();
+    }
     var params = this.state.gameManager.gameOver();
     if( this.boss != undefined ) {
         this.state.boss.endState();
