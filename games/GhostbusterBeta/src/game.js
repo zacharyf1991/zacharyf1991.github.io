@@ -21,6 +21,7 @@ var game = new Kiwi.Game('content', 'PlatformBlueprint', null, gameOptions);
 
 //Add all the States we are going to use.
 game.states.addState(PlatformBlueprint.Loading);
+game.states.addState(PlatformBlueprint.MenuOpening);
 game.states.addState(PlatformBlueprint.HowToPlay);
 game.states.addState(PlatformBlueprint.Credits);
 game.states.addState(PlatformBlueprint.SplashState);

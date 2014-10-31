@@ -66,7 +66,8 @@ PlatformBlueprint.Loading.preload = function () {
     //MINIGAME 
     this.addSpriteSheet('blueCircle', 'assets/img/minigame/blue3.png', 70, 70);
     this.addImage('redCircle', 'assets/img/minigame/redCircle.png');
-    this.addImage('skull', 'assets/img/minigame/skull70.png');
+    // this.addImage('skull', 'assets/img/minigame/skull70.png');
+    this.addSpriteSheet('skull', 'assets/img/minigame/pacGhostSprite.png', 70, 70);
     this.addSpriteSheet('confirm', 'assets/img/minigame/confirm.png', 66, 14);
 
     //////////////////////
@@ -89,6 +90,13 @@ PlatformBlueprint.Loading.preload = function () {
     this.addSpriteSheet('howTo', 'assets/img/menu/HowTo.png', 960, 540);
     this.addSpriteSheet('credits', 'assets/img/menu/Credits.png', 960, 540);
     this.addImage('startText', 'assets/img/menu/PressStart1.png');
+
+    /////////////////////////
+    //MENU OPENING
+    this.addImage('open1', 'assets/img/menu/Menu_Opening1.png');
+    this.addImage('open2', 'assets/img/menu/Menu_Opening2.png');
+    this.addImage('open3', 'assets/img/menu/Menu_Opening3.png');
+    this.addImage('open4', 'assets/img/menu/Menu_Opening4.png');
 
 
 

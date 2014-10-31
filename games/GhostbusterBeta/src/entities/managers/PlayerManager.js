@@ -34,6 +34,7 @@ var PlayerManager = function (state, x, y){
 	this.maxRunVelo = 26;
 	this.beamStage = 0;
 	this.jumpHeight = 40;
+	this.shootingMovementSpeed = 0.7;
 
 	this.playedDeath = false;
 
@@ -337,7 +338,7 @@ PlayerManager.prototype.modifyVelocity = function () {
 	} else if (this.state.weaponManager.shooting){
 		//
 		//console.log("Shooting Mod")
-		return 0.5;//this.maxRunVelo * 0.5;
+		return this.shootingMovementSpeed;//this.maxRunVelo * 0.5;
 	} else {
 		return  1//this.maxRunVelo;
 	}

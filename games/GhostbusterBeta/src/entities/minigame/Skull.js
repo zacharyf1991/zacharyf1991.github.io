@@ -7,7 +7,12 @@ var Skull = function(state, x, y, radius){
 	this.state = state;
 
 	var mySkull = new Kiwi.GameObjects.Sprite(this.state, this.state.textures.skull, 0, -radius)
+
+	var num = Math.floor( Math.random() * 4 );
+	mySkull.cellIndex = num;
+
 	this.addChild(mySkull);
+
 
 
 	//this.animation.getAnimation('roll').onStop.add(this.finishedRoll, this);

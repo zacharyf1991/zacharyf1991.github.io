@@ -25,8 +25,8 @@ var DeathAnimation = function (state, x, y){
 	this.tweenB = this.game.tweens.create(this); 
 	
 	//set the tweens up
-	this.tweenA.to({ y: this.y - 120 }, 300, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
-	this.tweenB.to({ y: this.y + 400  }, 1000, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
+	this.tweenA.to({ y: this.y - 120 }, 400, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
+	this.tweenB.to({ y: this.y + 400  }, 1600, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
 	this.tweenB.onComplete( this.gameOver, this );
 
 	this.tweenA.chain(this.tweenB);
