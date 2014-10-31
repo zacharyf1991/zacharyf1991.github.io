@@ -13,7 +13,8 @@ var gameOptions = {
 	renderer: Kiwi.RENDERER_CANVAS, 
 	width: 960,
 	height: 540,
-	plugins: ['ShareButton']
+	plugins: ['ShareButton'],
+	scaleType : Kiwi.Stage.SCALE_FIT
 }
 
 var game = new Kiwi.Game('content', 'PlatformBlueprint', null, gameOptions);
