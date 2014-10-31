@@ -10,7 +10,7 @@ PlatformBlueprint.Credits.create = function (params) {
 	this.score = params;
 
 	
-	this.credits = new Kiwi.GameObjects.Sprite(this, this.textures.credits, 0, 0);
+	this.credits = new Kiwi.GameObjects.Sprite(this, this.textures.credits, 0, -20);
 
 	// this.logo = new Kiwi.GameObjects.Sprite( this, this.textures.secretBaseLogo, 0, 0 );
 	this.addChild( this.credits );

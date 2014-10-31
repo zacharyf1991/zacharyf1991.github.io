@@ -62,6 +62,8 @@ PlatformBlueprint.Loading.preload = function () {
     this.addImage('GOText', 'assets/img/gameOver/Gameover_text_gameover.png');
     this.addSpriteSheet('GOBeam', 'assets/img/gameOver/gameOverBeam.png', 294, 451);
 
+    this.addImage('twitterShare', 'assets/img/gameOver/Twitter2.png' );
+
     /////////////////////
     //MINIGAME 
     this.addSpriteSheet('blueCircle', 'assets/img/minigame/blue3.png', 70, 70);
