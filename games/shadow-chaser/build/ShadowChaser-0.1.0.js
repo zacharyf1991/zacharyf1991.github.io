@@ -25,28 +25,103 @@ MenuButton.prototype.left = function () {
 	this.animation.switchTo( 0 );
 	
 }
+BloodBar = function(state){
+	this.state = state;
+	this.textOffsetX = 50;
+	this.camera = this.state.game.cameras.defaultCamera;
+
+	this.bloodText = new Kiwi.GameObjects.Textfield ( this.state, 'Blood: 100 % ', this.state.runner.x, 20, '#FF0000', 32 );
+	this.state.addChild(this.bloodText);
+
+	this.blood = 100;
+	this.maxBlood = 100;
+	this.bloodRate = 0.05;
+
+
+}
+
+
+
+/**
+* This method checks to see if a player is on a leftSlope.
+*
+* Please note, "leftSlope" is refering to a slope that when the player is standing on the tile, facing away from the tile, the player is facing left.
+* Also note, this function checks for the outward edges of the sloping tile and calculates those points too for a more polished slope interaction
+*
+* @method checkLeftSlope
+* @public
+*/
+
+BloodBar.prototype.update = function(){
+	this.updateBlood();
+	this.updatePosition();
+	this.updateText();
+
+
+
+}
+
+BloodBar.prototype.updateBlood = function(){
+	var minBlood = 25;
+	if(this.blood > minBlood ){
+		this.blood -= this.bloodRate;
+		
+	} else {
+		
+		// Game Over Condition Here
+		this.blood = minBlood;
+
+	}
+}
+BloodBar.prototype.updateText = function(){
+	this.bloodText.text = "Blood: " + Math.round( this.blood ) + "%";
+}
+
+
+BloodBar.prototype.updatePosition = function(){
+
+	this.bloodText.x = -( this.camera.transform.x ) + this.textOffsetX;
+	// this.bloodText.x = this.state.runner.x + this.textOffsetX;
+}
+
+
 //PlayerManager / Player
 var Runner = function (state, x, y){
     Kiwi.GameObjects.Sprite.call(this, state, state.textures.runner, x, y, false);
     this.state = state;
     
+    this.animationSpeed = 0.05;
 
     this.animation.add('idle', [0], 0.1, true);
     // this.animation.add('run', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], 0.025, true);
-    this.animation.add('run', [ 22, 23, 24, 25, 26, 27, 28, 29, 30 ], 0.05, true);
+    this.animation.add('run', [ 22, 23, 24, 25, 26, 27, 28, 29, 30 ], this.animationSpeed, true);
+    this.animation.add('jumpStart', [ 09, 10 ], this.animationSpeed, false);
+    this.animation.add('jump', [ 11 ], this.animationSpeed, false);
+    this.animation.add('fallStart', [ 12, 13 ], this.animationSpeed, false);
+    this.animation.add('fall', [ 14 ], this.animationSpeed, false);
+
+    this.animation.add('run', [ 22, 23, 24, 25, 26, 27, 28, 29, 30 ], this.animationSpeed, true);
 
     this.animation.play('run');   
-    this.scaleX = 0.75;
-    this.scaleY = 0.75; 
 
-    this.box.hitbox = new Kiwi.Geom.Rectangle(31, 21, 61, 97); 
+    this.animation.getAnimation('jumpStart').onStop.add(this.loopJump, this);
+    this.animation.getAnimation('fallStart').onStop.add(this.startFall, this);
+
+
+
+    // this.scaleX = 0.75;
+    // this.scaleY = 0.75; 
+
+    this.box.hitbox = new Kiwi.Geom.Rectangle( 41, 63, 66, 110 ); 
     this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
 
     this.physics.allowCollisions = Kiwi.Components.ArcadePhysics.FLOOR;
+    // this.physics.allowCollisions = Kiwi.Components.ArcadePhysics.FLOOR;
     
 
     this.force = 3;
     this.maxRunVelo = 200;
+    this.runVelo = 120;
     this.jumpHeight = 40;
 
     // Raw physics data
@@ -63,6 +138,8 @@ var Runner = function (state, x, y){
     this.jumpKeyDown = false;
     this.upKeyDown = false;
     this.downKeyDown = false;
+
+    this.jumpAnimationPlaying = false;
 
 
 
@@ -81,7 +158,7 @@ var Runner = function (state, x, y){
     this.playersVelocityAfter = 0;
     this.speedDropPercentage = 1.5;
     this.yAccel = 100;
-    this.jumpVelo = 100;
+    this.jumpVelo = 131.72;
     this.physics.acceleration.y = this.yAccel;
     this.canJump = true;
 
@@ -99,64 +176,71 @@ Kiwi.extend(Runner, Kiwi.GameObjects.Sprite);
 
 
 Runner.prototype.update = function(){
+    Kiwi.GameObjects.Sprite.prototype.update.call(this);
 
-    this.x = (this.state.game.cameras.defaultCamera.transform.x * -1) + 100;
-    this.y = (this.state.game.cameras.defaultCamera.transform.x * -1) + 450;
-    if(this.state.paused){
-        this.animation.pause();
-
-    } else{
-        if(!this.animation._isPlaying){
-            this.animation.resume();
-        }
-
-
-
-
-        this.playersVelocity = 1 - (1 / (this.accellerationTime + 1));
-
-        //console.log(this.playersVelocity, this.playersVelocity * this.maxRunVelo);
-        this.accellerationTime += this.accellSpeed; //0.001;
-
-        //Control Accelleration time to control velocity. Changing the accellerationTime by 80% will reduce speed by 80%
-        // this.accellerationTime = 1 / (1- this.velocity) - 1;
-        // console.log(t);
-
-        Kiwi.GameObjects.Sprite.prototype.update.call(this);
-        /* if(this.x > 2200){
-            this.x = -50;
-        } else if(this.x < -50){
-            this.x = 2200;
-        }*/
-
-        this.playersVelocityAfter = this.playersVelocity * this.maxRunVelo;;
-        this.physics.velocity.x = (this.playersVelocityAfter * game.time.rate);
-
-        if(this.y > 700){
-            this.y = -50;
-            this.physics.velocity.y = 0;
-
-            //this.endState();
-        } 
-
-        this.updateMovement();
-
-
-        this.physics.update();
-
-        // if(this.physics.overlapsGroup(this.state.platformManager.platforms, true)){
-        //     if(this.physics.velocity.y == 0 ){
-        //         this.canJump = true;
-                
-        //     }
-        // }else {
-        //     this.canJump = false;
-        // }
+    if( this.state.bloodBar.blood < 40 ) {
+        this.die();
     }
+
+  
+    if( this.canJump && !this.jumpAnimationPlaying) {
+        if(this.animation.currentAnimation.name != 'run' ){
+            this.animation.play( 'run' );
+        }
+    }
+
+     if(this.animation.currentAnimation.name == 'jump' || 
+        this.animation.currentAnimation.name == 'jumpStart' ){
+        this.updateJumpVelocity();
+
+     } else {
+        // this.physics.acceleration.y = this.yAccel * this.state.game.time.rate;
+     }
+
+    this.updateYAcceleration();
+    this.updateXVelocity();
+    this.updateAnimationSpeed();
+
+    
+
+    if(this.y > 700){
+        this.y = -50;
+        this.physics.velocity.y = 0;
+
+        //this.endState();
+    } 
+
+    this.updateMovement();
+
+
+    this.physics.update();
+    this.checkCollisions();
+
 
     
     
 }
+
+Runner.prototype.checkCollisions = function(){
+
+    //platformManager.platforms[for all].member[2]
+
+    for (var i = this.state.platformManager.platforms.members.length - 1; i >= 0; i--) {
+           if( this.physics.overlapsGroup( this.state.platformManager.platforms.members[i].members[1], true )) {
+
+                if(this.physics.velocity.y == 0 ){
+                        this.canJump = true;
+                        return true;
+                        
+                    }
+            }
+
+    }
+    this.canJump = false;
+    return false;
+    
+} 
+
 
 Runner.prototype.endState = function() {
     console.log("END");
@@ -179,55 +263,25 @@ Runner.prototype.slowPlayer = function() {
 
 };
 
-
-
-
-
-
-
-
-
-Runner.prototype.updateMovement = function(direction){
-
-    var friction = 0.08;
-
-
-
-
-
-    if(this.rightKeyDown){
-        
-    } 
-    if(this.leftKeyDown){
-        
-        
-
-    } 
-    if(this.downKeyDown){
-       
-
-    } 
-    if(this.upKeyDown){
-        
-        
-
+Runner.prototype.die = function() {
+    if(this.animation.currentAnimation.name != 'die' ){
+        this.animation.play('die');
     }
 
+};
 
-}
-
-
-Runner.prototype.updateKeyDown = function(key) {
-    if(key == 'RIGHT'){
-        this.rightKeyDown = true;
-    }else if(key == 'LEFT'){
-        this.leftKeyDown = true;
-        this.friction = 0.8;
-    } else if(key == 'UP'){
-        if(this.canJump){
+Runner.prototype.jump = function () {
+    if(this.canJump){
             this.upKeyDown = true;
-            this.physics.velocity.y = -(this.jumpVelo);// * game.time.rate);
+            this.physics.velocity.y = -(this.jumpVelo);// * this.state.game.time.rate;
             this.physics.acceleration.y = 0;
+            this.jumpAnimationPlaying = true;
+
+            if(this.animation.currentAnimation.name != 'jumpStart' && this.animation.currentAnimation.name != 'jump' ){
+                this.animation.play( 'jumpStart' );
+            }
+
+
 
 
             this.jumpKeyDownTimer.clear();
@@ -239,7 +293,68 @@ Runner.prototype.updateKeyDown = function(key) {
         }
 
 
+}
+Runner.prototype.stopJumpUp = function(){
+    this.physics.acceleration.y = this.yAccel;
+    if( !this.canJump){
+        if(this.animation.currentAnimation.name != 'fallStart' && this.animation.currentAnimation.name != 'fall' ){
+            this.animation.play( 'fallStart' );
+        }
+        
+    }
+    this.canJump = false;
+}
 
+Runner.prototype.startFall = function(){
+    this.animation.play( 'fall' );
+    this.jumpAnimationPlaying = false;
+}
+Runner.prototype.loopJump = function(){
+    this.animation.play( 'jump' );
+    this.jumpAnimationPlaying = false;
+}
+
+Runner.prototype.updateJumpVelocity = function(){
+    this.physics.velocity.y = -(this.jumpVelo) * this.state.game.time.rate;
+}
+
+Runner.prototype.updateYAcceleration = function(){
+    this.physics.acceleration.y = this.yAccel  * this.state.game.time.rate;
+}
+
+Runner.prototype.updateXVelocity = function(){
+    var blood = this.state.bloodBar.blood;
+    var veloMod =  blood / this.state.bloodBar.maxBlood;
+    this.physics.velocity.x = this.runVelo * veloMod;
+}
+
+Runner.prototype.updateAnimationSpeed = function(){
+    var blood = this.state.bloodBar.blood;
+    var rateMod =  blood / this.state.bloodBar.maxBlood;
+    this.animation.currentAnimation.speed = this.animationSpeed / rateMod;
+}
+
+
+
+
+
+
+Runner.prototype.updateMovement = function(direction){
+
+    var friction = 0.08;
+
+
+}
+
+
+Runner.prototype.updateKeyDown = function(key) {
+    if(key == 'RIGHT'){
+        this.rightKeyDown = true;
+    }else if(key == 'LEFT'){
+        this.leftKeyDown = true;
+        this.friction = 0.8;
+    } else if(key == 'UP' || key == 'JUMP'){
+        this.jump();
         
     }else if(key == 'DOWN'){
         this.downKeyDown = true;
@@ -247,7 +362,7 @@ Runner.prototype.updateKeyDown = function(key) {
 
     if(key == 'JUMP'){
         this.jumpKeyDown = true;
-        this.jump();
+        // this.jump();
     }
 
 
@@ -256,6 +371,7 @@ Runner.prototype.updateKeyDown = function(key) {
 
 
 Runner.prototype.updateKeyUp = function(key) {
+    // console.log( key, 'KEY HIT' );
     if(key == 'RIGHT'){
         this.rightKeyDown = false;
     }else if(key == 'LEFT'){
@@ -289,18 +405,22 @@ Runner.prototype.hitByEnemy = function() {
         
     }
 };
-Runner.prototype.stopJumpUp = function(){
-    this.physics.acceleration.y = this.yAccel;
-    this.canJump = false;
-}
 
 var Platform = function( state, num ){
 	Kiwi.Group.call(this, state);
 	this.state = state;
 
 
-	this.background = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures[ 'platform0' + num ], 0, 0);
+	//this.background = new Kiwi.GameObjects.StaticImage(this.state, this.state.textures[ 'platform0' + num ], 0, 0);
+	this.background = new Kiwi.GameObjects.Sprite( this.state, this.state.textures[ 'platform' ], 0, 0 );
+	this.background.cellIndex = num - 1;
+	// this.background.scaleX = this.background.scaleX / 0.65 * 1.3;
+	// this.background.scaleY = this.background.scaleY / 0.65 * 1.3;
+	// this.background.x += 400;
+	// this.background.y += 100;
 	this.addChild(this.background);
+
+
 
 	this.tiles = new Kiwi.Group (this.state);
 	this.addChild( this.tiles );
@@ -336,8 +456,8 @@ Platform.prototype.generateTiles = function () {
 	var height = 22,
 		i = 0,
 		tileLength = this.myTileArray.data.length,
-		tileWidth = 44,
-		tileHeight = 32, 
+		tileWidth = 22,
+		tileHeight = 16, 
 		width = 46;
 	for ( i; i < tileLength; i++ ) {
 		if( this.myTileArray.data[i] > 0 ) {
@@ -359,11 +479,15 @@ var Tile = function (state, x, y){
 	Kiwi.GameObjects.Sprite.call(this, state, state.textures.tile, x, y);
 	this.state = state;
 
+	this.box.hitbox = new Kiwi.Geom.Rectangle( 0, 0, 44, 100 ); 
 
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
 	this.physics.immovable = true;
 	//this.physics.acceleration.y = 15;
 	//this.physics.velocity.y = 15;
+
+	this.alpha = 0.5;
+	this.visible = false;
 
 
 
@@ -387,28 +511,104 @@ Tile.prototype.update = function(){
    
 
 
+CameraManager = function(state){
+	this.state = state;
 
+    this.camera = game.cameras.defaultCamera;
+
+    this.cameraPos = 200;
+
+    this.bloodOffset = 500;
+
+    this.sunOffset = 50;
+
+    this.sunlight = new Kiwi.GameObjects.Sprite( this.state, this.state.textures.sunlight, -200, 0);
+    this.state.addChild(this.sunlight);
+
+
+}
+
+/**
+* This method moves the game camera dynamically via the player, but restrained on game borders
+* @method updateCamera
+* @public
+*/
+CameraManager.prototype.update = function () {
+    this.updatePosition(); 
+    this.updateSunlight();
+}
+
+
+
+
+
+CameraManager.prototype.updatePosition = function() {
+
+	var offset = this.state.bloodBar.blood / this.state.bloodBar.maxBlood;
+
+    this.camera.transform.x = -( this.state.runner.x + this.cameraPos - (offset * this.bloodOffset ));
+    //this.camera.transform.y = -(this.state.player.y + this.state.playerInitialY);
+};
+
+CameraManager.prototype.updateSunlight = function() {
+
+	var offset = this.state.bloodBar.blood / this.state.bloodBar.maxBlood;
+
+	this.sunlight.alpha = 1 - offset;
+
+    this.camera.transform.x = -( this.state.runner.x + this.cameraPos - (offset * this.bloodOffset ));
+
+    this.sunlight.x = -( this.camera.transform.x ) - this.sunOffset * offset;
+    //this.camera.transform.y = -(this.state.player.y + this.state.playerInitialY);
+};
 var InputManager = function (state, x, y){
     this.state = state;
 
 
 
     
+    this.keyboard = this.state.game.input.keyboard;
     this.mouse = this.state.game.input.mouse;
 
     
 
+    ///////////////////
+    //KEYBOARD
+    this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
+    this.rightArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT);
 
+    this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.A);
+    this.leftArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT);
+
+    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W);
+    this.upArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.UP);
+
+    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S);
+    this.downArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN);
+
+    this.spawnKey = this.keyboard.addKey(Kiwi.Input.Keycodes.Q);
+    this.restartKey = this.keyboard.addKey(Kiwi.Input.Keycodes.R);
+
+    this.shootKey = this.keyboard.addKey(Kiwi.Input.Keycodes.J);
+    this.shoot2Key = this.keyboard.addKey(Kiwi.Input.Keycodes.Z);
+
+    this.jumpKey = this.keyboard.addKey(Kiwi.Input.Keycodes.K);
+    this.jump2Key = this.keyboard.addKey(Kiwi.Input.Keycodes.X);
+
+    this.gemKey = this.keyboard.addKey(Kiwi.Input.Keycodes.G);
+    this.gameOverKey = this.keyboard.addKey(Kiwi.Input.Keycodes.F);
+
+    this.captureKey = this.keyboard.addKey(Kiwi.Input.Keycodes.SPACEBAR);
     ////////////////////////
     //MOUSE
-    this.state.game.input.onUp.add(this.mouseUp, this);
     this.state.game.input.onDown.add(this.mouseDown, this);
+    this.state.game.input.onUp.add(this.mouseUp, this);
 
-    // this.state.hudManager.jumpButton.input.touch.touchUp.add(this.mouseUp, this);
-    // this.state.hudManager.jumpButton.input.touch.touchDown.add(this.mouseDown, this);
+    this.keyboard.onKeyDownOnce.add(this.keyDownOnce, this);
+    this.keyboard.onKeyUp.add(this.keyUp, this);
 
-    // this.keyboard.onKeyDownOnce.add(this.keyDownOnce, this);
-    // this.keyboard.onKeyUp.add(this.keyUp, this);
+
+
 
 
 
@@ -416,53 +616,9 @@ var InputManager = function (state, x, y){
 
 }
 
-InputManager.prototype.keyDownOnce = function(keyCode, key) {
-    // body...
-    //console.log(keyCode, key);
-
-    if(this.rightArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyDown('RIGHT');
-    } else if(this.leftArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyDown('LEFT');
-    } else if(this.upArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyDown('UP');
-    } else if(this.downArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyDown('DOWN');
-    } 
-    
-
-
-
-};
-
-
-
-InputManager.prototype.keyUp = function(keyCode, key) {
-    // body...
-    //console.log(keyCode, key);
-    //Move
-    if(this.rightArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyUp('RIGHT');
-    } else if(this.leftArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyUp('LEFT');
-    }
-    if(this.upArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyUp('UP');
-    } else if(this.downArrowKey.keyCode == keyCode){
-        this.state.player.updateKeyUp('DOWN');
-    }  
-  
-    
-
-};
-
-
-
-
-
 InputManager.prototype.mouseDown = function(x, y, timeDown, timeUp, duration, pointer) {
     //console.log(this.mouse.x, this.mouse.y);
-    this.state.player.updateKeyDown('UP');
+    this.state.runner.updateKeyDown('UP');
     //this.mouse.reset();
     
 
@@ -470,7 +626,7 @@ InputManager.prototype.mouseDown = function(x, y, timeDown, timeUp, duration, po
 
 InputManager.prototype.mouseUp = function(x, y, timeDown, timeUp, duration, pointer) {
     //console.log(this.mouse.x, this.mouse.y);
-    this.state.player.updateKeyUp('UP');
+    this.state.runner.updateKeyUp('UP');
 
     // console.log("Click!");
     
@@ -478,25 +634,107 @@ InputManager.prototype.mouseUp = function(x, y, timeDown, timeUp, duration, poin
 };
 
 
+InputManager.prototype.keyDownOnce = function(keyCode, key) {
+    // body...
+    //console.log(keyCode, key);
+
+    if(keyCode == this.rightKey.keyCode || keyCode == this.rightArrowKey.keyCode){
+        this.state.runner.updateKeyDown('RIGHT');
+    } 
+
+    if(keyCode == this.leftKey.keyCode || keyCode == this.leftArrowKey.keyCode){
+        this.state.runner.updateKeyDown('LEFT');
+    } 
+
+    if(keyCode == this.upKey.keyCode || keyCode == this.upArrowKey.keyCode){
+        this.state.runner.updateKeyDown('UP');
+    } 
+    if(keyCode == this.jumpKey.keyCode || keyCode == this.jump2Key.keyCode){
+        this.state.runner.updateKeyDown('JUMP');
+        this.keyUp(this.shootKey.keyCode, this.jumpKey);
+    }
+
+    if(keyCode == this.spawnKey.keyCode){
+        this.state.enemyManager.addEnemies(1);
+    }
+    ////////////////////
+    //Shooting
+    if(keyCode == this.shootKey.keyCode || keyCode == this.shoot2Key.keyCode){
+    }
+    /////////////////////
+    //Capture
+    if(keyCode == this.captureKey.keyCode){
+       
+    }
+    if(keyCode == this.gemKey.keyCode){
+        var tempPoint = new Kiwi.Geom.Point(this.mouse.x, this.mouse.y);
+        tempPoint = game.cameras.defaultCamera.transformPoint(tempPoint);
+        this.state.itemManager.addItem('gem', tempPoint.x, tempPoint.y);
+    }
 
 
-InputManager.prototype.endState = function(){
 
-    this.state.hudManager.jumpButton.input.onUp.remove(this.mouseUp, this);
-    this.state.hudManager.jumpButton.input.onDown.remove(this.mouseDown, this);
+};
 
+InputManager.prototype.keyUp = function(keyCode, key) {
+    // body...
+    //console.log(keyCode, key);
+    //Move
+    if(keyCode == this.rightKey.keyCode || keyCode == this.rightArrowKey.keyCode){
+        this.state.runner.updateKeyUp('RIGHT');
+    } 
 
-    this.state.hudManager.pauseButton.input.onUp.remove(this.pauseUp, this);
+    if(keyCode == this.leftKey.keyCode || keyCode == this.leftArrowKey.keyCode){
+        this.state.runner.updateKeyUp('LEFT');
+    } 
+
+    if(keyCode == this.upKey.keyCode || keyCode == this.upArrowKey.keyCode){
+        this.state.runner.updateKeyUp('UP');
+    } 
+    //Jump
+    if(keyCode == this.jumpKey.keyCode || keyCode == this.jump2Key.keyCode){
+       this.state.runner.updateKeyUp('JUMP');
+    }
+    //Shoot
+    if(keyCode == this.shootKey.keyCode || keyCode == this.shoot2Key.keyCode){
+    }
+
+    if(keyCode == this.restartKey.keyCode){
+        this.state.levelManager.switchStates();
+    }
+    if(keyCode == this.gameOverKey.keyCode){
+        // this.state.levelManager.gameOver();
+    }
+    
+
+};
+
+InputManager.prototype.switchStates = function(){
+    this.keyboard.onKeyDownOnce.remove(this.keyDownOnce, this);
+    this.keyboard.onKeyUp.remove(this.keyUp, this);
+}
+
+InputManager.prototype.getKeysDown = function(){
+    var keys = {
+        rightKey: this.rightKey.isDown || this.rightArrowKey.isDown,
+        leftKey: this.leftKey.isDown || this.leftArrowKey.isDown,
+        upKey: this.upKey.isDown || this.upArrowKey.isDown,
+        downKey: this.downKey.isDown || this.downArrowKey.isDown
+    }
+    return keys;
 }
 PlatformManager = function(state){
 	this.state = state;
+	this.scale = 1.3;
 
-	this.platformWidth = 2024;
+	this.platformWidth = 1012;//2048; // 2024; //2024;// * this.scale;
 
 	// This number does not include 0, therefore the platform.length == this number
-	this.platformsAmount = 8;
+	this.platformsAmount = 3;
 	this.platforms = new Kiwi.Group( this.state );
 	this.state.addChild( this.platforms );
+	this.platforms.scaleX = this.scale;
+	this.platforms.scaleY = this.scale;
 
 	this.camera = this.state.game.cameras.defaultCamera;
 
@@ -526,7 +764,7 @@ PlatformManager.prototype.createPlatforms = function(){
 	var i = 0;
 	for ( i; i < this.platformsAmount; i++ ) {
 		var tempPlat = new Platform ( this.state, i + 1 );
-		tempPlat.x = i * 2024;
+		tempPlat.x = i * this.platformWidth;
 		//this.state.addChild( tempPlat );
 		this.platforms.addChild( tempPlat );
 	}
@@ -539,7 +777,7 @@ PlatformManager.prototype.checkPosition = function(){
 	for (var i = this.platforms.members.length - 1; i >= 0; i--) {
 
 		//console.log ( "Camera Calc:", (this.camera.transform.x * -1))
-		if( this.platforms.members[i].x < (this.camera.transform.x * -1) - this.platformWidth ) {
+		if( this.platforms.members[i].worldX < (this.camera.transform.x * -1) - this.platformWidth * this.scale) {
 			this.resetPlatformPosition( this.platforms.members[i] );
 		}
 	};	
@@ -820,6 +1058,43 @@ PlayerManager.prototype.stopJumpUp = function(){
 
 var ShadowChaser = ShadowChaser || {};
 
+ShadowChaser.Escape = new Kiwi.State('Escape');
+
+/**
+* The IntroState is the state which would manage any main-menu functionality for your game.
+* Generally this State would switch to other sub 'states' which would handle the individual features. 
+*  
+* Right now we are just switching straight to the PlayState.
+*
+*/
+
+
+ShadowChaser.Escape.create = function () {
+
+	this.background = new Kiwi.GameObjects.StaticImage( this, this.textures.escapeBackground, 200 , 50 );
+	this.addChild( this.background );
+
+	// this.playButton = new MenuButton( this, this.textures.breakFree, 620, 240 );
+	// this.addChild( this.playButton );
+	this.escape = new Kiwi.GameObjects.Sprite( this, this.textures.escape, 371 + 200, 111 + 50 );
+	this.escape.animation.add('idle', [0, 1, 2,3 ,4, 5, 6,7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 16, 17, 18], 0.05, false )
+	this.escape.animation.play('idle');
+	this.addChild( this.escape );
+
+	this.escape.animation.getAnimation('idle').onStop.add(this.startGame, this);
+}
+
+ShadowChaser.Escape.update = function() {
+	Kiwi.State.prototype.update.call(this);
+
+}
+
+ShadowChaser.Escape.startGame = function () {
+	game.states.switchState("Play");
+
+}
+var ShadowChaser = ShadowChaser || {};
+
 ShadowChaser.GameOver = new Kiwi.State('GameOver');
 
 
@@ -852,25 +1127,36 @@ ShadowChaser.Intro = new Kiwi.State('Intro');
 
 ShadowChaser.Intro.create = function () {
 
-	this.background = new Kiwi.GameObjects.StaticImage( this, this.textures.menuBackground, 0 , 0 );
+	this.background = new Kiwi.GameObjects.StaticImage( this, this.textures.menuBackground, 0 , -112 );
 	this.addChild( this.background );
 
-	this.playButton = new MenuButton( this, this.textures.breakFree, 620, 340 );
+	// this.playButton = new MenuButton( this, this.textures.breakFree, 620, 240 );
+	// this.addChild( this.playButton );
+	this.playButton = new Kiwi.GameObjects.Sprite( this, this.textures.breakFree, 620, 240 );
+	this.playButton.cellIndex = 1;
 	this.addChild( this.playButton );
 
 	this.playButton.input.onUp.add( this.playButtonHit, this );
+	this.alphaMin = 0.4;
+	this.alphaCount = this.alphaMin;
+	this.alphaStep = 0.01;
 }
 
 ShadowChaser.Intro.update = function() {
 	Kiwi.State.prototype.update.call(this);
 	// game.states.switchState("Play");
+	this.alphaCount += this.alphaStep;
+	if( this.alphaCount >= 1 || this.alphaCount <= this.alphaMin ){
+		this.alphaStep *= -1;
+	}
+	this.playButton.alpha = this.alphaCount;
 
 
 }
 
 ShadowChaser.Intro.playButtonHit = function () {
 	// console.log( "Hit Play Button" );
-	game.states.switchState("Play");
+	game.states.switchState("Escape");
 
 }
 /**
@@ -914,8 +1200,16 @@ ShadowChaser.Loading.preload = function () {
 	this.menuAssets();
 	this.platformAssets();
 	this.runnerAssets();
+	this.animationIntro();
 
 };
+
+ShadowChaser.Loading.animationIntro = function(){
+	
+	this.addSpriteSheet('escape', 'assets/img/runner/viktor-escape.png', 299, 133);
+	this.addImage('escapeBackground', 'assets/img/runner/viktor-escape-tree.png')
+
+}
 
 
 ShadowChaser.Loading.backgroundCharactersAssets = function(){
@@ -925,6 +1219,8 @@ ShadowChaser.Loading.backgroundCharactersAssets = function(){
 }
 
 ShadowChaser.Loading.environmentAssets = function(){
+
+	this.addImage('sunlight', 'assets/img/environment/sun-beams.png' );
 	
 	// this.addImage('background', 'assets/img/environment/background.jpg');
 
@@ -941,14 +1237,15 @@ ShadowChaser.Loading.menuAssets = function(){
 }
 ShadowChaser.Loading.platformAssets = function(){
 	this.addJSON( 'platformJSON', 'assets/tilemaps/platform-tiles/platforms.json' );
-	this.addImage( 'platform01', 'assets/img/platforms/bg_01.jpg' );
-	this.addImage( 'platform02', 'assets/img/platforms/bg_02.jpg' );
-	this.addImage( 'platform03', 'assets/img/platforms/bg_03.jpg' );
-	this.addImage( 'platform04', 'assets/img/platforms/bg_04.jpg' );
-	this.addImage( 'platform05', 'assets/img/platforms/bg_05.jpg' );
-	this.addImage( 'platform06', 'assets/img/platforms/bg_06.jpg' );
-	this.addImage( 'platform07', 'assets/img/platforms/bg_07.jpg' );
-	this.addImage( 'platform08', 'assets/img/platforms/bg_08.jpg' );
+	// this.addImage( 'platform01', 'assets/img/platforms/bg_01.jpg' );
+	// this.addImage( 'platform02', 'assets/img/platforms/bg_02.jpg' );
+	// this.addImage( 'platform03', 'assets/img/platforms/bg_03.jpg' );
+	// this.addImage( 'platform04', 'assets/img/platforms/bg_04.jpg' );
+	// this.addImage( 'platform05', 'assets/img/platforms/bg_05.jpg' );
+	// this.addImage( 'platform06', 'assets/img/platforms/bg_06.jpg' );
+	// this.addImage( 'platform07', 'assets/img/platforms/bg_07.jpg' );
+	// this.addImage( 'platform08', 'assets/img/platforms/bg_08.jpg' );
+	this.addSpriteSheet( 'platform', 'assets/img/platforms/bg-images.jpg', 1012, 320 );
 
 	this.addImage( 'tile', 'assets/img/platforms/tile.png' );
 	
@@ -974,11 +1271,14 @@ ShadowChaser.Play.create = function () {
 
 	this.camera = this.game.cameras.defaultCamera;
 
-	this.runner = new Runner(this, 50, 50);
+	this.runner = new Runner(this, 400, 150);
 	this.addChild( this.runner );
 
-	this.inputManager = new InputManager(this, 0, 0);
 	
+	this.inputManager = new InputManager( this, 0, 0 );
+	this.cameraManager = new CameraManager( this );
+
+	this.bloodBar = new BloodBar( this );
 
 
 
@@ -989,6 +1289,8 @@ ShadowChaser.Play.create = function () {
 ShadowChaser.Play.update = function() {
 	Kiwi.State.prototype.update.call(this);
 	this.camera.transform.x -= 10 /** this.game.time.rate */;
+	this.cameraManager.update();
+	this.bloodBar.update();
 
 
 	this.platformManager.update();
@@ -1013,20 +1315,21 @@ var gameOptions = {
 	// width: 500,
 	// height: 200,
 	width: 1136,
-	height: 640,
-	// deviceTarget: Kiwi.TARGET_COCOON,
-	plugins: [] //,
-	// scaleType: Kiwi.Stage.SCALE_FIT
+	height: 416,
+	deviceTarget: Kiwi.TARGET_COCOON,
+	scaleType: Kiwi.Stage.SCALE_FIT,
+	plugins: []
 }
 
-
 var game = new Kiwi.Game('content', 'ShadowChaser', null, gameOptions);
+this.game.stage.color = "332f3d";
 
 
 //Add all the States we are going to use.
 game.states.addState(ShadowChaser.Loading);
 game.states.addState(ShadowChaser.Intro);
 game.states.addState(ShadowChaser.Play);
+game.states.addState(ShadowChaser.Escape);
 game.states.addState(ShadowChaser.GameOver);
 
 game.states.switchState("Loading");
