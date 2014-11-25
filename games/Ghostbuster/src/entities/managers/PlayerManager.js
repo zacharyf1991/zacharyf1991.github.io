@@ -34,6 +34,7 @@ var PlayerManager = function (state, x, y){
 	this.maxRunVelo = 26;
 	this.beamStage = 0;
 	this.jumpHeight = 40;
+	this.shootingMovementSpeed = 0.5;
 
 	this.playedDeath = false;
 
@@ -77,6 +78,7 @@ PlayerManager.prototype.takeDamage = function() {
 	//console.log("I'M HERE")
 	//this.cat.y.s.f;
 	this.state.cameraManager.takeDamage();
+	this.state.weaponManager.stopShooting();
 
 	this.physics.velocity.x = this.scaleX * 70;
 	this.physics.velocity.y = -20;
@@ -336,7 +338,7 @@ PlayerManager.prototype.modifyVelocity = function () {
 	} else if (this.state.weaponManager.shooting){
 		//
 		//console.log("Shooting Mod")
-		return 0.5;//this.maxRunVelo * 0.5;
+		return this.shootingMovementSpeed;//this.maxRunVelo * 0.5;
 	} else {
 		return  1//this.maxRunVelo;
 	}
@@ -374,10 +376,11 @@ PlayerManager.prototype.updateMovement = function(direction){
 
 	//If camera is lock lock position to boss fight area
 	if( this.state.cameraManager.lockCamera ){
-		if(this.x < 1255){
-			this.x = 1255;
-		} else if (this.x > 2164){
-			this.x = 2164;
+		var maxXPos = this.state.game.stage.width - this.width + 20
+		if(this.x < 20){
+			this.x = 20;
+		} else if (this.x > maxXPos){
+			this.x = maxXPos;
 		}
 	}
 }

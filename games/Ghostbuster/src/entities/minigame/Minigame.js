@@ -6,8 +6,8 @@ var MiniGame = function(state){
 
 	this.rotBlue = 0;
 	this.rotSkull = Math.PI*2;
-	this.rotBlueSpeed = -0.0376
-	this.rotSkullSpeed = 0.0427;
+	this.rotBlueSpeed = -0.0176
+	this.rotSkullSpeed = 0.0227;
 
 	this.redCircle;
 	this.blueCircle;
@@ -19,6 +19,7 @@ var MiniGame = function(state){
 	this.miniGameActive = false;
 
 	this.missCount = 0;
+	this.trappedGhosts = 0;
 
 
 	// Groups
@@ -45,8 +46,9 @@ Kiwi.extend(MiniGame , Kiwi.Group);
 
 
 MiniGame.prototype.createMiniGame = function ( target, health ) {
-	this.beamTarget = this.state.weaponManager.beamManager.targetEnemy;
+	this.beamTarget = this.state.weaponManager.beamManager.beam.targets[0];
 	//console.log( this.beamTarget, "Beam Target" );
+	// this.x.t.y.s.a;
 
 	this.removeOldGame();
 	this.missCount = 0;
@@ -62,6 +64,8 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 	this.createBlueCircle();
 
 	this.startMiniGame();
+
+
 };
 
 MiniGame.prototype.updateMiniGamePos = function(){
@@ -78,8 +82,8 @@ MiniGame.prototype.moveMiniGame = function(){
 	this.redCircle.x = this.center.x - this.redCircle.width * 0.5;
 	this.redCircle.y = this.center.y - this.redCircle.width * 0.5;
 
-	this.blueCircle.x = this.center.x; // - this.blueCircle.width * 0.5;
-	this.blueCircle.y = this.center.y - this.radius; // - this.blueCircle.width * 0.5;
+	this.blueCircleGroup.x = this.center.x; // - this.blueCircle.width * 0.5;
+	this.blueCircleGroup.y = this.center.y; // - this.blueCircle.width * 0.5;
 
 	this.skullGroup.x = this.center.x;
 	this.skullGroup.y = this.center.y;
@@ -88,11 +92,13 @@ MiniGame.prototype.moveMiniGame = function(){
 MiniGame.prototype.removeOldGame = function () {
 	this.miniGameActive = false;
 	this.miniGamePaused = false;
+	this.trappedGhosts = 0;
+	this.capturedGhosts = 0;
 	if ( this.redCircle ) {
 		this.redCircle.exists = false;
 	}
-	if( this.blueCircle ) {
-		this.blueCircle.exists = false;
+	if( this.blueCircleGroup ) {
+		this.blueCircleGroup.exists = false;
 	}
 	if( this.skullGroup ) {
 		this.skullGroup.exists = false;
@@ -135,25 +141,17 @@ MiniGame.prototype.getHealth = function() {
 };
 
 MiniGame.prototype.createBlueCircle = function() {
-	this.blueCircle = new Kiwi.GameObjects.Sprite( this.state, this.state.textures.blueCircle, this.center.x , this.center.y -this.radius);
-	this.blueCircle.anchorPointY += this.radius - this.blueCircle.height * 0.5;
-	this.blueCircle.anchorPointX -= this.blueCircle.width * 0.5;
-	this.state.addChild(this.blueCircle);
 
-	this.blueCircle.animation.add('loop', [00, 01], 0.06, true);
-	this.blueCircle.animation.add('fade', [02, 03, 04, 05], 0.1, false);
-	this.blueCircle.animation.add('missedOne', [06, 06, 01, 06, 01, 06, 06], 0.1, false);
-	this.blueCircle.animation.add('missedTwo', [07, 07, 01, 07, 07, 01, 07, 07], 0.1, false);
-	this.blueCircle.animation.add('missedThree', [08, 08, 01, 08, 08, 01, 08, 08], 0.1, false);
+	this.blueCircleGroup = new Kiwi.Group ( this.state );
 
+	var blueCircle = new BlueCircle( this.state, 0, 0);
+	blueCircle.y = - this.radius; // - blueCircle.height * 0.5;
+	// blueCircle.x = -blueCircle.width * 0.5;
+	this.blueCircleGroup.addChild( blueCircle );
+	this.blueCircleGroup.x = this.center.x;
+	this.blueCircleGroup.y = this.center.y;
+	this.state.addChild(this.blueCircleGroup);
 
-	this.blueCircle.animation.play('loop');
-
-
-	this.blueCircle.animation.getAnimation('fade').onStop.add(this.continueMiniGame, this);
-	this.blueCircle.animation.getAnimation('missedTwo').onStop.add(this.continueMiniGame, this);
-	this.blueCircle.animation.getAnimation('missedThree').onStop.add(this.continueMiniGame, this);
-	this.blueCircle.animation.getAnimation('missedOne').onStop.add(this.continueMiniGame, this);
 };
 MiniGame.prototype.startMiniGame = function() {
 	this.miniGameActive = true;
@@ -188,14 +186,17 @@ MiniGame.prototype.updateSkullRotation = function () {
 	};
 }
 MiniGame.prototype.updateBlueCircleRotation = function () {
-	this.blueCircle.rotation += this.rotBlueSpeed;
+	this.blueCircleGroup.rotation += this.rotBlueSpeed;
+	this.blueCircleGroup.members[0].rotation = -this.blueCircleGroup.rotation
 }
 
 MiniGame.prototype.catchSkull = function (skull){
 	var circRot, diffAngel, skullRot;
 
-	circRot = this.getAngle(this.blueCircle.rotation);
+	circRot = this.getAngle(this.blueCircleGroup.rotation);
 	skullRot = this.getAngle(skull.rotation);
+
+	// console.log(circRot, skullRot, "Capture amounts");
 
 	
 	return this.calculateDifference( circRot, skullRot ) < this.hitRange;
@@ -221,7 +222,16 @@ MiniGame.prototype.calculateDifference = function(a, b){
 	}
 }
 MiniGame.prototype.capture = function(){
-	// this.animation.play('shoot');
+	// console.log("Capture");
+
+	// UPDATE TRAPPED ENEMY ANIMATION
+
+
+	this.state.enemyManager.updateTrappedAnimation();
+	// SCREEN FLASH HERE
+	this.miniGamePaused = true;
+	this.blueCircleGroup.members[0].animation.play('fade');
+	this.state.weaponManager.beamManager.updateBeamStage();
 }
 
 MiniGame.prototype.failCapture = function(){
@@ -229,16 +239,16 @@ MiniGame.prototype.failCapture = function(){
 	this.miniGamePaused = true;
 	switch ( this.missCount ){
 		case 0:
-			// this.blueCircle.animation.play('missedOne');
-			this.blueCircle.animation.play('fade');
+			this.blueCircleGroup.members[0].animation.play('missedOne');
+			// this.blueCircleGroup.members[0].animation.play('fade');
 			break;
 		case 1:
-			// this.blueCircle.animation.play('missedTwo');
-			this.blueCircle.animation.play('fade');
+			this.blueCircleGroup.members[0].animation.play('missedTwo');
+			// this.blueCircleGroup.members[0].animation.play('fade');
 			break;
 		case 2:
-			// this.blueCircle.animation.play('missedThree');
-			this.blueCircle.animation.play('fade');
+			this.blueCircleGroup.members[0].animation.play('missedThree');
+			// this.blueCircleGroup.members[0].animation.play('fade');
 			break;
 		default:
 			this.state.weaponManager.stopShooting();
@@ -249,7 +259,7 @@ MiniGame.prototype.failCapture = function(){
 }
 
 MiniGame.prototype.continueMiniGame = function () {
-	this.blueCircle.animation.play('loop');
+	this.blueCircleGroup.members[0].animation.play('loop');
 	this.miniGamePaused = false;
 
 }
@@ -266,6 +276,25 @@ MiniGame.prototype.update = function(){
     this.updateMiniGamePos();
     this.moveMiniGame();
 
+    if( this.state.enemyManager.getTrappedEnemies().length > this.trappedGhosts ) {
+
+    	var amount =  this.state.enemyManager.getTrappedEnemies().length;
+    	var health = 3;
+    	switch (amount) {
+    		case 1:
+    			health = 3;
+    			break;
+    		case 2:
+    			health = 5;
+    			break;
+
+    		default:
+    			health = 6;
+    	}
+		this.createMiniGame(this.state.weaponManager.beamManager.targetEnemy, health);
+		this.trappedGhosts = amount;
+	}
+
 
 }
 
@@ -276,7 +305,7 @@ MiniGame.prototype.updatePosition = function() {
 	this.center.x = temp.worldX + temp.width * 0.5;
 	this.center.y = temp.worldY + temp.height * 0.5;
 	this.updateObjectPos( this.redCircle );
-	this.updateObjectPos( this.blueCircle );
+	this.updateObjectPos( this.blueCircleGroup );
 	this.updateObjectPos( this.skullGroup );
 };
 
@@ -288,13 +317,6 @@ MiniGame.prototype.updateObjectPos = function( obj ) {
 
 
 
-
-MiniGame.prototype.stageUp = function() {
-	this.myParent.beamStage += 1;
-	this.myParent.beamNeedsUpdating = true;
-	this.myParent.updateBeamStage();
-	this.myParent.damageEnemy();
-};
 
 MiniGame.prototype.stopMiniGame = function () {
 	this.removeOldGame();
@@ -321,7 +343,7 @@ MiniGame.prototype.skullCaptured = function ( skull ) {
 	skull.exists = false;
 	
 	if( this.getHealth() > 1 ){
-		this.state.weaponManager.beamManager.beamUpgrade();
+		// this.state.weaponManager.beamManager.beamUpgrade();
 		this.capture();
 		return true;
 	} else {
@@ -332,6 +354,9 @@ MiniGame.prototype.killTarget = function () {
 	this.state.enemyManager.killTrapped();
 	this.state.weaponManager.stopShooting();
 
+
 	this.state.weaponManager.beamManager.enemyKilled();
+	this.removeOldGame();
 
 }
+

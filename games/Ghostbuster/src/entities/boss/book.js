@@ -108,6 +108,8 @@ Book.prototype.switchToIdle = function() {
 };
 
 Book.prototype.removeBook = function() {
+	// console.log( "REMOVE" );
+	// console.log( this.animation.currentAnimation.name, "ZACH ANI" );
 	this.alpha = 0;
 	this.exists = false;
 };
@@ -191,8 +193,13 @@ Book.prototype.trapped = function () {
 
 }
 Book.prototype.disappear = function () {
+	//console.log("BOOK DISAPPEAR")
 	if(this.exists){
-		this.animation.play('disappear'); 
+		if(this.animation.currentAnimation.name != 'disappear') {
+			this.animation.play('disappear', false); 
+			// console.log("BOOK DISAPPEAR 2")
+			
+		}
 	}
 
 }

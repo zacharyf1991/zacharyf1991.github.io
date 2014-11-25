@@ -96,6 +96,8 @@ PlatformBlueprint.Play.create = function () {
     this.miniGameManager = new MiniGame( this );
     this.addChild( this.miniGameManager );
 
+    this.survivalGame = new SurvivalGame(this)
+
 
 
     //////////////////////
@@ -133,7 +135,9 @@ PlatformBlueprint.Play.create = function () {
     this.levelManager.ghostsLevelOne();
 
 
+
 }
+
 
 /**
 * This method is the main update loop. Move scrolling items and update player here
@@ -190,3 +194,12 @@ PlatformBlueprint.Play.createBoss = function(){
     this.swapChildren( this.boss, this.miniGameManager )
 }
 
+PlatformBlueprint.Play.createSurvivalGame = function(){
+    // this.boss = new Boss( this, 1625, 200 );
+    // this.addChild(this.boss);
+
+    // this.survivalGame = new SurvivalGame(this)
+
+    // this.swapChildren( this.boss, this.boss.shield );
+    // this.swapChildren( this.boss, this.miniGameManager )
+}

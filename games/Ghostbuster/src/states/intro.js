@@ -40,6 +40,18 @@ PlatformBlueprint.Intro.create = function () {
     this.game.cameras.defaultCamera.transform.x = 0;
     this.game.cameras.defaultCamera.transform.y = 0;
 
+    this.hudScore = new Kiwi.HUD.Widget.TextField(game, 'ORIGINAL CONCEPT BY SECRET BASE', 0, 10);
+    
+    this.hudScore.style.fontFamily = 'myFirstFont';
+    this.hudScore.style.color = '#FFEAD1';
+    this.hudScore.style.fontSize ="16px";
+    this.hudScore.style.letterSpacing ="1px";
+    this.hudScore.style.width ="100%";
+    this.hudScore.style.textAlign ="center";
+
+
+    game.huds.defaultHUD.addWidget(this.hudScore);
+
     
 }
 PlatformBlueprint.Intro.startGame = function(keyCode, key){
@@ -48,7 +60,8 @@ PlatformBlueprint.Intro.startGame = function(keyCode, key){
 	}
 	this.keyboard.onKeyDownOnce.remove(this.startGame, this);
 	this.timer.stop();
-	game.states.switchState("Play");
+	this.hudScore.style.opacity = 0;
+	game.states.switchState("HowToPlay");
 
 }
 

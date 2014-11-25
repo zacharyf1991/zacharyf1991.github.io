@@ -79,13 +79,16 @@ LevelManager.prototype.gemsLevelOne = function() {
 };
 
 LevelManager.prototype.ghostsLevelOne = function() {
-    this.state.enemyManager.addEnemy('ghost', 992, 479);
-    this.state.enemyManager.addEnemy('ghost', 1610, 320);
+    //this.state.enemyManager.addEnemy('ghost', 992, 479);
+    //this.state.enemyManager.addEnemy('ghost', 1610, 320);
 };
 
 LevelManager.prototype.gameOver = function() {
     this.state.hudManager.endState();
 
+    if(this.state.survivalGame){
+        this.state.survivalGame.spawnTimer.stop();
+    }
     var params = this.state.gameManager.gameOver();
     if( this.boss != undefined ) {
         this.state.boss.endState();

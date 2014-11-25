@@ -33,6 +33,14 @@ WeaponManager.prototype.currentlyShooting = function(){
 
 WeaponManager.prototype.update = function() {
 	this.beamManager.update();
+	// console.log("UPDATE WEAPON MANAGER")
+
+	if(this.shooting == true && !this.state.player.jumping){
+		//IF ADD MULTIPLE WEAPONS CHECK TYPE OF WEAPON THEN CALL THE START SHOOTING METHOD ON IT
+
+		this.beamManager.shoot();
+		//this.state.player.setAnimation();
+	}
 
 
 };
@@ -44,6 +52,7 @@ WeaponManager.prototype.stopShooting = function() {
 	this.beamShooting = false;
 	this.enemyTargeted = false
 	this.beamStage = 0;
+	this.beamManager.stopShooting();
 	//this.beamManager.clearBeam()
 	
    
@@ -57,6 +66,7 @@ WeaponManager.prototype.startShooting = function(){
 
 		this.beamManager.shoot();
 		this.state.player.setAnimation();
+		this.shooting = true;
 	}
 
 }
@@ -71,11 +81,9 @@ WeaponManager.prototype.damageEnemy = function() {
 WeaponManager.prototype.shootKeyUp = function(){
 
 	this.shootKeyIsDown = false;
-	this.shooting = false;
-	this.beamManager.stoppedShooting();
-	this.state.enemyManager.resetEnemies();
+
+	
 	this.stopShooting();
-	this.state.enemyManager.resetHit();
 
 
 

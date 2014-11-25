@@ -26,7 +26,7 @@ PlatformBlueprint.SplashState.create = function (params) {
 
 	//set the tweens up
 	this.tweenA.to({ alpha: 1 }, 500, Kiwi.Animations.Tweens.Easing.Quintic.In, false);
-	this.tweenB.to({ alpha: 1 }, 1000, Kiwi.Animations.Tweens.Easing.Circular.InOut, false);
+	this.tweenB.to({ alpha: 1 }, 3000, Kiwi.Animations.Tweens.Easing.Circular.InOut, false);
 	this.tweenC.to({ alpha: 0 }, 500, Kiwi.Animations.Tweens.Easing.Quintic.Out, false);
 	this.tweenC.onComplete( this.splashFinished, this );
 
@@ -45,6 +45,6 @@ PlatformBlueprint.SplashState.update = function(){
 
 PlatformBlueprint.SplashState.splashFinished = function(){
 
-	game.states.switchState("Intro");
+	game.states.switchState("MenuOpening");
 
 }

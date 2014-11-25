@@ -9,6 +9,7 @@ var GameManager = function(state){
     this.score = 0;
 
     this.damageTimer = this.state.game.time.clock.createTimer('damageTimer', 0.45, 0, false);
+    this.state.createSurvivalGame();
 
 }
 

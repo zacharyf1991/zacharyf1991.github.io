@@ -73,6 +73,11 @@ PlatformBlueprint.GameOver.create = function (params) {
 
     this.gameOverKeyboard.onKeyDownOnce.add(this.keyDownOnce, this);
 
+    this.shareTwitter = new Kiwi.GameObjects.Sprite( this, this.textures.twitterShare, 360,  510 );
+    this.addChild ( this.shareTwitter );
+
+    this.shareTwitter.input.onUp.add(this.share, this);
+
 
 
     //this.shareB = new Kiwi.Plugins.GameObjects.ShareButton(this, this.textures['shareButton'], game.stage.width/2 - 125 ,405);
@@ -85,6 +90,18 @@ PlatformBlueprint.GameOver.update = function(){
     Kiwi.State.prototype.update.call(this);
 }
 
+PlatformBlueprint.GameOver.share = function(){
+    console.log("Share");
+    this.tweetWindow("http://bit.ly/1xGBN0s", "Happy Halloween, #Ghostbusters! Kick ectoplasmic ass in the new game by @secretbaseSG, powered by @kiwijsengine!");
+
+}
+
+PlatformBlueprint.GameOver.tweetWindow = function(url, text) {
+  window.open( "http://twitter.com/share?url=" + 
+    encodeURIComponent(url) + "&text=" + 
+    encodeURIComponent(text) + "&count=none/", 
+    "tweet", "height=300,width=550,resizable=1" ) 
+}
 
 // PlatformBlueprint.GameOver.restartGame = function(){
 // 	this.gameOverKeyboard.onKeyUp.remove(this.restartGame, this);
@@ -129,10 +146,11 @@ PlatformBlueprint.GameOver.continueGame = function(){
 
 
 PlatformBlueprint.GameOver.exitState = function(){
+    this.gameOverKeyboard.onKeyDownOnce.remove(this.keyDownOnce, this);
     this.gameOverKeyboard.onKeyUp.remove(this.keyDownOnce, this);
     // this.keyboard.onKeyUp.remove(this.restartGame, this);
     game.huds.defaultHUD.removeAllWidgets();
 
-    game.states.switchState("Intro");
+    game.states.switchState("Credits");
 
 }

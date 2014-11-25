@@ -1,5 +1,5 @@
 var BlueCircle = function(state, parent, x, y){
-	Kiwi.GameObjects.Sprite.call(this, state, state.textures['blueCircleSprite'], x, y);
+	Kiwi.GameObjects.Sprite.call(this, state, state.textures['blueCircle'], x, y);
 	this.state = state;
 	this.myParent = parent;
 	var animationSpeed = 0.1;
@@ -15,7 +15,7 @@ var BlueCircle = function(state, parent, x, y){
 	this.timesMissed = 0;
 
 
-	this.animation.getAnimation('fade').onStop.add(this.startNextStage, this);
+	this.animation.getAnimation('fade').onStop.add(this.resume, this);
 	this.animation.getAnimation('missedTwo').onStop.add(this.resume, this);
 	this.animation.getAnimation('missedThree').onStop.add(this.resume, this);
 	this.animation.getAnimation('missedOne').onStop.add(this.resume, this);
@@ -31,7 +31,7 @@ var BlueCircle = function(state, parent, x, y){
 Kiwi.extend(BlueCircle, Kiwi.GameObjects.Sprite);
 
 BlueCircle.prototype.startLoop = function(){
-	this.animation.play('shoot');
+	// this.animation.play('shoot');
 }
 
 BlueCircle.prototype.startNextStage = function(){
@@ -52,7 +52,7 @@ BlueCircle.prototype.resume = function(){
 
 
 BlueCircle.prototype.capture = function(){
-	this.animation.play('shoot');
+	// this.animation.play('shoot');
 }
 BlueCircle.prototype.update = function(){
     Kiwi.GameObjects.Sprite.prototype.update.call(this);

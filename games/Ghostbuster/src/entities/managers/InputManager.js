@@ -131,7 +131,7 @@ InputManager.prototype.keyUp = function(keyCode, key) {
         this.state.levelManager.switchStates();
     }
     if(keyCode == this.gameOverKey.keyCode){
-        this.state.levelManager.gameOver();
+        // this.state.levelManager.gameOver();
     }
     
 

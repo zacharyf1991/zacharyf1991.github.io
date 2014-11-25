@@ -3,7 +3,7 @@ CameraManager = function(state){
     this.shakeSize = 3;
     this.damageState = false;
     this.shakeDamage = this.state.game.time.clock.createTimer('shakeDamage', 0.005, 0, false);
-    this.lockCamera = false;
+    this.lockCamera = true;
 
 
 
@@ -67,7 +67,7 @@ CameraManager.prototype.updatePosition = function() {
 
     // Lock Position
     if( this.lockCamera ) {
-        this.state.camera.transform.x = -(this.state.levelManager.groundLayer.widthInPixels - this.state.game.stage.width);
+        this.state.camera.transform.x = -20;
 
         if (this.state.player.y < this.state.game.stage.height / 2) {
         this.state.camera.transform.y = 0;
@@ -87,7 +87,8 @@ CameraManager.prototype.updatePosition = function() {
 
             // Lock Camera
             this.lockCamera = true;
-            this.state.createBoss();
+            // this.state.createBoss();
+            
             // this.state.boss.appear();
             this.state.camera.transform.x = -(this.state.levelManager.groundLayer.widthInPixels - this.state.game.stage.width);
         } else {

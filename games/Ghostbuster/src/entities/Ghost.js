@@ -5,11 +5,13 @@ var Ghost = function(state, x, y){
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
 	this.objType = 'Ghost';
 
+	this.releaseTime == null;
+
 	var animationSpeed = 0.1;
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
 	this.animation.add('invis', [0], 0.1, false);
 	this.animation.add('appear', [00, 01, 02, 03, 04, 06, 07, 08, 09, 10, 12, 13, 14, 15], 0.06, false);
-	this.animation.add('disappear', [15, 14, 13, 12, 10, 9, 8, 7, 6, 4, 3, 2, 1, 0], 0.06, false);
+	this.animation.add('disappear', [ 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41], 0.06, false);
 	this.animation.add('capture', [16, 18, 19, 20, 21, 23, 24, 25, 26, 27], animationSpeed, false);
 	this.animation.add('idle',[05, 11], 0.1, true);
 	this.animation.add('dash',[05, 11], 0.1, true);
@@ -24,7 +26,7 @@ var Ghost = function(state, x, y){
 	this.centerPoint = new Kiwi.Geom.Point(centerX, centerY);
 
 
-	//this.animation.getAnimation('appear').onStop.add(this.dash, this);
+	this.animation.getAnimation('appear').onStop.add(this.appeared, this);
 	this.animation.getAnimation('capture').onStop.add(this.capture, this);
 
 
@@ -43,6 +45,10 @@ var Ghost = function(state, x, y){
 	this.isVisible = false;
 	this.targetLocation = [0,0];
 
+	this.canBeHit = false;
+
+
+	this.canEscape = false;
 
 
 
@@ -78,20 +84,25 @@ Ghost.prototype.update = function(){
     this.physics.update();
     this.ai.update();
     if(this.hit){
-    	//console.log("I am hit!!!!");
+    	// console.log("I am hit!!!!");
     	//this.state.weaponManager.beamManager.beams[0]
     	// console.log(this.state.weaponManager.beamManager.beams[0], "Zach");
-    	if( this.state.weaponManager.beamManager.beams[0] != undefined){
+    	if( this.state.weaponManager.beamManager.beam.exists){
+    		// console.log("Beam Exists!!!!", this.state.weaponManager.beamManager.beam );
     		var alignSpeed = 0.5,
+    			beam = this.state.weaponManager.beamManager.beam,
     			enemyCenter = new Kiwi.Geom.Point(this.x, this.y),
-    			impactCenter = new Kiwi.Geom.Point(0, 0),
-    			impactSprite = this.state.weaponManager.beamManager.beams[0].members[0];
+    			impactCenter = new Kiwi.Geom.Point ( 0, 0 );
+
+    			var tempImpPoint = this.state.weaponManager.beamManager.getHoldPos( this.targetIndex );
+
+    			impactCenter.x = tempImpPoint.x + beam.x;
+
+    			impactCenter.y = tempImpPoint.y + beam.y;
+    			//impactSprite = this.state.weaponManager.beamManager.beams[0].members[0];
 
     			enemyCenter.x = this.x + this.width * 0.5;
     			enemyCenter.y = this.y + this.height * 0.5;
-
-    			impactCenter.x = impactSprite.worldX + impactSprite.width * 0.5;
-    			impactCenter.y = impactSprite.worldY + impactSprite.height * 0.5;
 
     			// console.log(this.state.weaponManager.beamManager.beams[0].members[0].transform.worldX ,  this.x, "Zach");
 	    	if(enemyCenter.x > impactCenter.x ){
@@ -141,6 +152,10 @@ Ghost.prototype.capture = function() {
 	this.state.addCash(1, this.x, this.y);
 	this.state.weaponManager.stopShooting();
 	this.destroy();
+};
+
+Ghost.prototype.appeared = function() {
+	this.canBeHit = true;
 };
 
 
@@ -214,8 +229,17 @@ Ghost.prototype.checkDash = function() {
 };
 
 Ghost.prototype.teleport = function() {
-	this.x =  Math.random() * this.state.width
-	this.y = Math.random() * 200 - 100 + this.state.player.y;
+
+	this.exists = false;
+	var xPos = Math.floor( Math.random() * this.state.game.stage.width ),
+		yPos = 220 + Math.random() * 440;
+	if(this.survival){
+
+	}
+	this.x = xPos;
+	this.y = yPos;
+	// this.x =  Math.random() * this.state.width
+	// this.y = Math.random() * 200 - 100 + this.state.player.y;
 };
 
 Ghost.prototype.finishedAppear = function() {
@@ -234,6 +258,11 @@ Ghost.prototype.setupAI = function() {
 				detectHit
 				hit
 			dashSelector
+				escapeSequence
+					*isEscaping
+					*playEscape
+					*teleport
+
 				dashSequence
 					detectVisible
 					dashTargetSelect
@@ -280,7 +309,7 @@ Ghost.prototype.setupAI = function() {
     });
     var postDashPause = new Kiwi.Plugins.GhostAI.Actions.Pause({
         sprite:this,
-        length:120
+        length:240
     });
     var teleport = new Kiwi.Plugins.GhostAI.Actions.Teleport({
         sprite:this,
@@ -306,6 +335,12 @@ Ghost.prototype.setupAI = function() {
     var detectHit = new Kiwi.Plugins.GhostAI.Conditions.DetectHit({
     	sprite:this
     });
+    var isEscaping = new Kiwi.Plugins.GhostAI.Actions.IsEscaping({
+    	sprite:this
+    });
+    var playEscape = new Kiwi.Plugins.GhostAI.Actions.PlayEscape({
+    	sprite:this
+    });
 
 	var randomMoveSequence = new Kiwi.Plugins.AITree.Sequencer({name:'randomMoveSequence'});
 	randomMoveSequence.addChild(selectLocation);
@@ -324,6 +359,11 @@ Ghost.prototype.setupAI = function() {
 	detectHitSequencer.addChild(detectHit);
 	detectHitSequencer.addChild(hit);
 
+	var escapeSequence = new Kiwi.Plugins.AITree.Sequencer({name:'escapeSequence'});
+	escapeSequence.addChild(isEscaping);
+	escapeSequence.addChild(playEscape);
+	escapeSequence.addChild(teleport);
+
 	var dashSequence = new Kiwi.Plugins.AITree.Sequencer({name:'dashSequence'});
 	dashSequence.addChild(detectVisible);
 	dashSequence.addChild(dashTargetSelect);
@@ -333,6 +373,7 @@ Ghost.prototype.setupAI = function() {
 	dashSequence.addChild(teleport);
 
 	var dashSelector = new Kiwi.Plugins.AITree.Selector({name:'dashSelector'});
+	dashSelector.addChild(escapeSequence);
 	dashSelector.addChild(dashSequence);
 	dashSelector.addChild(detectEgonSelector);
 

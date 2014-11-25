@@ -158,7 +158,7 @@ Boss.prototype.updateTrappedBooks = function () {
 	};
 }
 Boss.prototype.updateBookAnimations = function (book) {
-	if( book.animation.currentAnimation != 'hold' ){
+	if( book.animation.currentAnimation != 'hold' && this.animation.currentAnimation.name != 'disappear'){
 		book.animation.play( 'hold', false );
 	}
 }
