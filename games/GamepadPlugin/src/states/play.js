@@ -41,9 +41,13 @@ GamepadPlugin.Play.create = function () {
   	this.bomb = new Kiwi.GameObjects.Sprite(this, this.textures.icons, 0, 10);
   	this.bomb.x = this.game.stage.width - this.bomb.width  -10;
 
-    this.game.gamepads.gamepads[0].onDownOnce.add( this.onDownOnce, this );
-    this.game.gamepads.gamepads[0].isDown.add( this.isDown, this );
-    this.game.gamepads.gamepads[0].onUp.add( this.onUp, this );
+    this.game.gamepads.gamepads[0].buttonOnDownOnce.add( this.buttonOnDownOnce, this );
+    this.game.gamepads.gamepads[0].buttonIsDown.add( this.buttonIsDown, this );
+    this.game.gamepads.gamepads[0].buttonOnUp.add( this.buttonOnUp, this );
+
+    this.game.gamepads.gamepads[0].thumbstickOnDownOnce.add( this.thumbstickOnDownOnce, this );
+    this.game.gamepads.gamepads[0].thumbstickIsDown.add( this.thumbstickIsDown, this );
+    this.game.gamepads.gamepads[0].thumbstickOnUp.add( this.thumbstickOnUp, this );
 
 
   	//Add the GameObjects to the stage
@@ -55,18 +59,37 @@ GamepadPlugin.Play.create = function () {
   
 }
 
-GamepadPlugin.Play.onDownOnce = function( button ){
+GamepadPlugin.Play.buttonOnDownOnce = function( button ){
   console.log("DOWN:", button.name );
 
 }
 
-GamepadPlugin.Play.isDown = function( button ){
+GamepadPlugin.Play.buttonIsDown = function( button ){
   // console.log("DOOOOWN", button.name );
 
 }
 
-GamepadPlugin.Play.onUp = function( button ){
+GamepadPlugin.Play.buttonOnUp = function( button ){
   console.log("UP:  ", button.name);
+
+}
+
+GamepadPlugin.Play.thumbstickOnDownOnce = function( thumbstick ){
+  // console.log( this.shorten( thumbstick.value ), thumbstick.name );
+
+}
+
+GamepadPlugin.Play.thumbstickIsDown = function( thumbstick ){
+  console.log(this.shorten( thumbstick.value ), thumbstick.name);
+}
+
+GamepadPlugin.Play.thumbstickOnUp = function( thumbstick ){
+  // console.log(this.shorten( thumbstick.value ), thumbstick.name);
+
+}
+
+GamepadPlugin.Play.shorten = function( num ){
+  return Math.round(num * 1000) / 1000;
 
 }
 

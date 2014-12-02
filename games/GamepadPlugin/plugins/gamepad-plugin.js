@@ -81,7 +81,7 @@ Kiwi.Plugins.Gamepad.Manager.prototype.createControllers = function () {
 	console.log("Creating Controllers", gamepadLength);
 
 	for (var i = gamepadLength - 1; i >= 0; i--) {
-		var tempController = new Kiwi.Plugins.Gamepad.Controller( this, 0.5, 0.5 );
+		var tempController = new Kiwi.Plugins.Gamepad.Controller( this, 0.15, 0.15 );
 		// console.log("Creating new controller", tempController);
 		gamepads.push( tempController );
 	};
@@ -111,10 +111,17 @@ Kiwi.Plugins.Gamepad.Controller = function ( parent, axesThreshold, triggerThres
 	this.createButtons();
 	this.createAxes();
 
-	this.onUp = new Kiwi.Signal();
-	this.isDown = new Kiwi.Signal();
-	this.onDownOnce = new Kiwi.Signal();
+	this.threshold = axesThreshold;
+
+	this.buttonOnUp = new Kiwi.Signal();
+	this.buttonIsDown = new Kiwi.Signal();
+	this.buttonOnDownOnce = new Kiwi.Signal();
 	this.justReleased = new Kiwi.Signal();
+
+	this.thumbstickOnUp = new Kiwi.Signal();
+	this.thumbstickIsDown = new Kiwi.Signal();
+	this.thumbstickOnDownOnce = new Kiwi.Signal();
+	// this.justReleased = new Kiwi.Signal();
 
 
 
@@ -161,10 +168,10 @@ Kiwi.Plugins.Gamepad.Controller.prototype.createButtons = function(){
 };
 
 Kiwi.Plugins.Gamepad.Controller.prototype.createAxes = function(){
-	this.axis0 = { rot: 0 };
-	this.axis1 = { rot: 0 };
-	this.axis2 = { rot: 0 };
-	this.axis3 = { rot: 0 };
+	this.axis0 = new Kiwi.Plugins.Gamepad.Thumbstick( 0, 'XBOX_LEFT_HORZ', 0.1);
+	this.axis1 = new Kiwi.Plugins.Gamepad.Thumbstick( 0, 'XBOX_LEFT_VERT', 0.1);
+	this.axis2 = new Kiwi.Plugins.Gamepad.Thumbstick( 0, 'XBOX_RIGHT_HORZ', 0.1);
+	this.axis3 = new Kiwi.Plugins.Gamepad.Thumbstick( 0, 'XBOX_RIGHT_VERT', 0.1);
 
 	this.axes = [ this.axis0, this.axis1, this.axis2, this.axis3 ];
 	this.leftAxis = [ this.axis0, this.axis1 ];
@@ -181,7 +188,7 @@ Kiwi.Plugins.Gamepad.Controller.prototype.checkButtons = function( gamepad ){
 				//FIRE IS DOWN SIGNAL
 				this.buttons[ i ].isDown( gamepad.buttons[ i ] );
 
-				this.isDown.dispatch( this.buttons[ i ] );
+				this.buttonIsDown.dispatch( this.buttons[ i ] );
 
 			} else {
 				//Button has not been pressed
@@ -192,16 +199,16 @@ Kiwi.Plugins.Gamepad.Controller.prototype.checkButtons = function( gamepad ){
 				//FIRE IS DOWN SIGNAL
 				//FIRE IS DOWN ONCE SIGNAL
 				this.buttons[ i ].press( gamepad.buttons[ i ] );
-				this.isDown.dispatch( this.buttons[ i ] );
 
-				this.onDownOnce.dispatch( this.buttons[ i ] );
+				this.buttonIsDown.dispatch( this.buttons[ i ] );
+				this.buttonOnDownOnce.dispatch( this.buttons[ i ] );
 
 			} else if( gamepad.buttons[ i ].pressed === false ){
 				////////////////////
 				//FIRE IS UP SIGNAL
 				this.buttons[ i ].release();
 
-				this.onUp.dispatch( this.buttons[ i ] );
+				this.buttonOnUp.dispatch( this.buttons[ i ] );
 
 			}
 
@@ -210,6 +217,45 @@ Kiwi.Plugins.Gamepad.Controller.prototype.checkButtons = function( gamepad ){
 };
 
 Kiwi.Plugins.Gamepad.Controller.prototype.checkAxes = function( gamepad ){
+
+	// console.log(gamepad, "ZACH", this.axes);
+	for (var i = this.axes.length - 1; i >= 0; i--) {
+		// console.log("ZACH", Math.abs( this.axes[ i ].value ) > this.threshold, this.threshold, Math.abs( this.axes[ i ].value ));
+		// console.log(i, "ZACH", gamepad)
+		if( Math.abs( this.axes[ i ].value ) > this.threshold &&  Math.abs( gamepad.axes[ i ] ) > this.threshold ){
+			if( Math.abs( this.axes[ i ].value ) > this.threshold ){
+				////////////////////
+				//FIRE IS DOWN SIGNAL
+				this.axes[ i ].isDown( gamepad.axes[ i ] );
+
+				this.thumbstickIsDown.dispatch( this.axes[ i ] );
+
+			} else {
+				//Button has not been pressed
+			}
+		} else if( Math.abs( this.axes[ i ].value ) > this.threshold ||  Math.abs( gamepad.axes[ i ] ) > this.threshold ) {
+			if(  Math.abs( this.axes[ i ].value ) > this.threshold ){
+				////////////////////
+				//FIRE IS DOWN SIGNAL
+				//FIRE IS DOWN ONCE SIGNAL
+				this.axes[ i ].press( gamepad.axes[ i ] );
+
+				this.thumbstickIsDown.dispatch( this.axes[ i ] );
+				this.thumbstickOnDownOnce.dispatch( this.axes[ i ] );
+
+			} else if(  Math.abs( this.axes[ i ].value ) < this.threshold ){
+				////////////////////
+				//FIRE IS UP SIGNAL
+				this.axes[ i ].release();
+
+				this.thumbstickOnUp.dispatch( this.axes[ i ] );
+
+			}
+
+		}
+		this.axes[i].value = gamepad.axes[i];
+
+	};
 };
 
 
@@ -228,6 +274,7 @@ Kiwi.Plugins.Gamepad.Button = function ( index, name, threshold ) {
 
 	this.startDown;
 	this.startUp;
+	this.pressed = false;
 };
 
 Kiwi.Plugins.Gamepad.Button.prototype.release = function () {
@@ -253,6 +300,23 @@ Kiwi.Plugins.Gamepad.Button.prototype.isDown = function ( button ) {
 
 Kiwi.Plugins.Gamepad.Thumbstick = function ( index, name, threshold ) {
 	this.threshold = threshold
+	this.name = name;
+	this.index = index,
+	this.threshold = threshold;
+	this.value = 0;
 
 
+};
+
+Kiwi.Plugins.Gamepad.Thumbstick.prototype.release = function () {
+	this.value = 0;
+};
+Kiwi.Plugins.Gamepad.Thumbstick.prototype.press = function ( axis ) {
+	// console.log(button);
+	this.value = axis;
+}
+
+Kiwi.Plugins.Gamepad.Thumbstick.prototype.isDown = function ( axis ) {
+	// console.log(button);
+	this.value = axis;
 };
