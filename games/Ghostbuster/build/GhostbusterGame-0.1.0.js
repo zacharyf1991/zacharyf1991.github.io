@@ -8260,7 +8260,7 @@ PlatformBlueprint.Intro.changeVisible = function(){
 
 var PlatformBlueprint = PlatformBlueprint || {};
 
-PlatformBlueprint.Loading = new KiwiLoadingScreen('Loading', 'Play', 'assets/img/loading/');
+PlatformBlueprint.Loading = new KiwiLoadingScreen('Loading', 'SplashState', 'assets/img/loading/');
 
 PlatformBlueprint.Loading.preload = function () {
     
