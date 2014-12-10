@@ -8250,13 +8250,6 @@ PlatformBlueprint.GameOver.tweetWindow = function(url, text) {
     "tweet", "height=300,width=550,resizable=1" ) 
 }
 
-// PlatformBlueprint.GameOver.restartGame = function(){
-// 	this.gameOverKeyboard.onKeyUp.remove(this.restartGame, this);
-// 	game.huds.defaultHUD.removeAllWidgets();
-
-// 	game.states.switchState("Intro");
-
-// }
 
 
 PlatformBlueprint.GameOver.keyDownOnce = function(keyCode, key) {
@@ -8539,7 +8532,7 @@ PlatformBlueprint.Loading.preload = function () {
     this.addSpriteSheet('boss', 'assets/img/enemies/boss.png', 300, 200);
 
     this.addSpriteSheet('questionMark', 'assets/img/enemies/Slimer_questionmark.png', 60, 60);
-    this.addSpriteSheet('escapeText', 'assets/img/enemies/Slimer_EscapeText04.png', 68, 44);
+    this.addSpriteSheet('escapeText', 'assets/img/enemies/Slimer_EscapeText04.PNG', 68, 44);
 
     this.addSpriteSheet('books', 'assets/img/enemies/books.png', 200, 200);
     this.addSpriteSheet('shield', 'assets/img/enemies/shield.png', 300, 220);
