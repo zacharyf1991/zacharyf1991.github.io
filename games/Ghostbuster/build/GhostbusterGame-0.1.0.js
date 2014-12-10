@@ -1,14 +1,15 @@
-var Death = function(state, x, y){
+var Death = function(state, x, y, amount){
 	Kiwi.GameObjects.Sprite.call(this, state, state.textures['ghost'], x, y);
 	this.state = state;
 	this.box.hitbox = new Kiwi.Geom.Rectangle(60, 65, 60, 55); 
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
+	this.amount = amount;
 
 	var animationSpeed = 0.1;
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
 	this.animation.add('invis', [30], 0.1, false);
 	this.animation.add('appear', [00, 01, 02, 03, 04, 06, 07, 08, 09, 10, 12, 13, 14, 15], 0.06, false);
-	this.animation.add('death', [16, 18, 19, 20, 21, 23, 24, 25, 26, 27], animationSpeed, false);
+	this.animation.add('death', [ 16, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28 ], animationSpeed, false);
 	
 	this.animation.play('death');
 
@@ -40,7 +41,7 @@ Death.prototype.update = function(){
 }
 
 Death.prototype.die = function() {
-	this.state.itemManager.addItem('cash', this.x, this.y);
+	this.state.itemManager.addItem('cash', this.x, this.y, this.amount);
 	// this.state.weaponManager.stopShooting();
 	this.destroy();
 };
@@ -55,7 +56,7 @@ Death.prototype.die = function() {
 var Ghost = function(state, x, y){
 	Kiwi.GameObjects.Sprite.call(this, state, state.textures['ghost'], x, y);
 	this.state = state;
-	this.box.hitbox = new Kiwi.Geom.Rectangle(60, 65, 60, 55); 
+	this.box.hitbox = new Kiwi.Geom.Rectangle(50, 50, 80, 75); 
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
 	this.objType = 'Ghost';
 
@@ -65,8 +66,9 @@ var Ghost = function(state, x, y){
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
 	this.animation.add('invis', [0], 0.1, false);
 	this.animation.add('appear', [00, 01, 02, 03, 04, 06, 07, 08, 09, 10, 12, 13, 14, 15], 0.06, false);
-	this.animation.add('disappear', [ 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 41, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 44], 0.06, false);
-	this.animation.add('capture', [16, 18, 19, 20, 21, 23, 24, 25, 26, 27], animationSpeed, false);
+	this.animation.add('disappear', [ 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 ], 0.06, false);
+	this.animation.add('disappear2', [ 40, 41, 41, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 44], 0.06, false);
+	this.animation.add('capture', [16, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28], animationSpeed, false);
 	this.animation.add('idle',[05, 11], 0.1, true);
 	this.animation.add('dash',[05, 11], 0.1, true);
 	this.animation.add('damage1',[17], 0.1, false);
@@ -80,11 +82,12 @@ var Ghost = function(state, x, y){
 	this.centerPoint = new Kiwi.Geom.Point(centerX, centerY);
 
 	var randomDash = Math.floor( Math.random() * 2 );
-	this.dashAmount = randomDash;
+	this.dashAmount = 2;
 
 
 	this.animation.getAnimation('appear').onStop.add(this.appeared, this);
 	this.animation.getAnimation('capture').onStop.add(this.capture, this);
+	this.animation.getAnimation('disappear').onStop.add(this.startD2, this);
 
 	// this.animation.getAnimation('disappear').onStop.add(this.disappear, this);
 
@@ -112,6 +115,7 @@ var Ghost = function(state, x, y){
 
 
 	this.setupAI();
+	this.lastKnownPoint;
 	
 
 
@@ -155,9 +159,15 @@ Ghost.prototype.update = function(){
 
     			var tempImpPoint = this.state.weaponManager.beamManager.getHoldPos( this.targetIndex );
 
-    			impactCenter.x = tempImpPoint.x + beam.x;
-
-    			impactCenter.y = tempImpPoint.y + beam.y;
+    			if(tempImpPoint){
+	    			impactCenter.x = tempImpPoint.x + beam.x;
+	    			impactCenter.y = tempImpPoint.y + beam.y;
+    				this.lastKnownPoint = new Kiwi.Geom.Point(impactCenter.x, impactCenter.y);
+	    		} else {
+	    			impactCenter.x = this.lastKnownPoint.x;
+	    			impactCenter.y = this.lastKnownPoint.y;
+	    		
+	    		}
     			//impactSprite = this.state.weaponManager.beamManager.beams[0].members[0];
 
     			enemyCenter.x = this.x + this.width * 0.5;
@@ -216,7 +226,11 @@ Ghost.prototype.capture = function() {
 Ghost.prototype.appeared = function() {
 	this.canBeHit = true;
 };
-
+Ghost.prototype.startD2 = function() {
+	this.createEscapeText();
+	this.canBeHit = false;
+	this.animation.play('disappear2');
+};
 
 Ghost.prototype.startLoop = function(){
 	if (this.animation.currentAnimation.name != 'idle'){
@@ -294,7 +308,7 @@ Ghost.prototype.teleport = function() {
 		return;
 	}
 
-	console.log("CELL INDEX == 44")
+	// console.log("CELL INDEX == 44")
 	this.exists = false;
 	if(this.cellIndex == 44){
 
@@ -311,6 +325,23 @@ Ghost.prototype.teleport = function() {
 };
 
 Ghost.prototype.finishedAppear = function() {
+	
+};
+Ghost.prototype.createQuestionMark = function() {
+	var questionMark = new FadeOutItem( this.state, this.x, this.y, this.state.textures.questionMark, 0.04, 'questionMark' );
+	this.state.addChild( questionMark );
+	// console.log(questionMark);
+	
+};
+Ghost.prototype.createEscapeText = function() {
+	var escapeText = new FadeOutItem( this.state, 0, 0, this.state.textures.escapeText, 0.02, 'escape' );
+	var x = this.x + this.width * 0.5 - escapeText.width * 0.5;
+	var y = this.y + this.height * 0.5 - escapeText.height * 0.5;
+	escapeText.x = x;
+	escapeText.y = y;
+	
+	this.state.addChild( escapeText );
+	// console.log(escapeText);
 	
 };
 
@@ -374,7 +405,7 @@ Ghost.prototype.setupAI = function() {
     });
     var dashPause = new Kiwi.Plugins.GhostAI.Actions.Pause({
         sprite:this,
-        length:80
+        length:160
     });
     var postDashPause = new Kiwi.Plugins.GhostAI.Actions.Pause({
         sprite:this,
@@ -469,7 +500,7 @@ var Beam = function( state, x, y, angle, beamLength ){
 
 	this.origin = new Kiwi.Geom.Point( 0, 0);
 
-	this.desiredLength;
+	this.desiredLength = new Kiwi.Geom.Point(0,0);
 
 	this.beamVelo = 25;
 
@@ -1564,17 +1595,21 @@ Kiwi.extend(Platform,Kiwi.GameObjects.Sprite);
    
 
 
-var Cash = function(state, x, y){
-	Kiwi.GameObjects.Sprite.call(this, state, state.textures.cash, x, y);
+var Cash = function(state, x, y, amount){
+	Kiwi.GameObjects.Sprite.call(this, state, state.textures.cash, x, y );
 	this.state = state;
 	this.box.hitbox = new Kiwi.Geom.Rectangle(60, 65, 60, 55); 
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
 
-	this.animation.add('drop', [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8], 0.05, false, true);
-	this.animation.play('drop');
+	this.animation.add('drop1', [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8], 0.05, false, true);
+	this.animation.add('drop2', [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8], 0.05, false, true);
+	this.animation.add('drop3', [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8], 0.05, false, true);
+	this.animation.play('drop'+amount);
 
 
-	this.animation.getAnimation('drop').onStop.add(this.removeCash, this);
+	this.animation.getAnimation('drop1').onStop.add(this.removeCash, this);
+	this.animation.getAnimation('drop2').onStop.add(this.removeCash, this);
+	this.animation.getAnimation('drop3').onStop.add(this.removeCash, this);
 	this.hittable = false;
 	this.state.gameManager.addScore(5000);
 
@@ -1638,6 +1673,44 @@ Gem.prototype.hitPlayer = function() {
 	this.state.gameManager.addScore(500);
 	this.animation.play('pickup');
 };
+var FadeOutItem = function(state, x, y, texture, fadeSpeed, type){
+	Kiwi.GameObjects.Sprite.call(this, state, texture, x, y);
+	this.state = state;
+	this.type = type
+
+	// this.animation.add('idle', [0], animationSpeed, true, true);
+	// this.animation.play('idle');
+
+	this.fadeSpeed = fadeSpeed;
+	if(this.type == 'escape'){
+		this.fadeSpeed = 0;
+		this.animation.add('idle', [ 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1 ], 0.06, false);
+		this.animation.play('idle');
+		this.animation.getAnimation('idle').onStop.add(this.removeSelf, this);
+	}
+	
+
+
+
+
+
+}
+Kiwi.extend(FadeOutItem, Kiwi.GameObjects.Sprite);
+
+FadeOutItem.prototype.update = function(){
+    Kiwi.GameObjects.Sprite.prototype.update.call(this);
+    this.alpha -= this.fadeSpeed;
+    if(this.alpha <= 0 ){
+    	this.removeSelf();
+    }
+    
+}
+
+FadeOutItem.prototype.removeSelf = function() {
+	//console.log("REMOVED FADE OUT ITEM")
+	this.exists = false; //state.itemManager.removeItem(this);
+};
+
 var BeamManager = function (state) {
 	"use strict";
 	this.state = state;
@@ -1648,9 +1721,38 @@ var BeamManager = function (state) {
 	this.spawnPoint = new Kiwi.Geom.Point ( 0, 0 );
 
 	// this.beams;
-	this.beam;
+	this.beam = undefined;
 	this.nonActiveBeams = [];
 	this.sparkPoint = new Kiwi.Geom.Point( 0, 0 );
+
+	this.targets = [];
+	this.releaseTime = 0;
+
+
+	// This boolean is used to determine if the beam has ever hit a target
+	this.hasHit = false;
+
+};
+
+BeamManager.prototype.continueMiniGame = function ( collideWith ) {
+	var temp = false;
+	for (var l = collideWith.length - 1; l >= 0; l--) {
+		for (var m = this.targets.length - 1; m >= 0; m--) {
+			if( this.targets[m] === collideWith[l].enemy ) {
+				temp = true;
+			}
+		}
+	}
+	
+	if( !temp ){
+		if(this.state.miniGameManager.active){
+			this.state.miniGameManager.removeOldGame();
+		}
+		this.releaseGhosts();
+		this.targets = [];
+	}
+
+	return temp;
 
 };
 
@@ -1658,8 +1760,12 @@ var BeamManager = function (state) {
 // This method is continuiously called when the shoot key is down. 
 BeamManager.prototype.shoot = function () {
 	"use strict";
+	if( this.state.miniGameManager.active ){
+		// console.log( "TIME UPDATE" );
+		this.releaseTime = this.state.game.time.now();
+	}
 
-	if(this.state.player.alpha == 0){
+	if(this.state.player.alpha === 0){
 		return;
 	}
 
@@ -1670,55 +1776,79 @@ BeamManager.prototype.shoot = function () {
 		var collideWith = this.state.collisionManager.checkBeamIntersectsEnemy();
 		// console.log(collideWith);
 
+			// console.log("Has Hit", this.hasHit );
 		if ( collideWith ){
+			 var continueMinigameBoo = this.continueMiniGame( collideWith ); //false;
+			
 			for (var k = collideWith.length - 1; k >= 0; k--) {
 				//collideWith[i]dd
 				collideWith[k].enemy.hit = true;
 				var matched = false;
-				for (var i = this.beam.targets.length - 1; i >= 0; i--) {
-					if ( this.beam.targets[i] == collideWith[k].enemy ) {
-						matched = true;
-					}
-				};
+				if(this.hasHit){
+					matched = this.matchTargets(collideWith[k].enemy);
+				}
+				
 				if( !matched ){
-					// console.log( "Hit New Enemy" );
+					
+
+					//console.log("Creating MiniGame");
+
+
+
 					collideWith[k].enemy.canEscape = true;
 					this.state.survivalGame.resetSpawn(true);
-					var index = this.beam.targets.length;
-					this.beam.targets.push(collideWith[k].enemy);
+					var index = this.targets.length;
+
+					if( !this.matchTargets( collideWith[k].enemy ) ){
+						this.targets.push(collideWith[k].enemy);
+						
+					}
 
 					collideWith[k].enemy.targetIndex = index;
+					var health = 3;
+					if(this.state.miniGameManager.active){
+						if(health < 3){
+							health = this.state.miniGameManager.getHealth();
+						}
+						if(this.targets.length ===  1){
+							health = 3;
+						} 
+						if(this.targets.length ===  2){
+							health = 5;
+						} 
+						if(this.targets.length >=  3){
+							health = 6;
+						}
 
-					// If minigame exists add to it instead of creating a new one.
-					this.state.miniGameManager.createMiniGame( null , 3 );
+					}
+					console.log(health, "Skull HEALTH")
+					this.state.miniGameManager.createMiniGame( null , health );
+						
 					this.state.cameraManager.damageState = true;
 
-					if( !this.beam.impact.exists ){
+					if( !this.beam.impact.exists ) {
 						this.beam.createImpact();
 						
 					}
 
 					var colPoint = new Kiwi.Geom.Point( collideWith[k].intersectResult.x, collideWith[k].intersectResult.y );
 
-					// this.beam.desiredLength.x = colPoint.x - this.beam.x;
-					// this.beam.desiredLength.y = colPoint.y - this.beam.y;
+					var tempLine = new Kiwi.Geom.Line(this.beam.x, this.beam.y, colPoint.x, colPoint.y);
 
-					var tempLine = new Kiwi.Geom.Line(this.beam.x, this.beam.y, colPoint.x, colPoint.y)
-
-					if( !this.beam.beamLocked ){
+					if( !this.beam.beamLocked ) {
 						this.beam.beamLocked = true;
 						this.beam.beamLength = tempLine.length;
 						this.beam.maxLength = tempLine.length;
 
 						
 					}
-					// console.log(tempLine.length, this.beam.beamLength, "Line Length");;
 
 					this.beam.beamVelo = 0;
+
+					this.hasHit = true;
 					
 				}
-			};
-			
+			}
 		}
 
 		// Continue Shooting
@@ -1757,28 +1887,58 @@ BeamManager.prototype.stopShooting = function () {
 	this.currentlyShooting = false;
 	this.state.cameraManager.damageState = false;
 
-	this.releaseGhosts();
-
+	this.hasHit = false;
 	this.removeOldBeam();
-	this.targets = [];
+	
 	
 };
 
+
+// This method is called when the shoot key has been lifted
+BeamManager.prototype.matchTargets = function ( enemy ) {
+
+	for (var i = this.targets.length - 1; i >= 0; i--) {
+		if ( this.targets[i] == enemy ) {
+			
+			return true;
+			
+		}
+	}
+	return false;
+};
 BeamManager.prototype.removeOldBeam = function ( x, y ) {
 	"use strict";
 	if ( this.beam ){
 		this.beam.removeBeam();
 		this.beam.exists = false;
 	}
+	
+};
+
+BeamManager.prototype.startRelease = function () {
+	// console.log("START RELEASE");
+	var timer = this.state.game.time.clock.createTimer('releaseGhosts', 2, 0, false);  
+    timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.releaseAll, this);
+
+    timer.start();
+	
+};
+BeamManager.prototype.releaseAll = function () {
+	// console.log("RELEASE ALL");
 	if(this.state.miniGameManager.active){
 		this.state.miniGameManager.removeOldGame();
 	}
+
+	this.releaseGhosts();
+
+	this.targets = [];
+	
 };
 
 
 BeamManager.prototype.moveBeam = function (  ) {
 	"use strict";
-	if( this.beam != undefined ){
+	if( this.beam !== undefined ){
 		if( this.beam.exists ){
 			var offX, offY;
 			switch ( this.beam.rotation + Math.PI * 0.5 ){
@@ -1793,7 +1953,7 @@ BeamManager.prototype.moveBeam = function (  ) {
 				case 0: // Up
 					offX = 0;
 					offY = -50;
-					break
+					break;
 				case Math.PI / 4: // Up Right
 					offX = 35;
 					offY = -25;
@@ -1807,7 +1967,7 @@ BeamManager.prototype.moveBeam = function (  ) {
 					offY = 0;
 			}
 			
-			this.sparkPoint = new Kiwi.Geom.Point(  this.state.player.centerPoint.x + offX, this.state.player.centerPoint.y + offY  )
+			this.sparkPoint = new Kiwi.Geom.Point(  this.state.player.centerPoint.x + offX, this.state.player.centerPoint.y + offY  );
 			this.beam.moveBeam(  this.sparkPoint.x, this.sparkPoint.y );
 		}
 	}	
@@ -1817,10 +1977,10 @@ BeamManager.prototype.getHoldPos = function ( index ) {
 	"use strict";
 	var myPoint, offX, offY,
 		offset = 20;
-	if( this.beam.targets.length <= 1 ){
+	if( this.targets.length <= 1 ){
 		return this.beam.desiredLength;
-	} else if ( this.beam.targets.length == 2 ) {
-		if( index == 0 ){
+	} else if ( this.targets.length == 2 ) {
+		if( index === 0 ){
 			offX = offset * 0.5;
 			offY = -offset;
 		} else {
@@ -1828,8 +1988,8 @@ BeamManager.prototype.getHoldPos = function ( index ) {
 			offY = offset;
 		}
 
-	} else if ( this.beam.targets.length >= 3 ) {
-		if( index == 0 ){
+	} else if ( this.targets.length >= 3 ) {
+		if( index === 0 ){
 			offX = 0;
 			offY = -offset;
 
@@ -1856,7 +2016,17 @@ BeamManager.prototype.releaseGhosts = function () {
 BeamManager.prototype.update = function () {
 	this.updateSpawnPoint();
 	this.moveBeam();
-}
+
+	if(this.state.miniGameManager){
+		// var number1 = this.state.game.time.now() - this.state.weaponManager.neamManagerreleaseTime;
+		// var number2 = number1 / 2000;
+		// this.state.miniGameManager.setAlpha( 1 - number2 );
+		
+	}
+	if(this.releaseTime + 2000 < this.state.game.time.now()){
+		this.releaseAll();
+	}
+};
 BeamManager.prototype.updateSpawnPoint = function () {
 	if( this.state.player ){
 		this.spawnPoint.x = this.state.player.x;
@@ -1873,7 +2043,7 @@ BeamManager.prototype.updateBeamStage = function () {
 		}
 		// console.log("INSIDE", this.beam.beamStage);
 	}
-}
+};
 
 
 BeamManager.prototype.getDirection = function() {
@@ -1918,11 +2088,11 @@ BeamManager.prototype.getDirection = function() {
 			return -(Math.PI / 2);
 		}
 	}
-}
+};
 
 BeamManager.prototype.enemyKilled = function() {
 		this.stopShooting();
-}
+};
 
 CameraManager = function(state){
 	this.state = state;
@@ -2034,7 +2204,7 @@ CollisionManager = function(state){
 	this.state = state;
 	this.beamCollideDistance = 12;
 
-	this.ghostCollideDistance = 40;
+	this.ghostCollideDistance = 80;
 
 	this.bookCollideDistance = 30;
 	this.shieldHitDistance = 200;
@@ -2272,7 +2442,7 @@ CollisionManager.prototype.checkBeamIntersectsEnemy = function () {
 					a.enemy = enemies.members[i];
 					a.intersectResult = tempRes; 
 					if( a.enemy.hit ){
-						continue;
+						// continue;
 					}
 
 				}  else {
@@ -2558,8 +2728,7 @@ EnemyManager.prototype.killTrapped = function(enemy) {
 EnemyManager.prototype.killEnemy = function(enemy) {
 	enemy.exists = false;
 
-	var tempDeath = new Death(this.state, enemy.x, enemy.y);
-	this.deathGroup.addChild(tempDeath);
+	
 	
 };
 
@@ -2581,8 +2750,11 @@ EnemyManager.prototype.checkPlayerCollision = function(){
 
 		//////////////////////////
 		//Update enemies here
-		if(enemiesMem[i].physics.overlaps(this.state.player)){
-			this.state.player.hitByEnemy();
+		if(enemiesMem[i].animation.currentAnimation.name != 'appear' && enemiesMem[i].animation.currentAnimation.name != 'disappear'){
+			if(enemiesMem[i].physics.overlaps(this.state.player)){
+				this.state.player.hitByEnemy();
+			}
+			
 		}
 	};
 }
@@ -2622,12 +2794,12 @@ GameManager.prototype.update = function(){
         this.playersEnergy += 0.5;
     }
 
-}
+};
 
 GameManager.prototype.addScore = function(amount){
-   this.score += amount
+   this.score += amount;
 
-}
+};
 
 GameManager.prototype.playersEnergy = function() {
 	return this.playersEnergy;
@@ -2636,8 +2808,8 @@ GameManager.prototype.playersEnergy = function() {
 
 GameManager.prototype.playerHitByEnemy = function() {
     //console.log(this);
-
-    if(this.canTakeDamage){
+    // as.as.as.asdafafa
+    if(this.canTakeDamage && !this.state.player.invulnerable){
         this.startDamageTimer();
         this.state.player.takeDamage();
         this.state.cameraManager.shakeCamera();
@@ -3083,10 +3255,9 @@ LevelManager.prototype.switchStates = function(){
 //PlayerManager / Player
 var PlayerManager = function (state, x, y){
 	//Kiwi.Group.call(this, state);
-	Kiwi.GameObjects.Sprite.call(this, state, state.textures['egonSprite'], x, y);
-	this.state = state;
+	Kiwi.GameObjects.Sprite.call( this, state, state.textures.egonSprite, x, y );
 
-
+ 
 
 	// Top half animations
 	this.animation.add('idle', [15], 0.1, true);
@@ -3099,6 +3270,8 @@ var PlayerManager = function (state, x, y){
 	this.animation.add( 'death', [43], 1, true );
 	this.animation.add( 'damaged', [ 44, 44, 44, 44, 44, 44, 44, 44, 44, 44 ], 0.05, false, false );
 	this.animation.play('idle'); 
+
+	this.invulnerable = false;
 
 	// Bottom half animations
 	
@@ -3154,7 +3327,7 @@ var PlayerManager = function (state, x, y){
 
 
 
-}
+};
 Kiwi.extend(PlayerManager, Kiwi.GameObjects.Sprite);
 
 
@@ -3173,8 +3346,12 @@ PlayerManager.prototype.takeDamage = function() {
 	this.state.cameraManager.takeDamage();
 	this.state.weaponManager.stopShooting();
 
-	this.physics.velocity.x = this.scaleX * 70;
-	this.physics.velocity.y = -20;
+	this.physics.acceleration.x = 0;
+	this.physics.velocity.x = this.scaleX * 140;
+	// console.log('Scale', this.scaleX, this.scaleX * 140, this.physics.velocity.x);
+	this.physics.velocity.y = -60;
+
+	// this.physics.update();
 
 	this.takeDamageTimer.clear();
 	this.takeDamageTimer.stop();
@@ -3208,9 +3385,6 @@ PlayerManager.prototype.stopFlash = function() {
 
 PlayerManager.prototype.update = function(){
 	Kiwi.GameObjects.Sprite.prototype.update.call(this);
-	//console.log(this.physics.velocity.x, this.x, this.physics.last.x);
-
-	// console.log( this.y, "Player Y" );
 
 	if(this.x > 2200){
 		this.x = -50;
@@ -3218,11 +3392,6 @@ PlayerManager.prototype.update = function(){
 		this.x = 2200;
 	}
 
-	//if(this.state.enemyManager.checkCollision(this)){
-		//console.log("Hit Enemy");
-	//}
-
-	//this.physics.update();
 	this.updateMovement();
 
 	// Checks if boss exists
@@ -3260,13 +3429,13 @@ PlayerManager.prototype.update = function(){
 	}
 		
 	
-}
+};
 
 PlayerManager.prototype.updateBookCollisions = function() {
 	if ( this.state.collisionManager.bookHitPlayer() ){
 		this.hitByEnemy();
 	}
-}
+};
 PlayerManager.prototype.setAnimation = function () {
 	var dir = this.state.weaponManager.beamManager.getDirection();
 
@@ -3314,7 +3483,7 @@ PlayerManager.prototype.setAnimation = function () {
 		this.shootScaleX = this.scaleX;
 
 
-}
+};
 
 // This get the animation if the player is not shooting
 PlayerManager.prototype.setNormalAnimation = function () {
@@ -3359,12 +3528,15 @@ PlayerManager.prototype.setNormalAnimation = function () {
 		//this.shootScaleX = this.scaleX;
 
 
-}
+};
 
 PlayerManager.prototype.jump = function(){
+	if(this.animation.currentAnimation.name == 'damaged' ){
+		return;
+	}
 
 	if(this.jumpKeyDown && !this.jumping){
-		if(this.physics.velocity.x == 0){
+		if(this.physics.velocity.x === 0){
 			this.physics.velocity.x += (this.maxRunVelo * 1.25) * -this.scaleX;
 			//this.scaleX *= -1;
 		}
@@ -3378,32 +3550,35 @@ PlayerManager.prototype.jump = function(){
 	   }
 	} 
 
-}
+};
 
 PlayerManager.prototype.roll = function(){
 	if (this.animation.currentAnimation.name != 'roll'){
 		
 		this.animation.play('roll');
 	}
-}
+};
 PlayerManager.prototype.finishedRoll = function(){
 
 	this.jumping = false;
    
-}
+};
 PlayerManager.prototype.finishedDamaged = function(){
-	console.log( "Finished Damage" );
+	// console.log( "Finished Damage" );
 	this.state.playersLegs.alpha = 0;
 	// if(this.animation.currentAnimation == 'damaged'){
 		this.animation.play('idle');
 		
 	// }
    
-}
+};
 
 PlayerManager.prototype.updateAnimations = function () {
 	//EITHER MOVE KEYS DOWN
 	this.setNormalAnimation();
+	if(this.animation.currentAnimation.name == 'damaged' ){
+		return;
+	}
 	if(this.leftKeyDown || this.rightKeyDown){
 		//console.log("Animation", this.shootAnimation );
 		if (this.animation.currentAnimation.name != this.normalAnimation && !this.jumping ){
@@ -3425,23 +3600,23 @@ PlayerManager.prototype.updateAnimations = function () {
 			   this.animation.play('idle');
 			   this.state.playersLegs.animation.play('idle', false);
 			
-		};
+		}
 			   
 	}
-}
+};
 
 
 // If no movement keys are down it eases the players velocity by 92%
 PlayerManager.prototype.negativeAccel = function () {
 
 	//BOTH MOVE KEYS UP
-	if((!this.rightKeyDown && !this.leftKeyDown) && !this.jumping ){
+	if((!this.rightKeyDown && !this.leftKeyDown) && !this.jumping || this.animation.currentAnimation.name == 'damaged' ){
 		if(this.physics.velocity.x > 6 || this.physics.velocity.x < -6){
 			this.physics.velocity.x *= 0.92;
 		} else {this.physics.velocity.x = 0;}
 	}
 
-}
+};
 
 // This is used to slowdown / speed up player if jumping or shooting
 PlayerManager.prototype.modifyVelocity = function () {
@@ -3453,10 +3628,10 @@ PlayerManager.prototype.modifyVelocity = function () {
 		//console.log("Shooting Mod")
 		return this.shootingMovementSpeed;//this.maxRunVelo * 0.5;
 	} else {
-		return  1//this.maxRunVelo;
+		return  1;//this.maxRunVelo;
 	}
 
-}
+};
 
 PlayerManager.prototype.updateMovement = function(direction){
 	this.negativeAccel();
@@ -3464,23 +3639,27 @@ PlayerManager.prototype.updateMovement = function(direction){
 
 	var veloMod = this.modifyVelocity();
 
-	if(this.rightKeyDown){
-		this.scaleX = -1;
-		if(this.physics.velocity.x < this.maxRunVelo * veloMod){
-			
-			this.physics.velocity.x += this.force;
-		} else if(!this.jumping){
-			this.physics.velocity.x = this.maxRunVelo  * veloMod;
-		}
+	if(this.animation.currentAnimation.name != 'damaged' ){
+		// console.log("IM STILL MOVING", game.time.now());
+		if(this.rightKeyDown){
+			this.scaleX = -1;
+			if(this.physics.velocity.x < this.maxRunVelo * veloMod){
+				
+				this.physics.velocity.x += this.force;
+			} else if(!this.jumping){
+				this.physics.velocity.x = this.maxRunVelo  * veloMod;
+			}
 
-	} else if(this.leftKeyDown){
-		this.scaleX = 1;
-		//this.physics.velocity.x -= this.force;
-		if(this.physics.velocity.x > -this.maxRunVelo * veloMod){
-			//console.log(this.physics.velocity.x);
-			this.physics.velocity.x -= (this.force);
-		} else if(!this.jumping){
-			this.physics.velocity.x = -this.maxRunVelo  * veloMod;
+		} else if(this.leftKeyDown){
+			this.scaleX = 1;
+			//this.physics.velocity.x -= this.force;
+			if(this.physics.velocity.x > -this.maxRunVelo * veloMod){
+				//console.log(this.physics.velocity.x);
+				this.physics.velocity.x -= (this.force);
+			} else if(!this.jumping){
+				this.physics.velocity.x = -this.maxRunVelo  * veloMod;
+			}
+
 		}
 
 	}
@@ -3489,14 +3668,14 @@ PlayerManager.prototype.updateMovement = function(direction){
 
 	//If camera is lock lock position to boss fight area
 	if( this.state.cameraManager.lockCamera ){
-		var maxXPos = this.state.game.stage.width - this.width + 20
-		if(this.x < 20){
+		var maxXPos = this.state.game.stage.width - this.width + 20;
+		if( this.x < 20 ) {
 			this.x = 20;
 		} else if (this.x > maxXPos){
 			this.x = maxXPos;
 		}
 	}
-}
+};
 
 
 
@@ -3558,35 +3737,8 @@ PlayerManager.prototype.die = function() {
 		this.state.addChild( this.deathAni );	
 	}
 
-	// if( this.animation.currentAnimation != 'death' ){
-	// 	this.animation.play( 'death' );
-	// }
-
-
-	// //create the tweens
- //  this.tweenA = this.game.tweens.create(this);  
- //  this.tweenB = this.game.tweens.create(this); 
-
- //  this.physics.velocity.y = 0;
- //  // this.physics;
-  
- //  //set the tweens up
- //  this.tweenA.to({ y: this.y - 100 }, 300, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
- //  this.tweenB.to({ y: this.y + 100  }, 600, Kiwi.Animations.Tweens.Easing.Cubic.Out, false);
- //  this.tweenB.onComplete( this.gameOver, this );
-
- //  this.tweenA.chain(this.tweenB);
- //  this.tweenA.start();
-
 
 };
-
-// PlayerManager.prototype.gameOver = function() {
-
-// 	// Start Death Animation
-// 	// On complete play gameOver Method
-// 	this.state.levelManager.gameOver();
-// };
 
 
 
@@ -3938,19 +4090,22 @@ Kiwi.extend(MiniGame , Kiwi.Group);
 
 
 MiniGame.prototype.createMiniGame = function ( target, health ) {
-	this.beamTarget = this.state.weaponManager.beamManager.beam.targets[0];
-	//console.log( this.beamTarget, "Beam Target" );
-	// this.x.t.y.s.a;
+	// this.beamTarget = this.state.weaponManager.beamManager.targets[0];
+
+	this.beamTarget = this.state.weaponManager.beamManager.beam.impact;
+	// this.beamTarget = new Kiwi.Geom.Point(0,0);
+	// this.beamTarget.x = this.state.weaponManager.beamManager.targets[0].x;
+	// this.beamTarget.y = this.state.weaponManager.beamManager.targets[0].y;
 
 	this.removeOldGame();
 	this.missCount = 0;
-	// this.center = new Kiwi.Geom.Point( target.worldX, target.worldY ); // += target.centerPoint.x, target.y += target.centerPoint.y );
-	// this.center.x += target.width * 0.5;
-	// this.center.y += target.height * 0.5;
-	// console.log( "Center x and y 1 ", this.center.x, this.center.y);
+
 	this.updateMiniGamePos();
 	this.moveMiniGame;
 	this.createRedCircle();
+
+	// console.log("CREATE SKULLS");
+
 	this.createSkulls( health );
 	//this.resetHealth();
 	this.createBlueCircle();
@@ -3961,8 +4116,11 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 };
 
 MiniGame.prototype.updateMiniGamePos = function(){
-	// console.log(this.beamTarget);
-	if(this.beamTarget != undefined && this.beamTarget.exists ){
+	// console.log(this.beamTarget, "BEAM TARGET");
+
+	if ( this.state.weaponManager.beamManager.beam.impact !== undefined && this.state.weaponManager.beamManager.beam.impact.exists ){
+
+		this.beamTarget = this.state.weaponManager.beamManager.beam.impact;
 		
 		this.center.x = this.beamTarget.worldX + this.beamTarget.width * 0.5;
 		this.center.y = this.beamTarget.worldY +  this.beamTarget.height * 0.5;
@@ -4005,7 +4163,12 @@ MiniGame.prototype.createRedCircle = function( ){
 	this.addChild(this.redCircle);
 };
 MiniGame.prototype.createSkulls = function ( amount ) {
-	var i, rot, tempSkull,tempSkullGroup;
+	var i, rot, tempSkull;
+
+	if(this.skullGroup){
+		this.skullGroup.exists = false;
+		
+	}
 	this.skullGroup = new Kiwi.Group(this.state);
 	for( i = amount - 1 ;  i >= 0;  i-- ) {
 		// tempSkull = new Skull( this.state, this.center.x, this.center.y, this.radius );
@@ -4055,11 +4218,21 @@ MiniGame.prototype.missedHit = function() {
 	this.timesMissed = this.blueCircleGroup.members[0].missedHit();
 };
 
+MiniGame.prototype.setAlpha = function( num ) {
+	this.redCircle.alpha = num;
+	// this.skullGroup.alpha = num;
+	this.blueCircleGroup.members[0].alpha = num;
+	for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+		this.skullGroup.members[i].members[0].alpha = num;
+		// console.log( this.skullGroup.members[i].mySkull.alpha, num);
+	}
+};
+
 MiniGame.prototype.startNextStage = function(){
 
 	this.stage += 1;
 	this.hit = false;
-	this.skullGroup.members[0].alpha = 1;
+	// this.skullGroup.members[0].alpha = 1;
 	}
 
 MiniGame.prototype.updateRotation = function(){
@@ -4162,30 +4335,17 @@ MiniGame.prototype.update = function(){
     	return;
     }
 
+    var number1 = this.state.game.time.now() - this.state.weaponManager.beamManager.releaseTime;
+	var number2 = number1 / 2000;
+	// console.log(1-number2, "Alpha");
+
     // If !player.shooting set minigame to inactive.
 
     this.updateRotation();
     this.updateMiniGamePos();
     this.moveMiniGame();
 
-    if( this.state.enemyManager.getTrappedEnemies().length > this.trappedGhosts ) {
-
-    	var amount =  this.state.enemyManager.getTrappedEnemies().length;
-    	var health = 3;
-    	switch (amount) {
-    		case 1:
-    			health = 3;
-    			break;
-    		case 2:
-    			health = 5;
-    			break;
-
-    		default:
-    			health = 6;
-    	}
-		this.createMiniGame(this.state.weaponManager.beamManager.targetEnemy, health);
-		this.trappedGhosts = amount;
-	}
+	this.state.miniGameManager.setAlpha( 1 - number2 );
 
 
 }
@@ -4204,7 +4364,7 @@ MiniGame.prototype.updatePosition = function() {
 MiniGame.prototype.updateObjectPos = function( obj ) {
 	obj.x = this.center.x;
 	obj.y = this.center.y;
-	console.log(this.center.x, this.center.y, "Update Circle Pos");
+	// console.log(this.center.x, this.center.y, "Update Circle Pos");
 };
 
 
@@ -4216,7 +4376,7 @@ MiniGame.prototype.stopMiniGame = function () {
 
 
 MiniGame.prototype.attemptMatch = function () {
-	if(this.miniGameActive){
+	if(this.miniGameActive && this.state.weaponManager.beamManager.hasHit){
 		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
 			if( this.catchSkull( this.skullGroup.members[i] ) ) {
 				this.skullCaptured( this.skullGroup.members[i] );
@@ -4243,7 +4403,14 @@ MiniGame.prototype.skullCaptured = function ( skull ) {
 	}
 }
 MiniGame.prototype.killTarget = function () {
+
+	//todo
+	var deathAmount = this.state.weaponManager.beamManager.targets.length;
 	this.state.enemyManager.killTrapped();
+	var tempDeath = new Death(this.state, 0, 0, deathAmount);
+	tempDeath.x = this.center.x - tempDeath.width * 0.5;
+	tempDeath.y = this.center.y - tempDeath.height * 0.5;
+	this.state.addChild(tempDeath);
 	this.state.weaponManager.stopShooting();
 
 
@@ -4268,9 +4435,22 @@ var Skull = function(state, x, y, radius){
 
 	this.addChild(mySkull);
 
+	// as.as.as
+	// console.log("Create Skull");
+
 
 
 	//this.animation.getAnimation('roll').onStop.add(this.finishedRoll, this);
+	// Object.defineProperty(Skull.prototype, "alpha", {
+	//     get: function () {
+	//     },
+	//     set: function (value) {
+	//     	asas.asasa
+	//     	console.error("HERE");
+	//     },
+	//     enumerable: true,
+	//     configurable: true
+	// });
 
 
 
@@ -4282,8 +4462,12 @@ Kiwi.extend(Skull, Kiwi.Group);
 Skull.prototype.update = function(){
     Kiwi.Group.prototype.update.call(this);
     this.members[0].rotation = -this.rotation;
+    // this.alpha = this.state.miniGameManager.redCircle.alpha;
+    // console.log("Skull Alpha on Update", this.alpha);
 
 }
+
+
 //PlayerManager / Player
 var PlayersLegs = function (state, x, y){
 	//Kiwi.Group.call(this, state);
@@ -5455,6 +5639,8 @@ Kiwi.Plugins.GhostAI.Actions.SelectDashTarget = function( params )
 	this.run = function()
 	{
 		//console.log(this.target);
+
+		// this.sprite.createQuestionMark();
 		if(this.sprite.x > this.target.x){
 			this.sprite.targetLocation[0] = this.target.x - 150;
 			this.sprite.targetLocation[1] = this.target.y;
@@ -5508,22 +5694,20 @@ Kiwi.Plugins.GhostAI.Actions.PlayEscape = function( params )
 		// play animation
 			// running
 
-		if (this.sprite.animation.currentAnimation.name == 'disappear'){
+		if (this.sprite.animation.currentAnimation.name == 'disappear' || this.sprite.animation.currentAnimation.name == 'disappear2'){
 			if(this.sprite.cellIndex != 44){
-				//this.sprite.cellIndex ++;
-				// console.log("PLAYING ANIMATION");
-				this.sprite.scaleX = 1;
 				this.status = this.STATUS_RUNNING;
 			} else {
-				// console.log("FINISHED ANIMATION", this.sprite.cellIndex);
 				this.status = this.STATUS_SUCCESS;
 
 			}
 
 		} else {
 			// console.log("START ANIMATION");
+			this.sprite.createQuestionMark();
 			this.sprite.animation.play('disappear', true);
-			this.sprite.scaleX = 1;
+			
+			// this.sprite.scaleX = 1;
 			this.status = this.STATUS_RUNNING;
 		}
 
@@ -8055,7 +8239,7 @@ PlatformBlueprint.GameOver.update = function(){
 
 PlatformBlueprint.GameOver.share = function(){
     console.log("Share");
-    this.tweetWindow("http://bit.ly/1xGBN0s", "Happy Halloween, #Ghostbusters! Kick ectoplasmic ass in the new game by @secretbaseSG, powered by @kiwijsengine!");
+    this.tweetWindow("http://bit.ly/1xGBN0s", "Merry Christmas, #Ghostbusters! Kick ectoplasmic ass in the new game by @secretbaseSG, powered by @kiwijsengine!");
 
 }
 
@@ -8114,7 +8298,7 @@ PlatformBlueprint.GameOver.exitState = function(){
     // this.keyboard.onKeyUp.remove(this.restartGame, this);
     game.huds.defaultHUD.removeAllWidgets();
 
-    game.states.switchState("Credits");
+    game.states.switchState("Intro");
 
 }
 var PlatformBlueprint = PlatformBlueprint || {};
@@ -8151,7 +8335,7 @@ PlatformBlueprint.HowToPlay.changeFrame = function(){
 
 PlatformBlueprint.HowToPlay.exitState = function(){
 	this.keyboard.onKeyDownOnce.remove(this.changeFrame, this);
-	game.states.switchState("Play");
+	game.states.switchState("Intro");
 
 }
 
@@ -8181,6 +8365,12 @@ PlatformBlueprint.Intro.create = function () {
 
     this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
 
+    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W);
+    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S);
+
+    this.enterKey  = this.keyboard.addKey(Kiwi.Input.Keycodes.ENTER);
+    this.spaceKey  = this.keyboard.addKey(Kiwi.Input.Keycodes.SPACEBAR);
+
 	this.keyboard.onKeyDownOnce.add(this.startGame, this);
 	this.menuBackground = new Kiwi.GameObjects.Sprite(this, this.textures.menu, 0, 0);
 	this.menuBackground.animation.add('play', [0, 1, 2, 2, 1], 0.075, true);
@@ -8188,7 +8378,10 @@ PlatformBlueprint.Intro.create = function () {
 	this.addChild(this.menuBackground);
 
 	this.startText = new Kiwi.GameObjects.StaticImage(this, this.textures.startText, 375, 440);
-	this.addChild(this.startText);
+	// this.addChild(this.startText);
+
+	this.menuSelect = new Kiwi.GameObjects.Sprite(this, this.textures.menuSelectSprite, 360, 410);
+	this.addChild(this.menuSelect);
 
 	
     this.timer.start();
@@ -8214,12 +8407,68 @@ PlatformBlueprint.Intro.create = function () {
 PlatformBlueprint.Intro.startGame = function(keyCode, key){
 
 	if(keyCode == this.rightKey.keyCode){
-	}
-	this.keyboard.onKeyDownOnce.remove(this.startGame, this);
-	this.timer.stop();
-	this.hudScore.style.opacity = 0;
-	game.states.switchState("HowToPlay");
 
+	}
+	if(keyCode == this.upKey.keyCode){
+		this.menuSelect.animation.prevFrame();
+
+		
+	}
+	if(keyCode == this.downKey.keyCode){
+		this.menuSelect.animation.nextFrame();
+		
+	}
+	if(keyCode == this.enterKey.keyCode){
+		
+		game.states.switchState("HowToPlay");
+		
+	}
+
+	if(keyCode == this.spaceKey.keyCode){
+		console.log(this.menuSelect.cellIndex);
+
+		switch (this.menuSelect.cellIndex) {
+			case 0:
+				this.stopState();
+				game.states.switchState("Play");
+				break
+			case 1:
+				this.stopState();
+				game.states.switchState("HowToPlay");
+				break;
+			case 2:
+				this.stopState();
+				game.states.switchState("Credits");
+				break;
+			case 3:
+				this.share();
+				break;
+			default:
+
+		}
+		
+	}
+	
+
+}
+PlatformBlueprint.Intro.stopState = function(){
+	this.keyboard.onKeyDownOnce.remove(this.startGame, this);
+		this.timer.stop();
+		this.hudScore.style.opacity = 0;
+
+}
+
+PlatformBlueprint.Intro.share = function(){
+    console.log("Share");
+    this.tweetWindow("http://bit.ly/1xGBN0s", "Merry Christmas, #Ghostbusters! Kick ectoplasmic ass in the new game by @secretbaseSG, powered by @kiwijsengine!");
+
+}
+
+PlatformBlueprint.Intro.tweetWindow = function(url, text) {
+  window.open( "http://twitter.com/share?url=" + 
+    encodeURIComponent(url) + "&text=" + 
+    encodeURIComponent(text) + "&count=none/", 
+    "tweet", "height=300,width=550,resizable=1" ) 
 }
 
 
@@ -8261,6 +8510,7 @@ PlatformBlueprint.Intro.changeVisible = function(){
 var PlatformBlueprint = PlatformBlueprint || {};
 
 PlatformBlueprint.Loading = new KiwiLoadingScreen('Loading', 'SplashState', 'assets/img/loading/');
+// PlatformBlueprint.Loading = new KiwiLoadingScreen('Loading', 'Play', 'assets/img/loading/');
 
 PlatformBlueprint.Loading.preload = function () {
     
@@ -8287,6 +8537,9 @@ PlatformBlueprint.Loading.preload = function () {
 
     this.addSpriteSheet('ghost', 'assets/img/enemies/ghost2.png', 160, 160);
     this.addSpriteSheet('boss', 'assets/img/enemies/boss.png', 300, 200);
+
+    this.addSpriteSheet('questionMark', 'assets/img/enemies/Slimer_questionmark.png', 60, 60);
+    this.addSpriteSheet('escapeText', 'assets/img/enemies/Slimer_EscapeText04.png', 68, 44);
 
     this.addSpriteSheet('books', 'assets/img/enemies/books.png', 200, 200);
     this.addSpriteSheet('shield', 'assets/img/enemies/shield.png', 300, 220);
@@ -8331,6 +8584,8 @@ PlatformBlueprint.Loading.preload = function () {
     this.addSpriteSheet('credits', 'assets/img/menu/Credits.png', 960, 540);
     this.addImage('startText', 'assets/img/menu/PressStart1.png');
 
+    this.addSpriteSheet( 'menuSelectSprite', 'assets/img/menu/menuSelectSprite.png', 264, 118 );
+
     /////////////////////////
     //MENU OPENING
     this.addImage('open1', 'assets/img/menu/Menu_Opening1.png');
@@ -8368,46 +8623,55 @@ PlatformBlueprint.MenuOpening = new Kiwi.State('MenuOpening');
 
 
 PlatformBlueprint.MenuOpening.create = function (params) {
-    this.open1 = new Kiwi.GameObjects.Sprite ( this, this.textures.open1, 0, 0 );
-    this.open1.alpha = 0;
-    this.open1.x = this.game.stage.width * 0.5 - this.open1.width * 0.5;
-    this.open1.y = this.game.stage.height * 0.5 - this.open1.height * 0.5;
+	this.open1 = new Kiwi.GameObjects.Sprite ( this, this.textures.open1, 0, 0 );
+	this.open1.alpha = 0;
+	this.open1.x = this.game.stage.width * 0.5 - this.open1.width * 0.5;
+	this.open1.y = this.game.stage.height * 0.5 - this.open1.height * 0.5;
 
-    this.open2 = new Kiwi.GameObjects.Sprite ( this, this.textures.open2, 0, 0 );
-    this.open2.alpha = 0;
-    this.open2.x = this.game.stage.width * 0.5 - this.open2.width * 0.5;
-    this.open2.y = this.game.stage.height * 0.5 - this.open2.height * 0.5;
+	this.open2 = new Kiwi.GameObjects.Sprite ( this, this.textures.open2, 0, 0 );
+	this.open2.alpha = 0;
+	this.open2.x = this.game.stage.width * 0.5 - this.open2.width * 0.5;
+	this.open2.y = this.game.stage.height * 0.5 - this.open2.height * 0.5;
 
-    this.open3 = new Kiwi.GameObjects.Sprite ( this, this.textures.open3, 0, 0 );
-    this.open3.alpha = 0;
-    this.open3.x = this.game.stage.width * 0.5 - this.open3.width * 0.5;
-    this.open3.y = this.game.stage.height * 0.5 - this.open3.height * 0.5;
+	this.open3 = new Kiwi.GameObjects.Sprite ( this, this.textures.open3, 0, 0 );
+	this.open3.alpha = 0;
+	this.open3.x = this.game.stage.width * 0.5 - this.open3.width * 0.5;
+	this.open3.y = this.game.stage.height * 0.5 - this.open3.height * 0.5;
 
-    this.open4 = new Kiwi.GameObjects.Sprite ( this, this.textures.open4, 0, 0 );
-    this.open4.alpha = 0;
-    this.open4.x = this.game.stage.width * 0.5 - this.open4.width * 0.5;
-    this.open4.y = this.game.stage.height * 0.5 - this.open4.height * 0.5;
+	this.open4 = new Kiwi.GameObjects.Sprite ( this, this.textures.open4, 0, 0 );
+	this.open4.alpha = 0;
+	this.open4.x = this.game.stage.width * 0.5 - this.open4.width * 0.5;
+	this.open4.y = this.game.stage.height * 0.5 - this.open4.height * 0.5;
 
-    this.menuBackground = new Kiwi.GameObjects.Sprite(this, this.textures.menu, 0, 0);
-    this.menuBackground.animation.add('play', [0, 1, 2, 2, 1], 0.075, true);
-    this.menuBackground.animation.play('play'); 
-    this.menuBackground.alpha = 0;
-    this.addChild(this.menuBackground);
-
-
-    this.addChild( this.open4 );
-    this.addChild( this.open3 );
-    this.addChild( this.open2 );
-    this.addChild( this.open1 );
-
-    this.tweenTime = 500;
-    this.tweenHoldTime = 1000;
-    this.tweenInTime = 500;
-    this.delayTime = 200;
+	this.menuBackground = new Kiwi.GameObjects.Sprite(this, this.textures.menu, 0, 0);
+	this.menuBackground.animation.add('play', [0, 1, 2, 2, 1], 0.075, true);
+	this.menuBackground.animation.play('play'); 
+	this.menuBackground.alpha = 0;
+	this.addChild(this.menuBackground);
 
 
+	this.addChild( this.open4 );
+	this.addChild( this.open3 );
+	this.addChild( this.open2 );
+	this.addChild( this.open1 );
 
-    //create the tweens
+	this.tweenTime = 500;
+	this.tweenHoldTime = 1000;
+	this.tweenInTime = 500;
+	this.delayTime = 200;
+
+	///////////////////
+	//KEYBOARD
+	this.keyboard = this.game.input.keyboard;
+	this.skip2Key = this.keyboard.addKey(Kiwi.Input.Keycodes.ENTER);
+
+	this.skipKey = this.keyboard.addKey(Kiwi.Input.Keycodes.SPACEBAR);
+
+	this.keyboard.onKeyDownOnce.add(this.myKeyDownOnce, this);
+
+
+
+	//create the tweens
   this.tween1In = this.game.tweens.create(this.open1);
   this.tween1Hold = this.game.tweens.create(this.open1);  
   this.tween1Out = this.game.tweens.create(this.open1);
@@ -8465,39 +8729,53 @@ PlatformBlueprint.MenuOpening.create = function (params) {
 
   this.tween1In.start();
 
-    
+	
 }
 PlatformBlueprint.MenuOpening.startFlash = function(){
 
-    // console.log ( "Start Flash" );
+	// console.log ( "Start Flash" );
 
-    this.menuBackground.alpha = 1;
+	this.menuBackground.alpha = 1;
 
-    this.timer  = this.game.time.clock.createTimer('flash', 0.125, 16, false);
-    this.timerEvent = this.timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.flash, this);  //create a new timer event on that timer
-    this.timerEvent = this.timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.exitState, this);  //create a new timer event on that timer
-    this.timer.start();
+	this.timer  = this.game.time.clock.createTimer('flash', 0.125, 16, false);
+	this.timerEvent = this.timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_COUNT, this.flash, this);  //create a new timer event on that timer
+	this.timerEvent = this.timer.createTimerEvent(Kiwi.Time.TimerEvent.TIMER_STOP, this.exitState, this);  //create a new timer event on that timer
+	this.timer.start();
 }
 
 PlatformBlueprint.MenuOpening.flash = function(){
 
-    // console.log ( "Flash" , this.open4.alpha );
+	// console.log ( "Flash" , this.open4.alpha );
 
-    if( this.open4.alpha == 1 ) {
-        this.open4.alpha = 0;
-    } else {
-        this.open4.alpha = 1;
-    }
+	if( this.open4.alpha == 1 ) {
+		this.open4.alpha = 0;
+	} else {
+		this.open4.alpha = 1;
+	}
 }
 
 
 
 PlatformBlueprint.MenuOpening.exitState = function(){
+	if(this.game.states.current.name == 'MenuOpening' ){
 
-    game.states.switchState("Intro");
+		game.states.switchState("Intro");
+	}
 
 }
+PlatformBlueprint.MenuOpening.myKeyDownOnce = function(keyCode, key) {
+	// body...
+	//console.log(keyCode, key);
 
+
+
+	if(keyCode == this.skipKey.keyCode || keyCode == this.skip2Key.keyCode){
+	  this.keyboard.onKeyDownOnce.remove(this.myKeyDownOnce, this);
+	  game.states.switchState("Intro");
+	} 
+
+
+};
 var PlatformBlueprint = PlatformBlueprint || {};
 
 PlatformBlueprint.Play = new Kiwi.State('Play');
@@ -8532,7 +8810,7 @@ PlatformBlueprint.Play.create = function () {
     //game.stage.createDebugCanvas();
 
     
-    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.background1, 0, -57);
+    this.background = new Kiwi.GameObjects.StaticImage( this, this.textures.background1, 0, -57 );
     this.addChild(this.background);
     this.background.scaleX = 1;
     this.background.scaleY = 1;
@@ -8596,7 +8874,7 @@ PlatformBlueprint.Play.create = function () {
     this.miniGameManager = new MiniGame( this );
     this.addChild( this.miniGameManager );
 
-    this.survivalGame = new SurvivalGame(this)
+    this.survivalGame = new SurvivalGame(this);
 
 
 
@@ -8636,7 +8914,7 @@ PlatformBlueprint.Play.create = function () {
 
 
 
-}
+};
 
 
 /**
@@ -8676,23 +8954,23 @@ PlatformBlueprint.Play.update = function () {
     
     
    // this.updateController();
-}
+};
 
 
 PlatformBlueprint.Play.updateCash = function(){
     for (var i = this.cashGroup.members.length - 1; i>= 0; i--) {
         //console.log("test");
         this.cashGroup.members[i].physics.update();
-    };
-}
+    }
+};
 
 PlatformBlueprint.Play.createBoss = function(){
     this.boss = new Boss( this, 1625, 200 );
     this.addChild(this.boss);
 
     this.swapChildren( this.boss, this.boss.shield );
-    this.swapChildren( this.boss, this.miniGameManager )
-}
+    this.swapChildren( this.boss, this.miniGameManager );
+};
 
 PlatformBlueprint.Play.createSurvivalGame = function(){
     // this.boss = new Boss( this, 1625, 200 );
@@ -8702,7 +8980,8 @@ PlatformBlueprint.Play.createSurvivalGame = function(){
 
     // this.swapChildren( this.boss, this.boss.shield );
     // this.swapChildren( this.boss, this.miniGameManager )
-}
+};
+
 var PlatformBlueprint = PlatformBlueprint || {};
 
 PlatformBlueprint.SplashState = new Kiwi.State('SplashState');
@@ -8740,6 +9019,8 @@ PlatformBlueprint.SplashState.create = function (params) {
 	this.tweenB.chain(this.tweenC);
 
 	this.tweenA.start();
+
+	 
 
 	
 }
