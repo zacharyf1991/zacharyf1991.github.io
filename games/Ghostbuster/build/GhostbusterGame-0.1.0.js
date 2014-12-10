@@ -3,7 +3,9 @@ var Death = function(state, x, y, amount){
 	this.state = state;
 	this.box.hitbox = new Kiwi.Geom.Rectangle(60, 65, 60, 55); 
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
+
 	this.amount = amount;
+	console.log(this.amount, "DEATH");
 
 	var animationSpeed = 0.1;
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
@@ -41,6 +43,8 @@ Death.prototype.update = function(){
 }
 
 Death.prototype.die = function() {
+	console.log(this.amount, "DEATH");
+
 	this.state.itemManager.addItem('cash', this.x, this.y, this.amount);
 	// this.state.weaponManager.stopShooting();
 	this.destroy();
@@ -61,6 +65,8 @@ var Ghost = function(state, x, y){
 	this.objType = 'Ghost';
 
 	this.releaseTime == null;
+
+	this.targetOrder = 0;
 
 	var animationSpeed = 0.1;
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
@@ -157,7 +163,7 @@ Ghost.prototype.update = function(){
     			enemyCenter = new Kiwi.Geom.Point(this.x, this.y),
     			impactCenter = new Kiwi.Geom.Point ( 0, 0 );
 
-    			var tempImpPoint = this.state.weaponManager.beamManager.getHoldPos( this.targetIndex );
+    			var tempImpPoint = this.state.weaponManager.beamManager.getHoldPos( this.targetIndex, this );
 
     			if(tempImpPoint){
 	    			impactCenter.x = tempImpPoint.x + beam.x;
@@ -227,9 +233,12 @@ Ghost.prototype.appeared = function() {
 	this.canBeHit = true;
 };
 Ghost.prototype.startD2 = function() {
-	this.createEscapeText();
-	this.canBeHit = false;
-	this.animation.play('disappear2');
+	if(!this.hit){
+		this.canBeHit = false;
+		this.createEscapeText();
+		this.animation.play('disappear2');
+		
+	}
 };
 
 Ghost.prototype.startLoop = function(){
@@ -498,7 +507,7 @@ var Beam = function( state, x, y, angle, beamLength ){
 	this.y = y;
 
 
-	this.origin = new Kiwi.Geom.Point( 0, 0);
+	this.origin = new Kiwi.Geom.Point(0, 0);
 
 	this.desiredLength = new Kiwi.Geom.Point(0,0);
 
@@ -529,7 +538,6 @@ var Beam = function( state, x, y, angle, beamLength ){
 	this.beamStage = 0;
 	this.animationCell = 0;
 
-	this.beamLength = beamLength;
 	this.angle = angle;
 
 	this.spark = new Spark( this.state, this.x, this.y );
@@ -607,7 +615,6 @@ Beam.prototype.update = function(){
     // this.x = this.state.player.x;
     // this.y = this.state.player.y;
 
-
     this.updateLength();
 
     this.updateLines();
@@ -616,10 +623,6 @@ Beam.prototype.update = function(){
     this.drawRepBeam();
     this.updateSpark();
     this.updateImpact();
-
-    // console.log( this.beamLine.length );
-    // console.log (this.beamLine);
-    // console.log( this.primLine.x, this.primLine.y );
     
 }
 
@@ -628,7 +631,6 @@ Beam.prototype.drawRepBeam = function() {
 	this.beamRep.transform.x = this.x + 480;
 	this.beamRep.transform.y = this.y + 246;
 	this.beamRep.width = this.beamLength;
-	// console.log("Beam Rep", this.beamRep.x, this.beamRep.y, this.x, this.y);
 }
 
 Beam.prototype.updateSpark = function() {
@@ -648,10 +650,12 @@ Beam.prototype.updateImpact = function() {
     this.impact.y = this.desiredLength.y - this.impact.height/2 + this.y;
 }
 Beam.prototype.updateLength = function() {
+	// console.log( "In", this.beamVelo);
     this.beamLength += this.beamVelo;
     if( this.beamLength > this.maxLength ){
     	this.beamLength = this.maxLength;
     }
+    // console.log( "Out", this.beamLength);
 }
 Beam.prototype.updateLines = function() {
 
@@ -661,9 +665,11 @@ Beam.prototype.updateLines = function() {
 	pointX = this.origin.x + this.beamLength * Math.cos( this.rotation );
 	pointY = this.origin.y + this.beamLength * Math.sin( this.rotation );
 
+	// console.log( "Zach", this.desiredLength.x, this.desiredLength.y, this.beamLength);
+
 
 	this.desiredLength = new Kiwi.Geom.Point( pointX, pointY );
-
+	// console.log(this.desiredLength);
 	this.beamLine = new Kiwi.Geom.Line( this.origin.x + this.x, this.origin.y + this.y,
 				this.desiredLength.x + this.x, this.desiredLength.y + this.y );
 
@@ -1602,8 +1608,8 @@ var Cash = function(state, x, y, amount){
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
 
 	this.animation.add('drop1', [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8], 0.05, false, true);
-	this.animation.add('drop2', [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8], 0.05, false, true);
-	this.animation.add('drop3', [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8, 7, 7, 8, 8], 0.05, false, true);
+	this.animation.add('drop2', [9, 10, 11, 12, 13, 14, 15, 16, 16, 17, 17, 16, 16, 17, 17, 16, 16, 17, 17, 16, 16, 17, 17], 0.05, false, true);
+	this.animation.add('drop3', [18, 19, 20, 21, 22, 23, 24, 25, 25, 8, 8, 25, 25, 8, 8, 25, 25, 8, 8, 25, 25, 8, 8], 0.05, false, true);
 	this.animation.play('drop'+amount);
 
 
@@ -1611,7 +1617,19 @@ var Cash = function(state, x, y, amount){
 	this.animation.getAnimation('drop2').onStop.add(this.removeCash, this);
 	this.animation.getAnimation('drop3').onStop.add(this.removeCash, this);
 	this.hittable = false;
-	this.state.gameManager.addScore(5000);
+
+	console.log(amount, "Zach");
+
+	if( amount <= 1 ){
+		this.state.gameManager.addScore(5000);
+		
+	} else if(amount === 2){
+		this.state.gameManager.addScore(15000);
+		
+	} else {
+		this.state.gameManager.addScore(30000);
+		
+	}
 
 
 	
@@ -1800,6 +1818,7 @@ BeamManager.prototype.shoot = function () {
 					var index = this.targets.length;
 
 					if( !this.matchTargets( collideWith[k].enemy ) ){
+						collideWith[k].enemy.targetOrder = this.targets.length;
 						this.targets.push(collideWith[k].enemy);
 						
 					}
@@ -1821,7 +1840,7 @@ BeamManager.prototype.shoot = function () {
 						}
 
 					}
-					console.log(health, "Skull HEALTH")
+					// console.log(health, "Skull HEALTH")
 					this.state.miniGameManager.createMiniGame( null , health );
 						
 					this.state.cameraManager.damageState = true;
@@ -1834,14 +1853,6 @@ BeamManager.prototype.shoot = function () {
 					var colPoint = new Kiwi.Geom.Point( collideWith[k].intersectResult.x, collideWith[k].intersectResult.y );
 
 					var tempLine = new Kiwi.Geom.Line(this.beam.x, this.beam.y, colPoint.x, colPoint.y);
-
-					if( !this.beam.beamLocked ) {
-						this.beam.beamLocked = true;
-						this.beam.beamLength = tempLine.length;
-						this.beam.maxLength = tempLine.length;
-
-						
-					}
 
 					this.beam.beamVelo = 0;
 
@@ -1973,14 +1984,15 @@ BeamManager.prototype.moveBeam = function (  ) {
 	}	
 };
 
-BeamManager.prototype.getHoldPos = function ( index ) {
+BeamManager.prototype.getHoldPos = function ( index, enemy ) {
 	"use strict";
+	// as.as.asda.s
 	var myPoint, offX, offY,
 		offset = 20;
 	if( this.targets.length <= 1 ){
 		return this.beam.desiredLength;
 	} else if ( this.targets.length == 2 ) {
-		if( index === 0 ){
+		if( enemy.targetOrder === 0 ){
 			offX = offset * 0.5;
 			offY = -offset;
 		} else {
@@ -1989,11 +2001,11 @@ BeamManager.prototype.getHoldPos = function ( index ) {
 		}
 
 	} else if ( this.targets.length >= 3 ) {
-		if( index === 0 ){
+		if( enemy.targetOrder === 0 ){
 			offX = 0;
 			offY = -offset;
 
-		} else if( index == 1 ){
+		} else if( enemy.targetOrder == 1 ){
 			// console.log("INDEX IS ONE");
 			offX = -offset;
 			offY = offset;
@@ -2750,7 +2762,7 @@ EnemyManager.prototype.checkPlayerCollision = function(){
 
 		//////////////////////////
 		//Update enemies here
-		if(enemiesMem[i].animation.currentAnimation.name != 'appear' && enemiesMem[i].animation.currentAnimation.name != 'disappear'){
+		if(enemiesMem[i].animation.currentAnimation.name != 'appear' && enemiesMem[i].animation.currentAnimation.name != 'disappear' && enemiesMem[i].animation.currentAnimation.name != 'disappear2'){
 			if(enemiesMem[i].physics.overlaps(this.state.player)){
 				this.state.player.hitByEnemy();
 			}
@@ -3095,9 +3107,10 @@ Kiwi.extend(ItemManager , Kiwi.Group);
 
 
 
-ItemManager.prototype.addItem = function(type, x, y, num){
+ItemManager.prototype.addItem = function(type, x, y, amount){
     if(type == 'cash'){
-        var tempItem = new Cash(this.state, x, y);
+        console.log("ITEM MANAGER", amount)
+        var tempItem = new Cash(this.state, x, y, amount);
         this.items.addChild(tempItem);
     }
 
@@ -3411,10 +3424,12 @@ PlayerManager.prototype.update = function(){
 
 	//CHECK TILES
 	//round the player position to make tile calculation easier
-	this.x = Math.round(this.x);
-	this.y = Math.round(this.y);
+	// this.x = this.x; // Math.round(this.x);
+	// this.y = this.y; // Math.round(this.y);
 
 	this.state.playersLegs.updateLegs();
+	this.x = Math.round(this.x);
+	this.y = Math.round(this.y);
 
 	if( this.state.weaponManager.shooting ) {
 		this.animation.play( this.shootAnimation, false );
@@ -4219,12 +4234,64 @@ MiniGame.prototype.missedHit = function() {
 };
 
 MiniGame.prototype.setAlpha = function( num ) {
-	this.redCircle.alpha = num;
-	// this.skullGroup.alpha = num;
-	this.blueCircleGroup.members[0].alpha = num;
-	for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
-		this.skullGroup.members[i].members[0].alpha = num;
-		// console.log( this.skullGroup.members[i].mySkull.alpha, num);
+	// this.redCircle.alpha = num;
+	// // this.skullGroup.alpha = num;
+	// this.blueCircleGroup.members[0].alpha = num;
+	// for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+	// 	this.skullGroup.members[i].members[0].alpha = num;
+	// 	// console.log( this.skullGroup.members[i].mySkull.alpha, num);
+	// }
+
+
+	//////////////////
+	//TERRIBLE BLINK STUFF
+
+	if( num > 0.3 ){
+		//Visible
+		this.redCircle.alpha = 1;
+		this.blueCircleGroup.members[0].alpha = 1;
+		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+			this.skullGroup.members[i].members[0].alpha = 1;
+		}
+	} else if ( num <= 0.3 && num > 0.25 ){
+		// Invisible
+		this.redCircle.alpha = 0;
+		this.blueCircleGroup.members[0].alpha = 0;
+		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+			this.skullGroup.members[i].members[0].alpha = 0;
+		}
+		
+	} else if( num <= 025 && num > 0.2  ){
+		//Visible
+		this.redCircle.alpha = 1;
+		this.blueCircleGroup.members[0].alpha = 1;
+		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+			this.skullGroup.members[i].members[0].alpha = 1;
+		}
+	} else if ( num <= 0.2 && num > 0.15 ){
+		// Invisible
+		this.redCircle.alpha = 0;
+		this.blueCircleGroup.members[0].alpha = 0;
+		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+			this.skullGroup.members[i].members[0].alpha = 0;
+		}
+		
+	}
+	else if( num <= 0.15  && num > 0.1 ){
+		//Visible
+		this.redCircle.alpha = 1;
+		this.blueCircleGroup.members[0].alpha = 1;
+		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+			this.skullGroup.members[i].members[0].alpha = 1;
+		}
+	} else if ( num <= 0.1 ){
+		// Invisible
+		this.redCircle.alpha = 0;
+		this.blueCircleGroup.members[0].alpha = 0;
+		for (var i = this.skullGroup.members.length - 1; i >= 0; i--) {
+			this.skullGroup.members[i].members[0].alpha = 0;
+		}
+		
 	}
 };
 
@@ -4318,6 +4385,7 @@ MiniGame.prototype.failCapture = function(){
 		default:
 			this.state.weaponManager.stopShooting();
 			this.removeOldGame();
+			this.state.weaponManager.beamManager.releaseAll();
 	}
 
 	this.missCount += 1 ;
@@ -8596,11 +8664,6 @@ PlatformBlueprint.Loading.preload = function () {
 
 
     //optional on screen controller assets
-    this.addSpriteSheet('leftButton', 'assets/img/controller/leftButton.png', 51, 73);
-    this.addSpriteSheet('rightButton', 'assets/img/controller/rightButton.png', 51, 73);
-    this.addSpriteSheet('upButton', 'assets/img/controller/upButton.png', 73, 51);
-    this.addSpriteSheet('downButton', 'assets/img/controller/downButton.png', 73, 51);
-
     this.addSpriteSheet('tiles', 'assets/img/tiles2.png', 32, 32);
 
     //Test
