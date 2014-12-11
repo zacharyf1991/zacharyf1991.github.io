@@ -8191,26 +8191,18 @@ PlatformBlueprint.Credits.create = function (params) {
 	this.addChild( this.credits );
 
 	this.keyboard.onKeyDownOnce.add(this.changeFrame, this);
-	this.mouse.onDown.add(this.openURL, this);
+	this.mouse.onDown.add(this.mouseDown, this);
 
 	
 }
 PlatformBlueprint.Credits.changeFrame = function(keyCode, key){
-		if(keyCode === this.rightKey.keyCode){
-		if (this.credits.cellIndex < 1){
-			this.credits.cellIndex ++;
-
-		} else {
-			this.exitState();
-		}
-
+	if(keyCode === this.rightKey.keyCode){
+		
+		this.right();
 		
 	}
 	if(keyCode === this.leftKey.keyCode){
-		if (this.credits.cellIndex > 0){
-			this.credits.cellIndex --;
-
-		} 
+		this.left();
 		
 	}
 
@@ -8224,10 +8216,26 @@ PlatformBlueprint.Credits.changeFrame = function(keyCode, key){
 
 
 PlatformBlueprint.Credits.exitState = function(){
-	this.mouse.onDown.remove(this.openURL, this);
+	this.mouse.onDown.remove(this.mouseDown, this);
 	this.keyboard.onKeyDownOnce.remove(this.changeFrame, this);
 
 	game.states.switchState("Intro");
+
+}
+PlatformBlueprint.Credits.right = function(){
+	if (this.credits.cellIndex < 1){
+			this.credits.cellIndex ++;
+
+	} else {
+		this.exitState();
+	}
+
+}
+PlatformBlueprint.Credits.left = function(){
+	if (this.credits.cellIndex > 0){
+			this.credits.cellIndex --;
+
+		} 
 
 }
 
@@ -8243,6 +8251,16 @@ PlatformBlueprint.Credits.openURL = function(){
 
 }
 
+PlatformBlueprint.Credits.mouseDown = function(){
+	if(this.mouse.x > this.game.stage.width - this.game.stage.width * 0.2){
+		this.right();
+	} else if (this.mouse.x < this.game.stage.width * 0.2){
+		this.left();
+	} else {
+		this.openURL();
+	}
+
+}
 
 var PlatformBlueprint = PlatformBlueprint || {};
 
@@ -8420,26 +8438,19 @@ PlatformBlueprint.HowToPlay.create = function (params) {
 	this.addChild( this.howTo );
 
 	this.keyboard.onKeyDownOnce.add(this.changeFrame, this);
+	this.mouse.onDown.add(this.mouseDown, this);
 
 	
 }
 PlatformBlueprint.HowToPlay.changeFrame = function( keyCode, key ){
 
 	if(keyCode === this.rightKey.keyCode){
-		if (this.howTo.cellIndex < 2){
-			this.howTo.cellIndex ++;
-
-		} else {
-			this.exitState();
-		}
+		this.right();
 
 		
 	}
 	if(keyCode === this.leftKey.keyCode){
-		if (this.howTo.cellIndex > 0){
-			this.howTo.cellIndex --;
-
-		} 
+		this.left();
 		
 	}
 
@@ -8452,13 +8463,40 @@ PlatformBlueprint.HowToPlay.changeFrame = function( keyCode, key ){
 	
 }
 
+PlatformBlueprint.HowToPlay.mouseDown = function(){
+	if(this.mouse.x > this.game.stage.width * 0.5){
+		this.right();
+	} else {
+		this.left();
+	}
+
+}
 
 PlatformBlueprint.HowToPlay.exitState = function(){
+	this.mouse.onDown.remove(this.mouseDown, this);
 	this.keyboard.onKeyDownOnce.remove(this.changeFrame, this);
 	game.states.switchState("Intro");
 
 }
 
+
+PlatformBlueprint.HowToPlay.right = function(){
+	if (this.howTo.cellIndex < 2){
+			this.howTo.cellIndex ++;
+
+		} else {
+			this.exitState();
+		}
+
+}
+
+PlatformBlueprint.HowToPlay.left = function(){
+	if (this.howTo.cellIndex > 0){
+			this.howTo.cellIndex --;
+
+		} 
+
+}
 var PlatformBlueprint = PlatformBlueprint || {};
 
 PlatformBlueprint.Intro = new Kiwi.State('Intro');
@@ -8521,6 +8559,7 @@ PlatformBlueprint.Intro.create = function () {
 
 
     game.huds.defaultHUD.addWidget(this.hudScore);
+    this.mouse.onDown.add(this.mouseDown, this);
 
     
 }
@@ -8575,6 +8614,42 @@ PlatformBlueprint.Intro.stopState = function(){
 	this.keyboard.onKeyDownOnce.remove(this.startGame, this);
 		this.timer.stop();
 		this.hudScore.style.opacity = 0;
+
+}
+PlatformBlueprint.Intro.mouseDown = function(){
+	// console.log(this.mouse.x);
+
+	// x 401 - 575 
+	if( this.mouse.x > 400 && this.mouse.x < 575 ){
+		if( this.mouse.y > 435 && this.mouse.y < 448 ){
+			//Play
+			this.stopState();
+			game.states.switchState("Play");
+
+		}
+		if( this.mouse.y > 453 && this.mouse.y < 465 ){
+			//How to
+			this.stopState();
+			game.states.switchState("HowToPlay");
+			
+		}
+		if( this.mouse.y > 472 && this.mouse.y < 483 ){
+			//Credits
+			this.stopState();
+			game.states.switchState("Credits");
+			
+		}
+		if( this.mouse.y > 489 && this.mouse.y < 501 ){
+			// Share
+			this.share();
+			
+		}
+	}
+
+	//435 - 448
+	//453 - 465
+	//472 - 483
+	//489 - 501
 
 }
 
