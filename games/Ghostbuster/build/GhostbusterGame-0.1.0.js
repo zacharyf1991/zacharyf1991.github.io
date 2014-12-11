@@ -5,7 +5,7 @@ var Death = function(state, x, y, amount){
 	this.physics = this.components.add(new Kiwi.Components.ArcadePhysics(this, this.box));
 
 	this.amount = amount;
-	console.log(this.amount, "DEATH");
+	// console.log(this.amount, "DEATH");
 
 	var animationSpeed = 0.1;
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
@@ -43,7 +43,7 @@ Death.prototype.update = function(){
 }
 
 Death.prototype.die = function() {
-	console.log(this.amount, "DEATH");
+	// console.log(this.amount, "DEATH");
 
 	this.state.itemManager.addItem('cash', this.x, this.y, this.amount);
 	// this.state.weaponManager.stopShooting();
@@ -165,7 +165,7 @@ Ghost.prototype.update = function(){
 
     			var tempImpPoint = this.state.weaponManager.beamManager.getHoldPos( this.targetIndex, this );
 
-    			if(tempImpPoint){
+    			if(tempImpPoint && this.state.weaponManager.beamManager.hasHit){
 	    			impactCenter.x = tempImpPoint.x + beam.x;
 	    			impactCenter.y = tempImpPoint.y + beam.y;
     				this.lastKnownPoint = new Kiwi.Geom.Point(impactCenter.x, impactCenter.y);
@@ -1618,7 +1618,7 @@ var Cash = function(state, x, y, amount){
 	this.animation.getAnimation('drop3').onStop.add(this.removeCash, this);
 	this.hittable = false;
 
-	console.log(amount, "Zach");
+	// console.log(amount, "Zach");
 
 	if( amount <= 1 ){
 		this.state.gameManager.addScore(5000);
@@ -1782,8 +1782,13 @@ BeamManager.prototype.shoot = function () {
 		// console.log( "TIME UPDATE" );
 		this.releaseTime = this.state.game.time.now();
 	}
+	if(this.state.player.animation.currentAnimation.name == 'damaged' ){
+		this.state.weaponManager.stopShooting();
+		return;
+	}
 
 	if(this.state.player.alpha === 0){
+		this.state.weaponManager.stopShooting();
 		return;
 	}
 
@@ -3109,7 +3114,7 @@ Kiwi.extend(ItemManager , Kiwi.Group);
 
 ItemManager.prototype.addItem = function(type, x, y, amount){
     if(type == 'cash'){
-        console.log("ITEM MANAGER", amount)
+        // console.log("ITEM MANAGER", amount)
         var tempItem = new Cash(this.state, x, y, amount);
         this.items.addChild(tempItem);
     }
@@ -3809,14 +3814,7 @@ SurvivalGame.prototype.attemptSpawn = function() {
 		this.waveCounter ++;
 	} else if ( this.state.enemyManager.enemiesAlive() == 0 ) {
 		this.newWave();
-	} else {
-		this.attempt += 1;
-		if ( this.attempt > ( 10 ) ){
-			this.newWave();
-			this.attempt = 0;
-			this.removeAllEnemies();
-		}
-	}
+	} 
 
 }
 
@@ -8176,6 +8174,16 @@ PlatformBlueprint.Credits.create = function (params) {
 	this.mouse = this.game.input.mouse;
 	this.score = params;
 
+
+	this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
+	this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.A);
+
+    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W);
+    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S);
+
+    this.enterKey  = this.keyboard.addKey(Kiwi.Input.Keycodes.ENTER);
+    this.spaceKey  = this.keyboard.addKey(Kiwi.Input.Keycodes.SPACEBAR);
+
 	
 	this.credits = new Kiwi.GameObjects.Sprite(this, this.textures.credits, 0, -20);
 
@@ -8187,14 +8195,31 @@ PlatformBlueprint.Credits.create = function (params) {
 
 	
 }
-PlatformBlueprint.Credits.changeFrame = function(){
-	// Kiwi.State.prototype.update.call(this);
-	if (this.credits.cellIndex < 0){
-		this.credits.cellIndex ++;
+PlatformBlueprint.Credits.changeFrame = function(keyCode, key){
+		if(keyCode === this.rightKey.keyCode){
+		if (this.credits.cellIndex < 1){
+			this.credits.cellIndex ++;
 
-	} else {
-		this.exitState();
+		} else {
+			this.exitState();
+		}
+
+		
 	}
+	if(keyCode === this.leftKey.keyCode){
+		if (this.credits.cellIndex > 0){
+			this.credits.cellIndex --;
+
+		} 
+		
+	}
+
+	if(keyCode === this.spaceKey.keyCode){
+		//this.exitState();
+		this.openURL();
+		
+	}
+	
 }
 
 
@@ -8208,7 +8233,13 @@ PlatformBlueprint.Credits.exitState = function(){
 
 PlatformBlueprint.Credits.openURL = function(){
 
-	window.open("http://store.steampowered.com/app/279580/");
+	if(this.credits.cellIndex === 0 ){
+		window.open("http://store.steampowered.com/app/279580/");
+		
+	} else {
+		window.open("http://gamefroot.com/");
+	}
+
 
 }
 
@@ -8373,6 +8404,15 @@ PlatformBlueprint.HowToPlay.create = function (params) {
 	this.mouse = this.game.input.mouse;
 	this.score = params;
 
+	this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.D);
+	this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.A);
+
+    this.upKey = this.keyboard.addKey(Kiwi.Input.Keycodes.W);
+    this.downKey = this.keyboard.addKey(Kiwi.Input.Keycodes.S);
+
+    this.enterKey  = this.keyboard.addKey(Kiwi.Input.Keycodes.ENTER);
+    this.spaceKey  = this.keyboard.addKey(Kiwi.Input.Keycodes.SPACEBAR);
+
 	
 	this.howTo = new Kiwi.GameObjects.Sprite(this, this.textures.howTo, 0, 0);
 
@@ -8383,14 +8423,33 @@ PlatformBlueprint.HowToPlay.create = function (params) {
 
 	
 }
-PlatformBlueprint.HowToPlay.changeFrame = function(){
-	// Kiwi.State.prototype.update.call(this);
-	if (this.howTo.cellIndex < 2){
-		this.howTo.cellIndex ++;
+PlatformBlueprint.HowToPlay.changeFrame = function( keyCode, key ){
 
-	} else {
-		this.exitState();
+	if(keyCode === this.rightKey.keyCode){
+		if (this.howTo.cellIndex < 2){
+			this.howTo.cellIndex ++;
+
+		} else {
+			this.exitState();
+		}
+
+		
 	}
+	if(keyCode === this.leftKey.keyCode){
+		if (this.howTo.cellIndex > 0){
+			this.howTo.cellIndex --;
+
+		} 
+		
+	}
+
+	if(keyCode === this.spaceKey.keyCode){
+		this.exitState();
+		
+	}
+	
+
+	
 }
 
 
@@ -8961,7 +9020,7 @@ PlatformBlueprint.Play.create = function () {
     this.py = this.player.y + this.player.height;
 
     this.levelManager.generateForegroundTileMap();
-    console.log('CREATE GAME');
+    // console.log('CREATE GAME');
 
     /////////////////
     //Add level assets
