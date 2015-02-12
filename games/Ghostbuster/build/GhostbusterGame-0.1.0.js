@@ -70,17 +70,17 @@ var Ghost = function(state, x, y){
 
 	var animationSpeed = 0.1;
 	//var animationSpeed = (Math.random() * 0.1) + 0.05;
-	this.animation.add('invis', [0], 0.1, false);
-	this.animation.add('appear', [00, 01, 02, 03, 04, 06, 07, 08, 09, 10, 12, 13, 14, 15], 0.06, false);
-	this.animation.add('disappear', [ 30, 31, 32, 33, 34, 33, 34, 33, 34, 33, 34, 35, 36, 37, 38, 39 ], 0.06, false);
-	this.animation.add('disappear2', [ 40, 41, 41, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 44], 0.06, false);
-	this.animation.add('capture', [16, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28], animationSpeed, false);
-	this.animation.add('idle',[05, 11], 0.1, true);
-	this.animation.add('dash',[05, 11], 0.1, true);
-	this.animation.add('dashReady',[ 15 ], 0.1, true);
-	this.animation.add('damage1',[17], 0.1, false);
-	this.animation.add('damage2',[23], 0.1, false);
-	this.animation.add('damage3',[29], 0.1, false);
+	this.animation.add('invis', [ 0 ], 0.1, false);
+	this.animation.add('appear', [ 00, 01, 02, 03, 04, 06, 07, 08, 09, 10, 12, 13, 14, 15 ], 0.06, false);
+	this.animation.add('disappear', [ 30, 31, 32, 33, 34, 33, 34, 33, 34, 33, 34, 33, 34, 33, 34, 35, 36, 37, 38, 39 ], 0.06, false);
+	this.animation.add('disappear2', [ 40, 41, 41, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 43, 41, 41, 41, 44 ], 0.06, false);
+	this.animation.add('capture', [ 16, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28 ], animationSpeed, false);
+	this.animation.add('idle',[ 05, 11 ], 0.1, true);
+	this.animation.add('dash',[ 05, 11 ], 0.1, true);
+	this.animation.add('dashReady',[ 15, 47 ], 0.1, true);
+	this.animation.add('damage1',[ 17 ], 0.1, false);
+	this.animation.add('damage2',[ 23 ], 0.1, false);
+	this.animation.add('damage3',[ 29 ], 0.1, false);
 	this.animation.play('invis');
 
 	//console.log(this.width, this.height, "Zach the width and Height");
@@ -1873,6 +1873,8 @@ BeamManager.prototype.shoot = function () {
 
 		this.removeOldBeam();
 
+		this.releaseAll();
+
 		var rotation = this.getDirection() - Math.PI / 2;
 		var beam = new Beam ( this.state, this.state.player.centerPoint.x, this.state.player.centerPoint.y,  rotation, 0 );
 
@@ -2782,7 +2784,7 @@ var GameManager = function(state){
     this.canTakeDamage = true;
     this.score = 0;
 
-    this.energyDrainRate = 0.225;
+    this.energyDrainRate = 0.15;
     this.energyChargeRate = 0.5;
 
     this.damageTimer = this.state.game.time.clock.createTimer('damageTimer', 0.45, 0, false);
@@ -2962,7 +2964,7 @@ var InputManager = function (state, x, y){
     this.downArrowKey = this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN);
 
     this.spawnKey = this.keyboard.addKey(Kiwi.Input.Keycodes.Q);
-    this.restartKey = this.keyboard.addKey(Kiwi.Input.Keycodes.R);
+    // this.restartKey = this.keyboard.addKey(Kiwi.Input.Keycodes.R);
 
     this.shootKey = this.keyboard.addKey(Kiwi.Input.Keycodes.J);
     this.shoot2Key = this.keyboard.addKey(Kiwi.Input.Keycodes.Z);
@@ -3031,11 +3033,7 @@ InputManager.prototype.keyDownOnce = function(keyCode, key) {
             }
         }
     }
-    if(keyCode == this.gemKey.keyCode){
-        var tempPoint = new Kiwi.Geom.Point(this.mouse.x, this.mouse.y);
-        tempPoint = game.cameras.defaultCamera.transformPoint(tempPoint);
-        this.state.itemManager.addItem('gem', tempPoint.x, tempPoint.y);
-    }
+    
 
 
 
@@ -3065,9 +3063,6 @@ InputManager.prototype.keyUp = function(keyCode, key) {
         this.state.weaponManager.shootKeyUp();
     }
 
-    if(keyCode == this.restartKey.keyCode){
-        this.state.levelManager.switchStates();
-    }
     if(keyCode == this.gameOverKey.keyCode){
         // this.state.levelManager.gameOver();
     }
@@ -3279,8 +3274,8 @@ var PlayerManager = function (state, x, y){
 
 	// Top half animations
 	this.animation.add( 'idle', [15], 0.1, true);
-	this.animation.add( 'walk', [ 8, 9, 10, 11, 12, 13, 14, 15 ], 0.05, true);
-	this.animation.add( 'shootHorz', [ 8, 9, 10, 11, 12, 13, 14, 15 ], 0.05, true);
+	this.animation.add( 'walk', [ 8, 9, 10, 11, 12, 13, 14 ], 0.05, true);
+	this.animation.add( 'shootHorz', [ 8, 9, 10, 11, 12, 13, 14 ], 0.05, true);
 	this.animation.add( 'shootVert', [ 16 ], 0.05, true ); //, 17, 18, 19, 20, 21, 22, 23 ], 0.05, true);
 	this.animation.add( 'shootDiagonal', [ 0, 1, 2, 3, 4, 5, 6, 7 ], 0.05, true);
 	this.animation.add( 'jump', [ 24, 25], 0.1, false);
@@ -3403,6 +3398,7 @@ PlayerManager.prototype.stopFlash = function() {
 
 PlayerManager.prototype.update = function(){
 	Kiwi.GameObjects.Sprite.prototype.update.call(this);
+
 
 	if(this.x > 2200){
 		this.x = -50;
@@ -4140,6 +4136,8 @@ MiniGame.prototype.createMiniGame = function ( target, health ) {
 
 MiniGame.prototype.updateMiniGamePos = function(){
 	// console.log(this.beamTarget, "BEAM TARGET");
+
+	// console.log( "Blue:", this.rotBlueSpeed, "Skull:", this.rotSkullSpeed );
 
 	if ( this.state.weaponManager.beamManager.beam.impact !== undefined && this.state.weaponManager.beamManager.beam.impact.exists ){
 
@@ -8299,7 +8297,7 @@ PlatformBlueprint.GameOver.create = function (params) {
     ////////////////////////////
     //SCORE
 
-    this.hudScore = new Kiwi.HUD.Widget.TextField(game, 'GAME OVER - YOUR SCORE IS: ' + this.score, 0, 480);
+    this.hudScore = new Kiwi.HUD.Widget.TextField(game, 'GAME OVER - YOUR SCORE IS: ' + this.score, 0, 490);
     
     this.hudScore.style.fontFamily = 'myFirstFont';
     this.hudScore.style.color = '#FFEAD1';
@@ -8312,7 +8310,7 @@ PlatformBlueprint.GameOver.create = function (params) {
 
     this.gameOverKeyboard.onKeyDownOnce.add(this.keyDownOnce, this);
 
-    this.shareTwitter = new Kiwi.GameObjects.Sprite( this, this.textures.twitterShare, 360,  510 );
+    this.shareTwitter = new Kiwi.GameObjects.Sprite( this, this.textures.twitterShare, 360,  460 );
     this.addChild ( this.shareTwitter );
 
     this.shareTwitter.input.onUp.add(this.share, this);
@@ -8405,16 +8403,38 @@ PlatformBlueprint.HowToPlay.create = function (params) {
 
 	this.keyboard.onKeyDownOnce.add(this.changeFrame, this);
 
+	this.leftKey1 = this.keyboard.addKey( Kiwi.Input.Keycodes.A );
+	this.leftKey2 = this.keyboard.addKey( Kiwi.Input.Keycodes.LEFT );
+
+	this.rightKey1 = this.keyboard.addKey( Kiwi.Input.Keycodes.D );
+	this.rightKey2 = this.keyboard.addKey( Kiwi.Input.Keycodes.RIGHT );
+	this.enterKey = this.keyboard.addKey( Kiwi.Input.Keycodes.ENTER );
+	this.spaceKey = this.keyboard.addKey( Kiwi.Input.Keycodes.SPACEBAR );
+
+
 	
 }
-PlatformBlueprint.HowToPlay.changeFrame = function(){
+PlatformBlueprint.HowToPlay.changeFrame = function( keyCode, key ){
 	// Kiwi.State.prototype.update.call(this);
-	if (this.howTo.cellIndex < 2){
-		this.howTo.cellIndex ++;
 
-	} else {
-		this.exitState();
-	}
+	if(keyCode == this.rightKey1.keyCode || keyCode == this.rightKey2.keyCode || keyCode == this.spaceKey.keyCode || keyCode == this.enterKey.keyCode){
+		if (this.howTo.cellIndex < 2){
+			this.howTo.cellIndex ++;
+
+		} else {
+			this.exitState();
+		}
+	} 
+
+	if(keyCode == this.leftKey1.keyCode || keyCode == this.leftKey2.keyCode){
+		if (this.howTo.cellIndex > 0){
+			this.howTo.cellIndex --;
+
+		} else {
+			this.toMainMenu();
+		}
+	} 
+	
 }
 
 
@@ -8423,7 +8443,11 @@ PlatformBlueprint.HowToPlay.exitState = function(){
 	game.states.switchState("Play");
 
 }
+PlatformBlueprint.HowToPlay.toMainMenu = function(){
+	this.keyboard.onKeyDownOnce.remove(this.changeFrame, this);
+	game.states.switchState("Intro");
 
+}
 var PlatformBlueprint = PlatformBlueprint || {};
 
 PlatformBlueprint.Intro = new Kiwi.State('Intro');
@@ -8599,7 +8623,7 @@ PlatformBlueprint.Loading.preload = function () {
     this.addImage('secretBaseLogo', 'assets/img/loading/LogoSecretBase0150.png');
     ////////////////////////
     //PLAYER
-    this.addSpriteSheet('egonSprite', 'assets/img/sprites/egon-sprite4.png', 100, 100);
+    this.addSpriteSheet('egonSprite', 'assets/img/sprites/egon-sprite5.png', 100, 100);
     this.addImage('UI', 'assets/img/UI/UI.png');
     this.addImage('cashUI', 'assets/img/UI/cashUI.png');
 
@@ -8612,7 +8636,7 @@ PlatformBlueprint.Loading.preload = function () {
     //////////////////////
     //ENEMIES
 
-    this.addSpriteSheet('ghost', 'assets/img/enemies/ghost2.png', 160, 160);
+    this.addSpriteSheet('ghost', 'assets/img/enemies/ghost4.png', 160, 160);
     this.addSpriteSheet('boss', 'assets/img/enemies/boss.png', 300, 200);
 
     this.addSpriteSheet('questionMark', 'assets/img/enemies/Slimer_questionmark.png', 60, 60);
@@ -8882,7 +8906,7 @@ PlatformBlueprint.Play.create = function () {
     //game.stage.createDebugCanvas();
 
     
-    this.background = new Kiwi.GameObjects.StaticImage( this, this.textures.background1, 0, -57 );
+    this.background = new Kiwi.GameObjects.StaticImage( this, this.textures.background1, -2150, -62 );
     this.addChild(this.background);
     this.background.scaleX = 1;
     this.background.scaleY = 1;
